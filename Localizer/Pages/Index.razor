@@ -1,3 +1,16 @@
 ﻿@page "/"
+@using Localizer.Core.Resx
+
+<ToolbarView />
 
 <MudAlert Severity="Severity.Success">The reactor is running at optimum temperature</MudAlert>
+
+@code
+{
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        var resxLoader = ResxLoader.Load(@"C:\Users\shive\OneDrive\Desktop\Projects\ResXBenchmark\test_folder");
+    }
+}

@@ -54,4 +54,8 @@
         <PackageReference Include="MudBlazor" Version="6.10.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Localizer.Core\Localizer.Core.csproj" />
+    </ItemGroup>
+
 </Project>
