@@ -1,0 +1,30 @@
+﻿@using Localizer.Core.Model;
+
+
+@if(TreeNode is not null)
+{
+    if(TreeNode is ResxLoadDataLeafNode leaf)
+    {
+        <MudTreeViewItem Value="leaf.FileName" Icon="@Icons.Custom.FileFormats.FileDocument" IconColor="Color.Info" />
+    }
+    else if(TreeNode is ResxLoadDataNode folderNode)
+    {
+        <MudTreeViewItem Value="folderNode.FolderName" Icon="@Icons.Custom.Uncategorized.Folder" IconColor="Color.Warning">
+            <Virtualize Context="child" Items="folderNode.Children">
+                <ResxTreeNodeView TreeNode="child.Value" />
+            </Virtualize>
+        </MudTreeViewItem>
+    }
+}
+
+@code {
+    [Parameter]
+    public IResxLoadDataNode TreeNode { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        StateHasChanged();
+    }
+
+}

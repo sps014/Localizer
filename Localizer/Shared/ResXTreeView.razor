@@ -1,0 +1,25 @@
+﻿@using Localizer.Core.Model
+
+<MudPaper Width="300px" Class="d-flex flex-column overflow-x-auto" Elevation="0" Height="100vh">
+    <MudTreeView @bind-SelectedValue="SelectedValue" Hover="true">
+        @if(Tree!=null)
+        {
+            <ResxTreeNodeView TreeNode="Tree.Root"/>
+        }
+    </MudTreeView>
+</MudPaper>
+
+@code {
+    string SelectedValue { get; set; }
+    bool folderOneExpanded;
+    bool folderTwoExpanded;
+
+    [Parameter]
+    public ResxLoadDataTree Tree { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        StateHasChanged();
+    }
+}

@@ -1,16 +1,25 @@
 ﻿@page "/"
 @using Localizer.Core.Resx
+@using Localizer.Core.Model
 
 <ToolbarView />
 
-<MudAlert Severity="Severity.Success">The reactor is running at optimum temperature</MudAlert>
+<div style="display:flex">
+    <div>
+        <ResXTreeView Tree="Tree"/>
+    </div>
+    <div>
+        <MudAlert Severity="Severity.Normal">trext</MudAlert>
+    </div>
+</div>
 
 @code
 {
+    ResxLoadDataTree Tree;
     protected override void OnInitialized()
     {
         base.OnInitialized();
+        Tree = ResxLoader.Load(@"C:\Users\shive\OneDrive\Desktop\Projects\ResXBenchmark\test_folder");
 
-        var resxLoader = ResxLoader.Load(@"C:\Users\shive\OneDrive\Desktop\Projects\ResXBenchmark\test_folder");
     }
 }
