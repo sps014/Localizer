@@ -9,7 +9,7 @@
     }
     else if(TreeNode is ResxLoadDataNode folderNode)
     {
-        <MudTreeViewItem Value="folderNode.FolderName" Icon="@Icons.Custom.Uncategorized.Folder" IconColor="Color.Warning">
+        <MudTreeViewItem Value="folderNode.FolderName" Icon="@Icons.Custom.Uncategorized.Folder" IconColor="Color.Warning" >
             <Virtualize Context="child" Items="folderNode.Children">
                 <ResxTreeNodeView TreeNode="child.Value" />
             </Virtualize>
@@ -21,6 +21,7 @@
     [Parameter]
     public IResxLoadDataNode TreeNode { get; set; }
 
+    bool IsExpanded { get; set; } = true;
     protected override void OnParametersSet()
     {
         base.OnParametersSet();

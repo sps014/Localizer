@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Localizer.Core.Helper;
 
 namespace Localizer.Core.Model;
@@ -19,6 +20,8 @@ public record ResxLoadDataTree
     private void ScanAndPopulateTree(string solutionPath, CancellationTokenSource cts)
     {
         var resxFiles = Directory.GetFiles(solutionPath, "*.resx", SearchOption.AllDirectories);
+        var csprojs = Directory.GetFiles(solutionPath, "*.csproj", SearchOption.AllDirectories)
+                        .Select(x => (x.GetDirectoryName()!,x)).ToImmutableDictionary(x=>x.Item1,x=>x.Item2);
 
         var solutionFolderName = solutionPath.GetDirectoryName();
 
@@ -52,7 +55,12 @@ public record ResxLoadDataTree
                     }
                     else
                     {
-                        var newNode = new ResxLoadDataNode(part, directoryInfo.FullName);
+                        var isCsProj = csprojs.ContainsKey(directoryInfo.FullName); // is directory contains a csproj
+                        var newNode = new ResxLoadDataNode(part, directoryInfo.FullName)
+                        {
+                            IsCsProjNode = isCsProj,
+                            CsProjPath = isCsProj ? csprojs[directoryInfo.FullName] : null
+                        };
                         node.AddChild(newNode);
                         currentFolder = newNode;
                     }
