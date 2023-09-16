@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
+using Localizer.Core.Helper;
 
 namespace Localizer.Core.Model;
 
@@ -27,12 +28,29 @@ public record struct ResxLoadDataNode(string FolderName, string FullPath) : IRes
         {
             Children.Add(node.FolderName, node);
         }
-        else if (child is ResxLoadDataLeafNode leaf)
-        {
-            Children.Add(leaf.FileName, leaf);
-        }
         else
             throw new ArgumentException("Invalid child type");
+    }
+    public void AddLeafFile(string fileName)
+    {
+        var neutralName = fileName.GetNeutralFileName();
+        if(this.Children.ContainsKey(neutralName))
+        {
+            var node = this.Children[neutralName];
+
+            if(node is ResxLoadDataLeafNode leafNode)
+            {
+                leafNode.AddFile(fileName);
+            }
+            else
+            {
+                throw new ArgumentException("Invalid child type");
+            }
+        }
+        else
+        {
+            this.Children.Add(neutralName, new ResxLoadDataLeafNode(fileName));
+        }
     }
     public IEnumerable<IResxLoadDataNode> SortedChildren()
     {

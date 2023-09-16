@@ -1,3 +1,5 @@
+using Localizer.Core.Helpers;
+
 namespace Localizer.Core.Helper;
 
 public static class FileHelperExtension
@@ -39,5 +41,48 @@ public static class FileHelperExtension
     public static string? GetParentDirectory(this string path)
     {
         return Path.GetDirectoryName(path);
+    }
+
+    public static string Join(this IEnumerable<string> strings, string separator)
+    {
+        return string.Join(separator, strings);
+    }
+    public static string GetNeutralFileName(this string path)
+    {
+        var parts = path.GetFileNameWithoutExtension().Split('.');
+
+        //if no culture, add to empty string
+        if (parts.Length == 1)
+        {
+            return path.GetFileNameWithoutExtension();
+        }
+        else
+        {
+            return parts.SkipLast(1).Join("1");
+        }
+    }
+    public static string GetCultureName(this string path)
+    {
+        var parts = path.GetFileNameWithoutExtension().Split('.');
+
+        //if no culture, add to empty string
+        if (parts.Length == 1)
+        {
+            return string.Empty;
+        }
+        else
+        {
+            var culture = parts.Last();
+
+            //Handle file name with multiple dots 
+            if(Culture.AllCultures.Contains(culture))
+            {
+                return culture;
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
     }
 }

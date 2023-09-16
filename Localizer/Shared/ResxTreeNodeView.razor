@@ -1,11 +1,13 @@
 ﻿@using Localizer.Core.Model;
-
+@using Localizer.Core.Helper
 
 @if(TreeNode is not null)
 {
     if(TreeNode is ResxLoadDataLeafNode leaf)
     {
-        <MudTreeViewItem Value="leaf.FileName" Icon="@Icons.Custom.FileFormats.FileDocument" IconColor="Color.Info" />
+        <Virtualize Context="child" Items="leaf.CultureFileNameMap" OverscanCount="30">
+           <MudTreeViewItem Value="child.Value.GetFileName()" Icon="@Icons.Custom.FileFormats.FileDocument" IconColor="Color.Info" />
+        </Virtualize>
     }
     else if(TreeNode is ResxLoadDataNode folderNode)
     {

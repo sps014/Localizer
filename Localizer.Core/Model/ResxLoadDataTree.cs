@@ -71,7 +71,10 @@ public record ResxLoadDataTree
                 }
             }
 
-            currentFolder.AddChild(new ResxLoadDataLeafNode(resxFile.GetFileName(), resxFile));
+            if(currentFolder is ResxLoadDataNode cur)
+                cur.AddLeafFile(resxFile);
+            else
+                throw new InvalidOperationException("Invalid , should be a folder node");
 
         }
 
