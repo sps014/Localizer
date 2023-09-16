@@ -31,4 +31,13 @@ public static class FileHelperExtension
     {
         return Path.GetFileName(path);
     }
+    /// <summary>
+    /// Returns the directory full path from the path
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public static string? GetParentDirectory(this string path)
+    {
+        return Path.GetDirectoryName(path);
+    }
 }

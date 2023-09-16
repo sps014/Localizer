@@ -1,10 +1,12 @@
 using System.Collections.Immutable;
+using System.Text.Json.Serialization;
 using Localizer.Core.Helper;
 
 namespace Localizer.Core.Model;
 
 public record ResxLoadDataTree
 {
+    [JsonPropertyName("root")]
     public IResxLoadDataNode? Root { get; private set; }
 
     public void BuildTree(string solutionPath)
@@ -21,7 +23,8 @@ public record ResxLoadDataTree
     {
         var resxFiles = Directory.GetFiles(solutionPath, "*.resx", SearchOption.AllDirectories);
         var csprojs = Directory.GetFiles(solutionPath, "*.csproj", SearchOption.AllDirectories)
-                        .Select(x => (x.GetDirectoryName()!,x)).ToImmutableDictionary(x=>x.Item1,x=>x.Item2);
+                        .Select(x => (x.GetParentDirectory()!,new ProjectInfo(x)))
+                        .ToImmutableDictionary(x=>x.Item1,x=>x.Item2);
 
         var solutionFolderName = solutionPath.GetDirectoryName();
 
@@ -31,7 +34,7 @@ public record ResxLoadDataTree
             MaxDegreeOfParallelism = Environment.ProcessorCount
         };
 
-        Parallel.ForEach(resxFiles, options, (resxFile) =>
+        foreach (var resxFile in resxFiles)
         {
             var directoryInfo = new DirectoryInfo(resxFile);
 
@@ -55,11 +58,12 @@ public record ResxLoadDataTree
                     }
                     else
                     {
-                        var isCsProj = csprojs.ContainsKey(directoryInfo.FullName); // is directory contains a csproj
-                        var newNode = new ResxLoadDataNode(part, directoryInfo.FullName)
+                        var currentDirPath = Path.Combine(node.FullPath, part);
+                        var isCsProj = csprojs.ContainsKey(currentDirPath); // is directory contains a csproj
+                        var newNode = new ResxLoadDataNode(part, currentDirPath)
                         {
                             IsCsProjNode = isCsProj,
-                            CsProjPath = isCsProj ? csprojs[directoryInfo.FullName] : null
+                            CsProjPath = isCsProj ? csprojs[currentDirPath].ProjectPath : null
                         };
                         node.AddChild(newNode);
                         currentFolder = newNode;
@@ -69,6 +73,15 @@ public record ResxLoadDataTree
 
             currentFolder.AddChild(new ResxLoadDataLeafNode(resxFile.GetFileName(), resxFile));
 
-        });
+        }
+
+    }
+
+    private record struct ProjectInfo(string ProjectPath)
+    {
+        public string ProjectName => ProjectPath.GetFileName();
+        public string ProjectDirectory => ProjectPath.GetDirectoryName()!;
     }
 }
+
+

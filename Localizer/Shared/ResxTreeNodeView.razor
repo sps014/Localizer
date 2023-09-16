@@ -9,10 +9,15 @@
     }
     else if(TreeNode is ResxLoadDataNode folderNode)
     {
-        <MudTreeViewItem Value="folderNode.FolderName" Icon="@Icons.Custom.Uncategorized.Folder" IconColor="Color.Warning" >
-            <Virtualize Context="child" Items="folderNode.Children">
-                <ResxTreeNodeView TreeNode="child.Value" />
-            </Virtualize>
+        <MudTreeViewItem Value="folderNode.FolderName"
+                         Icon="@(GetFolderIcon())"
+            IconColor="GetFolderColor()" Expanded="IsExpanded" ExpandedChanged="OnExpand">
+            @if (IsExpanded)
+            {
+                <Virtualize Context="child" Items="folderNode.SortedChildren().ToList()" TItem="IResxLoadDataNode" OverscanCount="30">
+                    <ResxTreeNodeView TreeNode="child" />
+                </Virtualize>
+            }
         </MudTreeViewItem>
     }
 }
@@ -21,11 +26,29 @@
     [Parameter]
     public IResxLoadDataNode TreeNode { get; set; }
 
-    bool IsExpanded { get; set; } = true;
+    bool IsExpanded { get; set; } = false;
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
         StateHasChanged();
+    }
+    void OnExpand(bool isExpanded)
+    {
+        IsExpanded = isExpanded;
+        StateHasChanged();
+    }
+
+    private string GetFolderIcon()
+    {
+        return TreeNode is ResxLoadDataNode folderNode && folderNode.IsCsProjNode
+                ? Icons.Material.Filled.SettingsEthernet
+                : Icons.Custom.Uncategorized.Folder;
+    }
+    private Color GetFolderColor()
+    {
+        return TreeNode is ResxLoadDataNode folderNode && folderNode.IsCsProjNode
+                ? Color.Success
+                : Color.Warning;
     }
 
 }
