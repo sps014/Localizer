@@ -1,10 +1,10 @@
 ﻿@using Localizer.Core.Model
 
 <MudPaper Width="400px" Class="d-flex flex-column overflow-x-auto" Style="flex-grow: 1;" Elevation="0" Height="90vh">
-    <MudTreeView @bind-SelectedValue="SelectedValue" Hover="true">
-        @if(Tree!=null)
+    <MudTreeView @bind-SelectedValue="SelectedValue" Hover="true" ExpandOnClick="true">
+        @if (Tree != null)
         {
-            <ResxTreeNodeView TreeNode="Tree.Root"/>
+            <ResxTreeNodeView TreeNode="Tree.Root" />
         }
     </MudTreeView>
 </MudPaper>
