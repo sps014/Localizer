@@ -46,6 +46,50 @@ public record ResxLoadDataTree
 
     }
 
+    public IResxLoadDataNode? GetNodeFromPath(string fullPath)
+    {
+        if (fullPath == null)
+            throw new ArgumentNullException(nameof(fullPath));
+
+        if (fullPath == SolutionFolder)
+            return Root;
+
+        var solutionFolderName = SolutionFolder!.GetDirectoryName();
+
+        bool isFile = File.Exists(fullPath);
+
+        if (isFile && !fullPath.EndsWith(".resx"))
+            return null;
+
+        var parts = fullPath.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries)
+                .SkipWhile(x => x != solutionFolderName).Skip(1).ToList();
+
+        var currentFolder = Root!;
+
+        for (int i = 0; i < parts.Count; i++)
+        {
+            var part = parts[i];
+            if (i == parts.Count - 1 && isFile)
+            {
+                part = fullPath.GetNeutralFileNameWithoutExtension();
+            }
+
+            if(currentFolder is ResxLoadDataNode node)
+            {
+                if (node.Children.TryGetValue(part, out var child))
+                {
+                    currentFolder = child;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        return currentFolder;
+    }
+
     private void AddNewFileToTree(string resxFile)
     {
         var directoryInfo = new DirectoryInfo(resxFile);

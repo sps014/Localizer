@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Localizer.Core.Helpers;
 
 namespace Localizer.Core.Helper;
@@ -5,7 +6,7 @@ namespace Localizer.Core.Helper;
 public static class FileHelperExtension
 {
     /// <summary>
-    /// Returns the file name from the path with extension
+    /// Returns the file name from the full path with extension
     /// </summary>
     /// <param name="path"></param>
     /// <returns></returns>
@@ -25,7 +26,7 @@ public static class FileHelperExtension
     }
 
     /// <summary>
-    /// Returns the directory name from the path
+    /// Returns the directory name from the full path
     /// </summary>
     /// <param name="path"></param>
     /// <returns></returns>
@@ -47,23 +48,39 @@ public static class FileHelperExtension
     {
         return string.Join(separator, strings);
     }
-    public static string GetNeutralFileName(this string path)
+
+    /// <summary>
+    /// Returns the neutral file name from the path (relative or full path)
+    /// </summary>
+    /// <param name="fullpath"></param>
+    /// <returns></returns>
+    public static string GetNeutralFileName(this string fullpath)
     {
-        var parts = path.GetFileNameWithoutExtension().Split('.');
+        var parts = fullpath.GetFileNameWithoutExtension().Split('.');
 
         //if no culture, add to empty string
         if (parts.Length == 1)
         {
-            return path.GetFileNameWithoutExtension();
+            return fullpath.GetFileNameWithoutExtension();
         }
         else
         {
             return parts.SkipLast(1).Join("1");
         }
     }
-    public static string GetCultureName(this string path)
+
+    public static string GetNeutralFileNameWithoutExtension(this string fullpath)
     {
-        var parts = path.GetFileNameWithoutExtension().Split('.');
+        return Path.GetFileNameWithoutExtension(fullpath.GetNeutralFileName());
+    }
+    /// <summary>
+    /// Returns the culture name from the path (relative or full path)
+    /// </summary>
+    /// <param name="fullpath"></param>
+    /// <returns></returns>
+    public static string GetCultureName(this string fullpath)
+    {
+        var parts = fullpath.GetFileNameWithoutExtension().Split('.');
 
         //if no culture, add to empty string
         if (parts.Length == 1)
@@ -75,7 +92,7 @@ public static class FileHelperExtension
             var culture = parts.Last();
 
             //Handle file name with multiple dots 
-            if(Culture.AllCultures.Contains(culture))
+            if (Culture.AllCultures.Contains(culture))
             {
                 return culture;
             }
