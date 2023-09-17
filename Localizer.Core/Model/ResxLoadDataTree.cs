@@ -24,7 +24,7 @@ public record ResxLoadDataTree
     }
     public Task BuildTreeAsync(CancellationTokenSource? cts = default)
     {
-        return Task.Run(() => ScanAndPopulateTree(cts),cts==null?CancellationToken.None:cts.Token);
+        return Task.Run(() => ScanAndPopulateTree(cts), cts == null ? CancellationToken.None : cts.Token);
     }
     private void ScanAndPopulateTree(CancellationTokenSource? cts)
     {
@@ -39,7 +39,7 @@ public record ResxLoadDataTree
         {
             AddNewFileToTree(resxFile);
 
-            if (cts!=null && cts.IsCancellationRequested)
+            if (cts != null && cts.IsCancellationRequested)
                 break;
 
         }
@@ -78,7 +78,8 @@ public record ResxLoadDataTree
                     var newNode = new ResxLoadDataNode(part, currentDirPath)
                     {
                         IsCsProjNode = isCsProj,
-                        CsProjPath = isCsProj ? CsProjs[currentDirPath].ProjectPath : null
+                        CsProjPath = isCsProj ? CsProjs[currentDirPath].ProjectPath : null,
+                        Parent = node
                     };
                     node.AddChild(newNode);
                     currentFolder = newNode;

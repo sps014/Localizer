@@ -22,6 +22,10 @@ public record struct ResxLoadDataNode(string FolderName, string FullPath) : IRes
     /// </summary>
     public bool IsCsProjNode { get; init; } = false;
 
+    private IResxLoadDataNode? parent;
+
+    public IResxLoadDataNode? Parent { get => parent; init => parent = value; }
+
     public void AddChild(IResxLoadDataNode child)
     {
         if (child is ResxLoadDataNode node)
@@ -34,11 +38,11 @@ public record struct ResxLoadDataNode(string FolderName, string FullPath) : IRes
     public void AddLeafFile(string fileName)
     {
         var neutralName = fileName.GetNeutralFileName();
-        if(this.Children.ContainsKey(neutralName))
+        if (this.Children.ContainsKey(neutralName))
         {
             var node = this.Children[neutralName];
 
-            if(node is ResxLoadDataLeafNode leafNode)
+            if (node is ResxLoadDataLeafNode leafNode)
             {
                 leafNode.AddFile(fileName);
             }
@@ -49,12 +53,15 @@ public record struct ResxLoadDataNode(string FolderName, string FullPath) : IRes
         }
         else
         {
-            this.Children.Add(neutralName, new ResxLoadDataLeafNode(fileName));
+            this.Children.Add(neutralName, new ResxLoadDataLeafNode(fileName){
+                Parent = this
+            });
         }
     }
-    public IEnumerable<IResxLoadDataNode> SortedChildren()
+    public ObservableCollection<IResxLoadDataNode> SortedChildren()
     {
-        return Children.Values.OrderByDescending(x => x is ResxLoadDataNode);
+        var sorted = Children.Values.OrderByDescending(x => x is ResxLoadDataNode);
+        return new ObservableCollection<IResxLoadDataNode>(sorted);
     }
 
 }
