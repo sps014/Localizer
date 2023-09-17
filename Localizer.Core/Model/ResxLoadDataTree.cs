@@ -8,7 +8,7 @@ namespace Localizer.Core.Model;
 public record ResxLoadDataTree
 {
     [JsonPropertyName("root")]
-    public IResxLoadDataNode? Root { get; private set; }
+    public ResxFileSystemNodeBase? Root { get; private set; }
     private ImmutableDictionary<string, ProjectInfo> CsProjs = ImmutableDictionary<string, ProjectInfo>.Empty;
     public string SolutionFolder { get; private set; }
     private ResxFileWatcher resxFileWatcher;
@@ -18,7 +18,7 @@ public record ResxLoadDataTree
         if (!Directory.Exists(solutionPath))
             throw new ArgumentException("Invalid solution path");
 
-        Root = new ResxLoadDataNode(solutionPath.GetDirectoryName()!, solutionPath);
+        Root = new ResxFileSystemFolderNode(solutionPath.GetDirectoryName()!, solutionPath);
         SolutionFolder = solutionPath;
         resxFileWatcher = new ResxFileWatcher(this);
     }
@@ -46,7 +46,7 @@ public record ResxLoadDataTree
 
     }
 
-    public IResxLoadDataNode? GetNodeFromPath(string fullPath)
+    public ResxFileSystemNodeBase? GetNodeFromPath(string fullPath)
     {
         if (fullPath == null)
             throw new ArgumentNullException(nameof(fullPath));
@@ -76,7 +76,7 @@ public record ResxLoadDataTree
                 part = fullPath.GetNeutralFileNameWithoutExtension();
             }
 
-            if (currentFolder is ResxLoadDataNode node)
+            if (currentFolder is ResxFileSystemFolderNode node)
             {
                 if (node.Children.TryGetValue(part, out var child))
                 {
@@ -109,7 +109,7 @@ public record ResxLoadDataTree
         foreach (var part in parts)
         {
             // If the current folder is a directory node, then we can add  more children to it
-            if (currentFolder is ResxLoadDataNode node)
+            if (currentFolder is ResxFileSystemFolderNode node)
             {
 
                 // If the current folder already has a child with the same name, then we can skip adding it
@@ -121,7 +121,7 @@ public record ResxLoadDataTree
                 {
                     var currentDirPath = Path.Combine(node.FullPath, part);
                     var isCsProj = CsProjs.ContainsKey(currentDirPath); // is directory contains a csproj
-                    var newNode = new ResxLoadDataNode(part, currentDirPath)
+                    var newNode = new ResxFileSystemFolderNode(part, currentDirPath)
                     {
                         IsCsProjNode = isCsProj,
                         CsProjPath = isCsProj ? CsProjs[currentDirPath].ProjectPath : null,
@@ -133,7 +133,7 @@ public record ResxLoadDataTree
             }
         }
 
-        if (currentFolder is ResxLoadDataNode cur)
+        if (currentFolder is ResxFileSystemFolderNode cur)
             cur.AddLeafFile(resxFile);
         else
             throw new InvalidOperationException("Invalid , should be a folder node");
@@ -147,7 +147,7 @@ public record ResxLoadDataTree
 
         var parent = node.Parent;
 
-        if (parent is ResxLoadDataNode parentNode)
+        if (parent is ResxFileSystemFolderNode parentNode)
         {
             parentNode.RemoveChild(node,oldFullPath);
 

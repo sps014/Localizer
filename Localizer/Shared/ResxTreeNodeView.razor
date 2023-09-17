@@ -5,17 +5,17 @@
 
 @if (TreeNode is not null)
 {
-    if (TreeNode is ResxLoadDataLeafNode leaf)
+    if (TreeNode is ResxFileSystemLeafNode leaf)
     {
-        <MudTreeViewItem Value="leaf.NeutralFileName" Icon="@Icons.Custom.FileFormats.FileDocument" IconColor="Color.Info" />
+        <MudTreeViewItem Value="leaf.NodeName" Icon="@Icons.Custom.FileFormats.FileDocument" IconColor="Color.Info" />
     }
-    else if (TreeNode is ResxLoadDataNode folderNode)
+    else if (TreeNode is ResxFileSystemFolderNode folderNode)
     {
-        <MudTreeViewItem Value="folderNode.FolderName" Icon="@(GetFolderIcon())" IconColor="GetFolderColor()"
+        <MudTreeViewItem Value="folderNode.NodeName" Icon="@(GetFolderIcon())" IconColor="GetFolderColor()"
             Expanded="IsExpanded" ExpandedChanged="OnExpand">
             @if (IsExpanded)
             {
-                <Virtualize Context="child" Items="folderNode.Children.Values" TItem="IResxLoadDataNode"
+                <Virtualize Context="child" Items="folderNode.SortedChildren().ToList()" TItem="ResxFileSystemNodeBase"
                     OverscanCount="5">
                     <ResxTreeNodeView TreeNode="child" />
                 </Virtualize>
@@ -27,24 +27,20 @@
 @code
 {
     [Parameter]
-    public IResxLoadDataNode TreeNode { get; set; }
+    public ResxFileSystemNodeBase TreeNode { get; set; }
 
     bool IsExpanded { get; set; } = false;
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
         StateHasChanged();
-        
+
     }
     private void SubscribeToEvents()
     {
-        if (TreeNode is ResxLoadDataLeafNode leaf)
+        if (TreeNode is not null)
         {
-            leaf.OnNodeChanged += OnNodeChanged;
-        }
-        else if (TreeNode is ResxLoadDataNode folderNode)
-        {
-            folderNode.OnNodeChanged += OnNodeChanged;
+            TreeNode.OnNodeChanged += OnNodeChanged;
         }
     }
 
@@ -66,28 +62,28 @@
 
     private string GetFolderIcon()
     {
-        return TreeNode is ResxLoadDataNode folderNode && folderNode.IsCsProjNode
+        return TreeNode is ResxFileSystemFolderNode folderNode && folderNode.IsCsProjNode
         ? Icons.Material.Filled.SettingsEthernet
         : Icons.Custom.Uncategorized.Folder;
     }
     private Color GetFolderColor()
     {
-        return TreeNode is ResxLoadDataNode folderNode && folderNode.IsCsProjNode
+        return TreeNode is ResxFileSystemFolderNode folderNode && folderNode.IsCsProjNode
         ? Color.Success
         : Color.Warning;
     }
 
-    private string GetToolTipForLeaf(ResxLoadDataLeafNode leaf)
-    {
-        var tooltip = new StringBuilder();
-        tooltip.AppendLine($"File Name: {leaf.NeutralFileNameWithExtension}");
-        // var list all non neutral files cultures
-        var nonNeutralFiles = leaf.CultureFileNameMap.Keys.Join(",");
-        tooltip.AppendLine($"Non Neutral Files: {nonNeutralFiles}");
+    @* private string GetToolTipForLeaf(ResxLoadDataLeafNode leaf)
+{
+var tooltip = new StringBuilder();
+tooltip.AppendLine($"File Name: {leaf.NeutralFileNameWithExtension}");
+// var list all non neutral files cultures
+var nonNeutralFiles = leaf.CultureFileNameMap.Keys.Join(",");
+tooltip.AppendLine($"Non Neutral Files: {nonNeutralFiles}");
 
-        var folderLocation = leaf.CultureFileNameMap.First().Value.GetParentDirectory();
-        tooltip.AppendLine($"Folder Location: {folderLocation}");
+var folderLocation = leaf.CultureFileNameMap.First().Value.GetParentDirectory();
+tooltip.AppendLine($"Folder Location: {folderLocation}");
 
-        return tooltip.ToString();
-    }
+return tooltip.ToString();
+} *@
 }
