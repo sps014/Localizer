@@ -15,7 +15,7 @@
             IconColor="GetFolderColor()" Expanded="IsExpanded" ExpandedChanged="OnExpand">
             @if (IsExpanded)
             {
-                <Virtualize Context="child" Items="folderNode.SortedChildren().ToList()" TItem="IResxLoadDataNode" OverscanCount="30">
+                <Virtualize Context="child" Items="folderNode.SortedChildren().ToList()" TItem="IResxLoadDataNode" OverscanCount="5">
                     <ResxTreeNodeView TreeNode="child" />
                 </Virtualize>
             }

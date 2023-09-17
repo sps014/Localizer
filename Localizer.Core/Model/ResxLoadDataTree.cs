@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Text.Json.Serialization;
 using Localizer.Core.Helper;
+using Localizer.Core.Watcher;
 
 namespace Localizer.Core.Model;
 
@@ -9,24 +10,27 @@ public record ResxLoadDataTree
     [JsonPropertyName("root")]
     public IResxLoadDataNode? Root { get; private set; }
     private ImmutableDictionary<string, ProjectInfo> CsProjs = ImmutableDictionary<string, ProjectInfo>.Empty;
-    public string? SolutionFolder { get; private set; }
+    public string SolutionFolder { get; private set; }
+    private ResxFileWatcher resxFileWatcher;
 
-    public void BuildTree(string solutionPath, CancellationTokenSource? cts=default)
+    public ResxLoadDataTree(string solutionPath)
     {
         if (!Directory.Exists(solutionPath))
             throw new ArgumentException("Invalid solution path");
 
         Root = new ResxLoadDataNode(solutionPath.GetDirectoryName()!, solutionPath);
-
-        ScanAndPopulateTree(solutionPath, cts);
-
-    }
-    private void ScanAndPopulateTree(string solutionPath, CancellationTokenSource? cts)
-    {
         SolutionFolder = solutionPath;
+        resxFileWatcher = new ResxFileWatcher(this);
+    }
+    public Task BuildTreeAsync(CancellationTokenSource? cts = default)
+    {
+        return Task.Run(() => ScanAndPopulateTree(cts),cts==null?CancellationToken.None:cts.Token);
+    }
+    private void ScanAndPopulateTree(CancellationTokenSource? cts)
+    {
 
-        var resxFiles = Directory.GetFiles(solutionPath, "*.resx", SearchOption.AllDirectories);
-        CsProjs = Directory.GetFiles(solutionPath, "*.csproj", SearchOption.AllDirectories)
+        var resxFiles = Directory.GetFiles(SolutionFolder, "*.resx", SearchOption.AllDirectories);
+        CsProjs = Directory.GetFiles(SolutionFolder, "*.csproj", SearchOption.AllDirectories)
                         .Select(x => (x.GetParentDirectory()!, new ProjectInfo(x)))
                         .ToImmutableDictionary(x => x.Item1, x => x.Item2);
 
@@ -34,6 +38,9 @@ public record ResxLoadDataTree
         foreach (var resxFile in resxFiles)
         {
             AddNewFileToTree(resxFile);
+
+            if (cts!=null && cts.IsCancellationRequested)
+                break;
 
         }
 

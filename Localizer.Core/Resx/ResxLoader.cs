@@ -9,10 +9,10 @@ namespace Localizer.Core.Resx
 {
     public static class ResxLoader
     {
-        public static ResxLoadDataTree Load(string path)
+        public static async Task<ResxLoadDataTree> LoadAsync(string path,CancellationTokenSource? cts=default)
         {
-            var tree = new ResxLoadDataTree();
-            tree.BuildTree(path);
+            var tree = new ResxLoadDataTree(path);
+            await tree.BuildTreeAsync(cts);
             return tree;
         }
     }

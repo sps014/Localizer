@@ -6,7 +6,7 @@
 
 <div style="display:flex">
     <div>
-        <ResXTreeView Tree="Tree"/>
+        <ResXTreeView Tree="Tree" />
     </div>
     <div>
         <MudAlert Severity="Severity.Normal">trext</MudAlert>
@@ -16,10 +16,10 @@
 @code
 {
     ResxLoadDataTree Tree;
-    protected override void OnInitialized()
+
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
-        //Tree = ResxLoader.Load(@"C:\Users\shive\OneDrive\Desktop\Projects\ResXBenchmark\test_folder");
-        Tree = ResxLoader.Load(@"C:\Users\shive\OneDrive\Desktop\ResXUse");
+        Tree = await ResxLoader.LoadAsync(@"C:\Users\shive\OneDrive\Desktop\Projects\ResXBenchmark\test_folder");
+        //Tree = await ResxLoader.LoadAsync(@"C:\Users\shive\OneDrive\Desktop\ResXUse");
     }
 }
