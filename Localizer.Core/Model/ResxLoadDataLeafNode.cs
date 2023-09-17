@@ -4,7 +4,9 @@ public class ResxLoadDataLeafNode : IResxLoadDataNode
 {
     public Dictionary<string,string> CultureFileNameMap { get; init; } = new();
 
-    public string NeutralFileName { get; private set; } = string.Empty;
+    private string? neutralFileName = null;
+    public string NeutralFileName => neutralFileName!;
+    public string NeutralFileNameWithExtension => $"{NeutralFileName}.resx";
 
     public ResxLoadDataLeafNode(string resXFile)
     {
@@ -22,7 +24,7 @@ public class ResxLoadDataLeafNode : IResxLoadDataNode
         }
 
         CultureFileNameMap.Add(cultureName, path);
-        NeutralFileName ??= neutralName;
+        neutralFileName ??= neutralName;
 
     }
 

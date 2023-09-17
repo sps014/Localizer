@@ -1,13 +1,12 @@
 ﻿@using Localizer.Core.Model;
 @using Localizer.Core.Helper
+@using System.Text;
 
 @if(TreeNode is not null)
 {
     if(TreeNode is ResxLoadDataLeafNode leaf)
     {
-        <Virtualize Context="child" Items="leaf.CultureFileNameMap" OverscanCount="30">
-           <MudTreeViewItem Value="child.Value.GetFileName()" Icon="@Icons.Custom.FileFormats.FileDocument" IconColor="Color.Info" />
-        </Virtualize>
+        <MudTreeViewItem Value="leaf.NeutralFileName" Icon="@Icons.Custom.FileFormats.FileDocument" IconColor="Color.Info"/>
     }
     else if(TreeNode is ResxLoadDataNode folderNode)
     {
@@ -24,7 +23,8 @@
     }
 }
 
-@code {
+@code
+{
     [Parameter]
     public IResxLoadDataNode TreeNode { get; set; }
 
@@ -53,4 +53,17 @@
                 : Color.Warning;
     }
 
+    private string GetToolTipForLeaf(ResxLoadDataLeafNode leaf)
+    {
+        var tooltip = new StringBuilder();
+        tooltip.AppendLine($"File Name: {leaf.NeutralFileNameWithExtension}");
+        // var list all non neutral files cultures
+        var nonNeutralFiles = leaf.CultureFileNameMap.Keys.Join(",");
+        tooltip.AppendLine($"Non Neutral Files: {nonNeutralFiles}");
+
+        var folderLocation = leaf.CultureFileNameMap.First().Value.GetParentDirectory();
+        tooltip.AppendLine($"Folder Location: {folderLocation}");
+
+        return tooltip.ToString();
+    }
 }
