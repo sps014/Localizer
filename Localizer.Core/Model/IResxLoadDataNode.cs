@@ -16,7 +16,7 @@ public interface IResxLoadDataNode
     /// <summary>
     /// Parent node of the current node
     /// </summary>
-    public IResxLoadDataNode? Parent { get;init;}
+    public IResxLoadDataNode? Parent { get; init; }
 
     /// <summary>
     /// Denotes if the current node is a leaf node (resxFile)
@@ -38,4 +38,5 @@ public interface IResxLoadDataNode
             node.AddChild(node);
         }
     }
+
 }

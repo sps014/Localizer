@@ -21,7 +21,7 @@ public class ResxFileWatcher
                                  | NotifyFilters.LastWrite
                                  | NotifyFilters.Security
                                  | NotifyFilters.Size;
-                                 
+
         _watcher.Created += OnCreated;
         _watcher.Changed += OnChanged;
         _watcher.Deleted += OnDeleted;
@@ -30,7 +30,8 @@ public class ResxFileWatcher
 
     private void OnRenamed(object sender, RenamedEventArgs e)
     {
-        throw new NotImplementedException();
+        _tree.DeleteFileFromTree(e.OldFullPath);
+        _tree.AddNewFileToTree(e.FullPath);
     }
 
     private void OnDeleted(object sender, FileSystemEventArgs e)

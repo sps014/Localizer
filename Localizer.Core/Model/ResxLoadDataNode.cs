@@ -64,4 +64,20 @@ public record struct ResxLoadDataNode(string FolderName, string FullPath) : IRes
         return new ObservableCollection<IResxLoadDataNode>(sorted);
     }
 
+    internal void RemoveChild(IResxLoadDataNode node,string fileName)
+    {
+        if (node is ResxLoadDataNode n)
+        {
+            Children.Remove(n.FolderName);
+        }
+        else if(node is ResxLoadDataLeafNode leafNode)
+        {
+            var culture = fileName.GetCultureName();
+            leafNode.CultureFileNameMap.Remove(culture);
+        }
+        else
+        {
+            throw new ArgumentException("Invalid child type");
+        }
+    }
 }

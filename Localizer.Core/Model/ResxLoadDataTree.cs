@@ -69,12 +69,14 @@ public record ResxLoadDataTree
         for (int i = 0; i < parts.Count; i++)
         {
             var part = parts[i];
+
+            // if it is file part will be neutral file name
             if (i == parts.Count - 1 && isFile)
             {
                 part = fullPath.GetNeutralFileNameWithoutExtension();
             }
 
-            if(currentFolder is ResxLoadDataNode node)
+            if (currentFolder is ResxLoadDataNode node)
             {
                 if (node.Children.TryGetValue(part, out var child))
                 {
@@ -90,7 +92,7 @@ public record ResxLoadDataTree
         return currentFolder;
     }
 
-    private void AddNewFileToTree(string resxFile)
+    public void AddNewFileToTree(string resxFile)
     {
         var directoryInfo = new DirectoryInfo(resxFile);
 
@@ -135,6 +137,24 @@ public record ResxLoadDataTree
             cur.AddLeafFile(resxFile);
         else
             throw new InvalidOperationException("Invalid , should be a folder node");
+    }
+
+    internal void DeleteFileFromTree(string oldFullPath)
+    {
+        var node = GetNodeFromPath(oldFullPath);
+        if (node is null)
+            return;
+
+        var parent = node.Parent;
+
+        if (parent is ResxLoadDataNode parentNode)
+        {
+            parentNode.RemoveChild(node,oldFullPath);
+        }
+        else
+        {
+            throw new InvalidOperationException("Invalid , should be a folder node");
+        }
     }
 
     private record struct ProjectInfo(string ProjectPath)
