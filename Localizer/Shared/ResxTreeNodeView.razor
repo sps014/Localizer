@@ -1,21 +1,22 @@
 ﻿@using Localizer.Core.Model;
 @using Localizer.Core.Helper
 @using System.Text;
+@implements IDisposable
 
-@if(TreeNode is not null)
+@if (TreeNode is not null)
 {
-    if(TreeNode is ResxLoadDataLeafNode leaf)
+    if (TreeNode is ResxLoadDataLeafNode leaf)
     {
-        <MudTreeViewItem Value="leaf.NeutralFileName" Icon="@Icons.Custom.FileFormats.FileDocument" IconColor="Color.Info"/>
+        <MudTreeViewItem Value="leaf.NeutralFileName" Icon="@Icons.Custom.FileFormats.FileDocument" IconColor="Color.Info" />
     }
-    else if(TreeNode is ResxLoadDataNode folderNode)
+    else if (TreeNode is ResxLoadDataNode folderNode)
     {
-        <MudTreeViewItem Value="folderNode.FolderName"
-                         Icon="@(GetFolderIcon())"
-            IconColor="GetFolderColor()" Expanded="IsExpanded" ExpandedChanged="OnExpand">
+        <MudTreeViewItem Value="folderNode.FolderName" Icon="@(GetFolderIcon())" IconColor="GetFolderColor()"
+            Expanded="IsExpanded" ExpandedChanged="OnExpand">
             @if (IsExpanded)
             {
-                <Virtualize Context="child" Items="folderNode.SortedChildren().ToList()" TItem="IResxLoadDataNode" OverscanCount="5">
+                <Virtualize Context="child" Items="folderNode.Children.Values" TItem="IResxLoadDataNode"
+                    OverscanCount="5">
                     <ResxTreeNodeView TreeNode="child" />
                 </Virtualize>
             }
@@ -33,7 +34,30 @@
     {
         base.OnParametersSet();
         StateHasChanged();
+        
     }
+    private void SubscribeToEvents()
+    {
+        if (TreeNode is ResxLoadDataLeafNode leaf)
+        {
+            leaf.OnNodeChanged += OnNodeChanged;
+        }
+        else if (TreeNode is ResxLoadDataNode folderNode)
+        {
+            folderNode.OnNodeChanged += OnNodeChanged;
+        }
+    }
+
+    private void OnNodeChanged(object sender)
+    {
+        StateHasChanged();
+    }
+
+    void IDisposable.Dispose()
+    {
+        TreeNode?.Dispose();
+    }
+
     void OnExpand(bool isExpanded)
     {
         IsExpanded = isExpanded;
@@ -43,14 +67,14 @@
     private string GetFolderIcon()
     {
         return TreeNode is ResxLoadDataNode folderNode && folderNode.IsCsProjNode
-                ? Icons.Material.Filled.SettingsEthernet
-                : Icons.Custom.Uncategorized.Folder;
+        ? Icons.Material.Filled.SettingsEthernet
+        : Icons.Custom.Uncategorized.Folder;
     }
     private Color GetFolderColor()
     {
         return TreeNode is ResxLoadDataNode folderNode && folderNode.IsCsProjNode
-                ? Color.Success
-                : Color.Warning;
+        ? Color.Success
+        : Color.Warning;
     }
 
     private string GetToolTipForLeaf(ResxLoadDataLeafNode leaf)

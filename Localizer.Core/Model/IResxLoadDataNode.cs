@@ -37,6 +37,8 @@ public interface IResxLoadDataNode
         {
             node.AddChild(node);
         }
-    }
+    } 
+    public void Dispose();
 
+    internal void NotifyNodeChanged();
 }

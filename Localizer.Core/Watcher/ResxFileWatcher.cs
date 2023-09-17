@@ -41,11 +41,10 @@ public class ResxFileWatcher
 
     private void OnChanged(object sender, FileSystemEventArgs e)
     {
-        throw new NotImplementedException();
     }
 
     private void OnCreated(object sender, FileSystemEventArgs e)
     {
-        throw new NotImplementedException();
+        _tree.AddNewFileToTree(e.FullPath);
     }
 }

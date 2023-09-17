@@ -31,5 +31,25 @@ public record struct ResxLoadDataLeafNode : IResxLoadDataNode
         neutralFileName ??= neutralName;
 
     }
+    public delegate void OnNodeChangedHandler(IResxLoadDataNode node);
+    public event OnNodeChangedHandler? OnNodeChanged;
 
+    public void Dispose()
+    {
+        OnNodeChanged = null;
+    }
+    internal void NotifyNodeChanged()
+    {
+        OnNodeChanged?.Invoke(this);
+    }
+
+    void IResxLoadDataNode.Dispose()
+    {
+        Dispose();
+    }
+
+    void IResxLoadDataNode.NotifyNodeChanged()
+    {
+        NotifyNodeChanged();
+    }
 }

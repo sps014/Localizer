@@ -56,7 +56,7 @@ public record ResxLoadDataTree
 
         var solutionFolderName = SolutionFolder!.GetDirectoryName();
 
-        bool isFile = File.Exists(fullPath);
+        bool isFile = Path.HasExtension(fullPath) && fullPath.EndsWith(".resx",StringComparison.OrdinalIgnoreCase);
 
         if (isFile && !fullPath.EndsWith(".resx"))
             return null;
@@ -150,6 +150,8 @@ public record ResxLoadDataTree
         if (parent is ResxLoadDataNode parentNode)
         {
             parentNode.RemoveChild(node,oldFullPath);
+
+            parentNode.NotifyNodeChanged();
         }
         else
         {

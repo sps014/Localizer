@@ -53,7 +53,8 @@ public record struct ResxLoadDataNode(string FolderName, string FullPath) : IRes
         }
         else
         {
-            this.Children.Add(neutralName, new ResxLoadDataLeafNode(fileName){
+            this.Children.Add(neutralName, new ResxLoadDataLeafNode(fileName)
+            {
                 Parent = this
             });
         }
@@ -64,13 +65,13 @@ public record struct ResxLoadDataNode(string FolderName, string FullPath) : IRes
         return new ObservableCollection<IResxLoadDataNode>(sorted);
     }
 
-    internal void RemoveChild(IResxLoadDataNode node,string fileName)
+    internal void RemoveChild(IResxLoadDataNode node, string fileName)
     {
         if (node is ResxLoadDataNode n)
         {
             Children.Remove(n.FolderName);
         }
-        else if(node is ResxLoadDataLeafNode leafNode)
+        else if (node is ResxLoadDataLeafNode leafNode)
         {
             var culture = fileName.GetCultureName();
             leafNode.CultureFileNameMap.Remove(culture);
@@ -79,5 +80,23 @@ public record struct ResxLoadDataNode(string FolderName, string FullPath) : IRes
         {
             throw new ArgumentException("Invalid child type");
         }
+    }
+
+    public delegate void OnNodeChangedHandler(IResxLoadDataNode node);
+    public event OnNodeChangedHandler? OnNodeChanged;
+
+    public void Dispose()
+    {
+        OnNodeChanged = null;
+    }
+
+    internal void NotifyNodeChanged()
+    {
+        OnNodeChanged?.Invoke(this);
+    }
+
+    void IResxLoadDataNode.NotifyNodeChanged()
+    {
+        NotifyNodeChanged();
     }
 }
