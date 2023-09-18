@@ -28,7 +28,7 @@ namespace Localizer
                 {
                     windowsLifecycleBuilder.OnWindowCreated(window =>
                     {
-                        window.ExtendsContentIntoTitleBar = false;
+                        // window.ExtendsContentIntoTitleBar = false;
                         var handle = WinRT.Interop.WindowNative.GetWindowHandle(window);
                         var id = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(handle);
                         var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(id);
