@@ -36,7 +36,7 @@ public class ResxFileWatcher
 
     private void OnDeleted(object sender, FileSystemEventArgs e)
     {
-        throw new NotImplementedException();
+        _tree.DeleteFileFromTree(e.FullPath);
     }
 
     private void OnChanged(object sender, FileSystemEventArgs e)

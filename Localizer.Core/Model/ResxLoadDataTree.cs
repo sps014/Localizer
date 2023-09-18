@@ -56,7 +56,7 @@ public record ResxLoadDataTree
 
         var solutionFolderName = SolutionFolder!.GetDirectoryName();
 
-        bool isFile = Path.HasExtension(fullPath) && fullPath.EndsWith(".resx",StringComparison.OrdinalIgnoreCase);
+        bool isFile = Path.HasExtension(fullPath) && fullPath.EndsWith(".resx", StringComparison.OrdinalIgnoreCase);
 
         if (isFile && !fullPath.EndsWith(".resx"))
             return null;
@@ -149,14 +149,14 @@ public record ResxLoadDataTree
 
         if (parent is ResxFileSystemFolderNode parentNode)
         {
-            parentNode.RemoveChild(node,oldFullPath);
-
-            parentNode.NotifyNodeChanged();
+            parentNode.RemoveChild(node, oldFullPath);
         }
         else
         {
             throw new InvalidOperationException("Invalid , should be a folder node");
         }
+
+        parent.NotifyNodeChanged();
     }
 
     private record struct ProjectInfo(string ProjectPath)

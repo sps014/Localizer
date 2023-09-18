@@ -33,6 +33,7 @@
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
+        SubscribeToEvents();
         StateHasChanged();
 
     }
@@ -46,7 +47,10 @@
 
     private void OnNodeChanged(object sender)
     {
-        StateHasChanged();
+        InvokeAsync(()=>
+        {
+            StateHasChanged();
+        });
     }
 
     void IDisposable.Dispose()
