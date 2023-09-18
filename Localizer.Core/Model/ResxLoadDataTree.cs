@@ -13,6 +13,8 @@ public record ResxLoadDataTree
     public string SolutionFolder { get; private set; }
     private ResxFileWatcher resxFileWatcher;
 
+    public HashSet<string> Cultures { get; } = new();
+
     public ResxLoadDataTree(string solutionPath)
     {
         if (!Directory.Exists(solutionPath))
@@ -24,6 +26,7 @@ public record ResxLoadDataTree
     }
     public Task BuildTreeAsync(CancellationTokenSource? cts = default)
     {
+        Cultures.Clear();
         return Task.Run(() => ScanAndPopulateTree(cts), cts == null ? CancellationToken.None : cts.Token);
     }
     private void ScanAndPopulateTree(CancellationTokenSource? cts)
@@ -134,7 +137,10 @@ public record ResxLoadDataTree
         }
 
         if (currentFolder is ResxFileSystemFolderNode cur)
+        {
+            Cultures.Add(resxFile.GetCultureName());
             cur.AddLeafFile(resxFile);
+        }
         else
             throw new InvalidOperationException("Invalid , should be a folder node");
     }
