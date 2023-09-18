@@ -10,17 +10,30 @@ namespace Localizer.Core.Helpers;
 internal static class Culture
 {
     private static HashSet<string>? cultures = null;
+    private static Dictionary<string, string> OverrrideCultures = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        ["en"] = "en-US",
+        ["zh"] = "zh-CN",
+        ["zh-CHT"] = "zh-CN",
+        ["zh-HANT"] = "zh-CN",
+    };
     public static HashSet<string> AllCultures
     {
         get
         {
-            if(cultures!=null)
+            if (cultures != null)
                 return cultures;
 
             cultures = new HashSet<string>();
+
             foreach (var culture in CultureInfo.GetCultures(CultureTypes.AllCultures))
             {
-                cultures.Add(culture.Name);
+                var name = culture.Name;
+
+                if (OverrrideCultures.ContainsKey(name))
+                    name = OverrrideCultures[name];
+
+                cultures.Add(name);
             }
             return cultures;
         }
