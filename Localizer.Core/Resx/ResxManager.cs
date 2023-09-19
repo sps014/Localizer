@@ -23,17 +23,17 @@ public record ResxManager
                 if (fileNode is null)
                     continue;
 
-                //iterate all cultures
-                foreach(var culture in fileNode.CultureFileNameMap.Keys)
-                {
-                    fileNode.ReadFileOfCulture(culture);
-                }
+                fileNode.ReadAllResourceFiles();
 
                 //group by key
-                var groupedByKeys = fileNode.CultureKeyValueMap
-                    .SelectMany(x => x.Value)
-                    .GroupBy(x => x.Key)
-                    .ToDictionary(x => x.Key, x => x.ToDictionary(y => y.Key, y => y.Value));
+
+                var keys = fileNode.Keys;
+
+                foreach (var key in keys)
+                {
+                    var entity = new ResxEntity(key, fileNode);
+                    ResxEntities.Add(entity);
+                }
             }
         });
     }

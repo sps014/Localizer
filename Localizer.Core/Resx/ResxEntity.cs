@@ -7,11 +7,12 @@ namespace Localizer.Core.Resx;
 
 public record ResxEntity
 {
-    public string Key => Node.NodeName;
+    public string Key { get; }
 
     public string NeutralDirectoryPath => Node.FullPath;
 
     public ImmutableList<string> Cultures => Node.CultureFileNameMap.Keys.ToImmutableList();
+
 
     public string? GetValue(string? culture = null)
     {
@@ -35,9 +36,10 @@ public record ResxEntity
 
     public ResxFileSystemLeafNode Node { get; init; }
 
-    public ResxEntity(ResxFileSystemLeafNode node)
+    public ResxEntity(string key, ResxFileSystemLeafNode node)
     {
         Node = node;
+        Key = key;
     }
 
 }

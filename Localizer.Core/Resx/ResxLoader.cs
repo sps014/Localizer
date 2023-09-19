@@ -17,5 +17,11 @@ namespace Localizer.Core.Resx
             await resxManager.BuildCollectionAsync();
             return tree;
         }
+        public static async Task<ResxManager> LoadAllEntities(this ResxLoadDataTree tree,CancellationTokenSource? cts=default)
+        {
+            var resxManager = new ResxManager(tree);
+            await resxManager.BuildCollectionAsync();
+            return resxManager;
+        }
     }
 }

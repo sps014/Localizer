@@ -8,11 +8,12 @@ public record ResxFileSystemLeafNode : ResxFileSystemNodeBase
 {
     public Dictionary<string, string> CultureFileNameMap { get; init; } = new();
 
-    internal Dictionary<string,Dictionary<string,string?>> CultureKeyValueMap { get; init; } = new();
+    internal Dictionary<string, Dictionary<string, string?>> CultureKeyValueMap { get; init; } = new();
 
     public string NeutralFileNameWithExtension => $"{NodeName}.resx";
+    internal HashSet<string> Keys { get; init; } = new();
 
-    public ResxFileSystemLeafNode(string resXFile):base(resXFile, resXFile.GetNeutralFileNameWithoutExtension())
+    public ResxFileSystemLeafNode(string resXFile) : base(resXFile, resXFile.GetNeutralFileNameWithoutExtension())
     {
         AddFile(resXFile);
     }
@@ -35,29 +36,42 @@ public record ResxFileSystemLeafNode : ResxFileSystemNodeBase
 
     }
 
-    public void ReadFileOfCulture(string? culture=null)
+    public void ReadAllResourceFiles()
     {
-        if(culture is null)
+        Keys.Clear();
+
+        foreach (var culture in CultureFileNameMap.Keys)
+        {
+            ReadFileOfCulture(culture);
+        }
+    }
+
+    public void ReadFileOfCulture(string? culture = null)
+    {
+        if (culture is null)
             culture = string.Empty;
-        
+
         CultureFileNameMap.TryGetValue(culture, out var path);
 
         if (path is null)
             return;
 
-        ResXResourceReader? resxReader=null;
+        ResXResourceReader? resxReader = null;
         try
         {
             resxReader = new ResXResourceReader(path);
-            foreach(DictionaryEntry entry in resxReader)
+            foreach (DictionaryEntry entry in resxReader)
             {
-                if(entry.Key is null)
+                if (entry.Key is null)
                     continue;
 
-                if(!CultureKeyValueMap.ContainsKey(culture))
+                if (!CultureKeyValueMap.ContainsKey(culture))
                     CultureKeyValueMap.Add(culture, new Dictionary<string, string?>());
-                
+
                 var key = entry.Key.ToString()!;
+
+                Keys.Add(key);
+
                 var value = entry.Value is null ? string.Empty : entry.Value.ToString();
 
                 CultureKeyValueMap[culture].TryAdd(key, value);
@@ -71,7 +85,7 @@ public record ResxFileSystemLeafNode : ResxFileSystemNodeBase
         {
             resxReader?.Close();
         }
-        
+
 
     }
 
