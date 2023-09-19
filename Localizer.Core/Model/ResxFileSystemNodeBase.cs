@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Localizer.Core.Resx;
 using Microsoft.VisualBasic;
 
 namespace Localizer.Core.Model;
@@ -71,5 +72,18 @@ public abstract record class ResxFileSystemNodeBase
     internal void NotifyNodeChanged()
     {
         OnNodeChanged?.Invoke(this);
+    }
+
+    public IEnumerable<ResxFileSystemNodeBase> GetAllChildren()
+    {
+        yield return this;
+
+        foreach (var child in Children)
+        {
+            foreach (var childChild in child.Value.GetAllChildren())
+            {
+                yield return childChild;
+            }
+        }
     }
 }

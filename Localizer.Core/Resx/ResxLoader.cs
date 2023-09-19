@@ -13,6 +13,8 @@ namespace Localizer.Core.Resx
         {
             var tree = new ResxLoadDataTree(path);
             await tree.BuildTreeAsync(cts);
+            var resxManager = new ResxManager(tree);
+            await resxManager.BuildCollectionAsync();
             return tree;
         }
     }
