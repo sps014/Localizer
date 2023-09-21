@@ -4,24 +4,26 @@
 
 <ToolbarView />
 
-<div style="display:flex">
-    <div>
-        <ResXTreeView Tree="Tree" />
+@if (Manager != null)
+{
+
+    <div style="display:flex">
+        <div>
+            <ResXTreeView Tree="Manager.Tree" />
+        </div>
+        <div>
+            <ResxDataGridView Manager="Manager"/>
+        </div>
     </div>
-    <div>
-        <ResxDataGridView Tree="Tree"/>
-    </div>
-</div>
+}
 
 @code
 {
-    ResxLoadDataTree Tree;
+    ResxManager Manager;
 
     protected override async Task OnInitializedAsync()
     {
         //Tree = await ResxLoader.LoadAsync(@"C:\Users\shive\OneDrive\Desktop\Projects\ResXBenchmark\test_folder");
-        Tree = await ResxLoader.LoadAsync(@"C:\Users\shive\OneDrive\Desktop\ResXUse");
-        var nodePath =
-        Tree.GetNodeFromPath(@"C:\\Users\\shive\\OneDrive\\Desktop\\ResXUse\\WindowsFormsApp1\\Properties");
+        Manager = await ResxLoader.LoadAsync(@"C:\Users\shive\OneDrive\Desktop\ResXUse");
     }
 }

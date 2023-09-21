@@ -1,6 +1,6 @@
 @using System.Collections.ObjectModel;
 
-@if (Tree is not null && entriesLoaded)
+@if (Manager!= null && Manager.Tree is not null && entriesLoaded)
 {
     <MudPaper Style="min-width:1000px;width:100vw" Height="90vh">
         <MudDataGrid Items="@Entries" Virtualize="true" FixedHeader="true" Height="89vh" HorizontalScrollbar="true"
@@ -12,7 +12,7 @@
                     </CellTemplate>
                 </TemplateColumn>
                 @* <PropertyColumn Property="x => x.Column1" Title="Key" CellStyle="min-width:300px" /> *@
-                @foreach (var culture in Tree.Cultures)
+                @foreach (var culture in Manager.Tree.Cultures)
                 {
                     <TemplateColumn Title="@(culture==string.Empty?"Neutral":culture)" Sortable="true"
                         CellStyle="min-width:400px">
@@ -28,7 +28,7 @@
 @code {
 
     [Parameter]
-    public ResxLoadDataTree Tree { get; set; }
+    public ResxManager Manager { get; set; }
 
     public bool entriesLoaded = false;
 
@@ -38,12 +38,10 @@
     {
         base.OnParametersSet();
 
-        if (Tree is null)
+        if (Manager is null)
             return;
 
-        var manager = await Tree.LoadAllEntities();
-
-        Entries = manager.ResxEntities;
+        Entries = Manager.ResxEntities;
 
         entriesLoaded = Entries is not null;
 

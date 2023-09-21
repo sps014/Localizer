@@ -10,13 +10,18 @@ public record ResxManager
     public ObservableCollection<ResxEntity> ResxEntities { get; init; } = new();
     public ResxLoadDataTree Tree { get; }
 
-    public ResxManager(ResxLoadDataTree resxLoadDataTree)
+    public string SolutionPath => Tree.SolutionFolder;
+
+    public ResxManager(string solutionPath)
     {
-        Tree = resxLoadDataTree;
+        Tree = new ResxLoadDataTree(solutionPath);
     }
     public async Task BuildCollectionAsync()
     {
+        await Tree.BuildTreeAsync();
+
         ResxEntities.Clear();
+
         await Task.Run(() =>
         {
             foreach (var fileNode in GetAllFileNodes())
@@ -39,6 +44,7 @@ public record ResxManager
         });
     }
 
+
     IEnumerable<ResxFileSystemLeafNode> GetAllFileNodes()
     {
         if (Tree.Root is null)
@@ -49,7 +55,7 @@ public record ResxManager
 
     internal void DeleteEntries(string fullPath)
     {
-        for(int i=ResxEntities.Count-1;i>=0;i--)
+        for (int i = ResxEntities.Count - 1; i >= 0; i--)
         {
             var entity = ResxEntities[i];
             if (entity.NeutralFilePath == fullPath)
