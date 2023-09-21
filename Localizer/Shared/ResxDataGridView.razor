@@ -45,7 +45,7 @@
 
         Entries = manager.ResxEntities;
 
-        entriesLoaded = true;
+        entriesLoaded = Entries is not null;
 
         StateHasChanged();
     }

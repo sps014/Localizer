@@ -75,9 +75,12 @@ public record class ResxFileSystemFolderNode : ResxFileSystemNodeBase
         else if (node is ResxFileSystemLeafNode leafNode)
         {
             var culture = fileName.GetCultureName();
-            leafNode.CultureFileNameMap.Remove(culture);
 
-            if(!leafNode.CultureFileNameMap.Any())
+            // remove the culture file from the leaf node
+            leafNode.ResxEntry.Delete(culture);
+
+            // if there is no culture file, remove the leaf node
+            if(!leafNode.ResxEntry.Any())
             {
                 Children.Remove(leafNode.NodeName);
             }

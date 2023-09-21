@@ -6,15 +6,18 @@ using System.Resources.NetStandard;
 using Localizer.Core.Helper;
 public record ResxFileSystemLeafNode : ResxFileSystemNodeBase
 {
-    public Dictionary<string, string> CultureFileNameMap { get; init; } = new();
-
-    internal Dictionary<string, Dictionary<string, string?>> CultureKeyValueMap { get; init; } = new();
+    public ResxNodeEntry ResxEntry { get; init; }
 
     public string NeutralFileNameWithExtension => $"{NodeName}.resx";
-    internal HashSet<string> Keys { get; init; } = new();
+
+    /// <summary>
+    /// Neutral file keys 
+    /// </summary>
+    public HashSet<string> Keys => ResxEntry.Keys;
 
     public ResxFileSystemLeafNode(string resXFile) : base(resXFile, resXFile.GetNeutralFileNameWithoutExtension())
     {
+        ResxEntry = new(this);
         AddFile(resXFile);
     }
 
@@ -27,66 +30,21 @@ public record ResxFileSystemLeafNode : ResxFileSystemNodeBase
     {
         var cultureName = path.GetCultureName();
 
-        if (CultureFileNameMap.ContainsKey(cultureName))
+        if(ResxEntry.ContainsCulture(cultureName))
         {
             throw new ArgumentException($"Duplicate culture file : {path} found");
         }
 
-        CultureFileNameMap.Add(cultureName, path);
+        ResxEntry.Add(cultureName, new ResxKeyValueCollection(path));
 
     }
 
     public void ReadAllResourceFiles()
     {
-        Keys.Clear();
-
-        foreach (var culture in CultureFileNameMap.Keys)
+        foreach (var culture in ResxEntry.Cultures)
         {
-            ReadFileOfCulture(culture);
+            ResxEntry.ReadFileOfCulture(culture);
         }
-    }
-
-    public void ReadFileOfCulture(string? culture = null)
-    {
-        if (culture is null)
-            culture = string.Empty;
-
-        CultureFileNameMap.TryGetValue(culture, out var path);
-
-        if (path is null)
-            return;
-
-        ResXResourceReader? resxReader = null;
-        try
-        {
-            resxReader = new ResXResourceReader(path);
-            foreach (DictionaryEntry entry in resxReader)
-            {
-                if (entry.Key is null)
-                    continue;
-
-                if (!CultureKeyValueMap.ContainsKey(culture))
-                    CultureKeyValueMap.Add(culture, new Dictionary<string, string?>());
-
-                var key = entry.Key.ToString()!;
-
-                Keys.Add(key);
-
-                var value = entry.Value is null ? string.Empty : entry.Value.ToString();
-
-                CultureKeyValueMap[culture].TryAdd(key, value);
-            }
-        }
-        catch
-        {
-
-        }
-        finally
-        {
-            resxReader?.Close();
-        }
-
-
     }
 
     public record ResxKeyValue(string Key, string? Value)

@@ -11,27 +11,13 @@ public record ResxEntity
 
     public string NeutralDirectoryPath => Node.FullPath;
 
-    public ImmutableList<string> Cultures => Node.CultureFileNameMap.Keys.ToImmutableList();
+    public ImmutableList<string> Cultures => Node.ResxEntry.Cultures.ToImmutableList();
 
 
     public string? GetValue(string? culture = null)
     {
-        if (culture is null)
-            culture = string.Empty;
-
-        var isCulturePresent = Node.CultureKeyValueMap.TryGetValue(culture, out var collection);
-
-        if (!isCulturePresent)
-            return null;
-
-        if (collection is null)
-            return null;
-
-        if (collection.ContainsKey(Key))
-            return collection[Key];
-
-        return null;
-
+        var value = Node.ResxEntry.GetValue(Key,culture);  
+        return value;
     }
 
     public ResxFileSystemLeafNode Node { get; init; }
