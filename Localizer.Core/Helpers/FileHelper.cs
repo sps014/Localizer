@@ -65,7 +65,7 @@ public static class FileHelperExtension
         }
         else
         {
-            return parts.SkipLast(1).Join("1");
+            return parts.SkipLast(1).Join(".");
         }
     }
 

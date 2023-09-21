@@ -18,7 +18,6 @@ public record ResxFileSystemLeafNode : ResxFileSystemNodeBase
     public ResxFileSystemLeafNode(string resXFile) : base(resXFile, resXFile.GetNeutralFileNameWithoutExtension())
     {
         ResxEntry = new(this);
-        AddFile(resXFile);
     }
 
     /// <summary>

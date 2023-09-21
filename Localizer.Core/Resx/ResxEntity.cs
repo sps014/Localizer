@@ -9,14 +9,14 @@ public record ResxEntity
 {
     public string Key { get; }
 
-    public string NeutralDirectoryPath => Node.FullPath;
+    public string NeutralFilePath => Node.FullPath;
 
     public ImmutableList<string> Cultures => Node.ResxEntry.Cultures.ToImmutableList();
 
 
     public string? GetValue(string? culture = null)
     {
-        var value = Node.ResxEntry.GetValue(Key,culture);  
+        var value = Node.ResxEntry.GetValue(Key, culture);
         return value;
     }
 

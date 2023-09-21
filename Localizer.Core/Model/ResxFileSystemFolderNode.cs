@@ -54,10 +54,12 @@ public record class ResxFileSystemFolderNode : ResxFileSystemNodeBase
         }
         else
         {
-            this.Children.Add(neutralName, new ResxFileSystemLeafNode(fileName)
+            var leafNode = new ResxFileSystemLeafNode(neutralName)
             {
                 Parent = this
-            });
+            };
+            leafNode.AddFile(fileName);
+            this.Children.Add(neutralName,leafNode);
         }
     }
     public ObservableCollection<ResxFileSystemNodeBase> SortedChildren()
