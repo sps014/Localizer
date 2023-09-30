@@ -12,7 +12,7 @@
             <ResXTreeView Tree="Manager.Tree" />
         </div>
         <div>
-            <ResxDataGridView Manager="Manager"/>
+            <ResxDataGridView Manager="Manager" />
         </div>
     </div>
 }
@@ -23,7 +23,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        //Tree = await ResxLoader.LoadAsync(@"C:\Users\shive\OneDrive\Desktop\Projects\ResXBenchmark\test_folder");
-        Manager = await ResxLoader.LoadAsync(@"C:\Users\shive\OneDrive\Desktop\ResXUse");
+        //Manager = await ResxLoader.LoadAsync(@"C:\Users\shive\OneDrive\Desktop\ResXUse");
+        Manager = await ResxLoader.LoadAsync(@"C:\Users\shive\OneDrive\Desktop\Projects\ResXBenchmark\test_folder");
+
     }
 }

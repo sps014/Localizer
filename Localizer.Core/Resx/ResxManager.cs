@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Security.Cryptography.X509Certificates;
 using Localizer.Core.Model;
@@ -7,7 +8,8 @@ namespace Localizer.Core.Resx;
 
 public record ResxManager
 {
-    public ObservableCollection<ResxEntity> ResxEntities { get; init; } = new();
+    public ObservableCollection<ResxEntity> ResxEntities { get; private set; } = new();
+    private ConcurrentBag<ResxEntity> COncurrentResxEntities { get; init; } = new();
     public ResxLoadDataTree Tree { get; }
 
     public string SolutionPath => Tree.SolutionFolder;
@@ -20,28 +22,33 @@ public record ResxManager
     {
         await Tree.BuildTreeAsync();
 
-        ResxEntities.Clear();
+        COncurrentResxEntities.Clear();
 
-        await Task.Run(() =>
+        var parallelOptions = new ParallelOptions
         {
-            foreach (var fileNode in GetAllFileNodes())
+            MaxDegreeOfParallelism = Environment.ProcessorCount
+        };
+
+        var nodes = GetAllFileNodes();
+        await Parallel.ForEachAsync(nodes, parallelOptions, async (fileNode,token) =>
+        {
+            if (fileNode is null)
+                return;
+
+            await fileNode.ReadAllResourceFiles();
+
+            //group by key
+
+            var keys = fileNode.Keys;
+
+            foreach (var key in keys)
             {
-                if (fileNode is null)
-                    continue;
-
-                fileNode.ReadAllResourceFiles();
-
-                //group by key
-
-                var keys = fileNode.Keys;
-
-                foreach (var key in keys)
-                {
-                    var entity = new ResxEntity(key, fileNode);
-                    ResxEntities.Add(entity);
-                }
+                var entity = new ResxEntity(key, fileNode);
+                COncurrentResxEntities.Add(entity);
             }
         });
+
+        ResxEntities = new ObservableCollection<ResxEntity>(COncurrentResxEntities);
     }
 
 

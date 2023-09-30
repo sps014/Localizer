@@ -1,15 +1,29 @@
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Resources.NetStandard;
 
 namespace Localizer.Core.Model;
 
 public class ResxNodeEntry : IEnumerable<KeyValuePair<string, ResxKeyValueCollection>>
 {
-    private Dictionary<string, ResxKeyValueCollection> culturedKeyValues = new();
+    private ConcurrentDictionary<string, ResxKeyValueCollection> culturedKeyValues = new();
 
     public ResxFileSystemLeafNode LeafNode { get; init; }
 
-    public HashSet<string> Keys => culturedKeyValues[string.Empty].Keys.ToHashSet();
+    public HashSet<string> Keys 
+    {
+        get
+        {
+            if(culturedKeyValues.ContainsKey(string.Empty))
+            {
+                return culturedKeyValues[string.Empty].Keys.ToHashSet();
+            }
+            else
+            {
+                return new HashSet<string>();
+            }
+        }
+}
 
     public ResxNodeEntry(ResxFileSystemLeafNode leafNode)
     {
@@ -21,12 +35,12 @@ public class ResxNodeEntry : IEnumerable<KeyValuePair<string, ResxKeyValueCollec
         if (culturedKeyValues.ContainsKey(culture))
             culturedKeyValues[culture] = keyValuePairs;
         else
-            culturedKeyValues.Add(culture, keyValuePairs);
+            culturedKeyValues.TryAdd(culture, keyValuePairs);
     }
     public void Delete(string culture)
     {
         if (culturedKeyValues.ContainsKey(culture))
-            culturedKeyValues.Remove(culture);
+            culturedKeyValues.TryRemove(culture,out var _);
     }
     public bool ContainsCulture(string culture)
     {
@@ -96,46 +110,47 @@ public class ResxNodeEntry : IEnumerable<KeyValuePair<string, ResxKeyValueCollec
         return true;
     }
 
-    public void ReadFileOfCulture(string? culture = null)
+    public Task ReadFileOfCulture(string? culture = null)
     {
-        if (culture is null)
-            culture = string.Empty;
-
-        TryGetFilePath(culture, out var path);
-
-        if (path is null)
-            return;
-
-        ResXResourceReader? resxReader = null;
-
-        try
+        return Task.Run(() => 
         {
-            resxReader = new ResXResourceReader(path);
+            if (culture is null)
+                culture = string.Empty;
 
-            ClearKeysOfCulture(culture);
+            TryGetFilePath(culture, out var path);
 
-            foreach (DictionaryEntry entry in resxReader)
+            if (path is null)
+                return;
+
+            ResXResourceReader? resxReader = null;
+
+            try
             {
-                if (entry.Key is null)
-                    continue;
+                resxReader = new ResXResourceReader(path);
 
-                var key = entry.Key.ToString()!;
+                ClearKeysOfCulture(culture);
 
-                var value = entry.Value is null ? string.Empty : entry.Value.ToString();
+                foreach (DictionaryEntry entry in resxReader)
+                {
+                    if (entry.Key is null)
+                        continue;
 
-                AddKeyValuePair(culture, key, value);
+                    var key = entry.Key.ToString()!;
+
+                    var value = entry.Value is null ? string.Empty : entry.Value.ToString();
+
+                    AddKeyValuePair(culture, key, value);
+                }
             }
-        }
-        catch
-        {
-            // ignored
-        }
-        finally
-        {
-            resxReader?.Close();
-        }
-
-
+            catch
+            {
+                // ignored
+            }
+            finally
+            {
+                resxReader?.Close();
+            }
+        });
     }
 
     public void ClearKeysOfCulture(string culture)

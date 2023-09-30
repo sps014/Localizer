@@ -29,7 +29,7 @@ public record ResxFileSystemLeafNode : ResxFileSystemNodeBase
     {
         var cultureName = path.GetCultureName();
 
-        if(ResxEntry.ContainsCulture(cultureName))
+        if (ResxEntry.ContainsCulture(cultureName))
         {
             throw new ArgumentException($"Duplicate culture file : {path} found");
         }
@@ -38,11 +38,11 @@ public record ResxFileSystemLeafNode : ResxFileSystemNodeBase
 
     }
 
-    public void ReadAllResourceFiles()
+    public async Task ReadAllResourceFiles()
     {
         foreach (var culture in ResxEntry.Cultures)
         {
-            ResxEntry.ReadFileOfCulture(culture);
+            await ResxEntry.ReadFileOfCulture(culture);
         }
     }
 
