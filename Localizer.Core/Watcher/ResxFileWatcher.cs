@@ -32,16 +32,14 @@ public class ResxFileWatcher
 
     private void OnRenamed(object sender, RenamedEventArgs e)
     {
-        _tree.DeleteFileFromTree(e.OldFullPath);
-        ResxManager?.DeleteEntries(e.OldFullPath);
+        ResxManager?.DeleteFile(e.OldFullPath);
         if (e.FullPath.EndsWith(".resx"))
             _tree.AddNewFileToTree(e.FullPath);
     }
 
     private void OnDeleted(object sender, FileSystemEventArgs e)
     {
-        _tree.DeleteFileFromTree(e.FullPath);
-        ResxManager?.DeleteEntries(e.FullPath);
+        ResxManager?.DeleteFile(e.FullPath);
     }
 
     private void OnChanged(object sender, FileSystemEventArgs e)

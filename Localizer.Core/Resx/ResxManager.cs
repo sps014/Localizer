@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Concurrent;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Security.Cryptography.X509Certificates;
 using Localizer.Core.Model;
@@ -14,12 +15,17 @@ public record ResxManager
 
     public string SolutionPath => Tree.SolutionFolder;
 
+    private int _filesRead = 0;
+
     public ResxManager(string solutionPath)
     {
         Tree = new ResxLoadDataTree(solutionPath);
     }
+
     public async Task BuildCollectionAsync()
     {
+        _filesRead = 0;
+
         await Tree.BuildTreeAsync();
 
         COncurrentResxEntities.Clear();
@@ -29,8 +35,10 @@ public record ResxManager
             MaxDegreeOfParallelism = Environment.ProcessorCount
         };
 
-        var nodes = GetAllFileNodes();
-        await Parallel.ForEachAsync(nodes, parallelOptions, async (fileNode,token) =>
+        var nodes = GetAllFileNodes().ToImmutableArray();
+        int _total = nodes.Length;
+
+        await Parallel.ForEachAsync(nodes, parallelOptions, async (fileNode, token) =>
         {
             if (fileNode is null)
                 return;
@@ -46,9 +54,15 @@ public record ResxManager
                 var entity = new ResxEntity(key, fileNode);
                 COncurrentResxEntities.Add(entity);
             }
+
+            Interlocked.Increment(ref _filesRead);
+
+            OnResxReadProgressChanged?.Invoke(this, new ResxFileReadProgressEventArg(fileNode.FullPath, _filesRead, _total));
         });
 
         ResxEntities = new ObservableCollection<ResxEntity>(COncurrentResxEntities);
+
+        OnResxReadFinished?.Invoke(this, new ResxReadFinishedEventArgs("All files", _total));
     }
 
 
@@ -60,7 +74,7 @@ public record ResxManager
         return Tree.Root.GetAllChildren().OfType<ResxFileSystemLeafNode>();
     }
 
-    internal void DeleteEntries(string fullPath)
+    private void DeleteEntries(string fullPath)
     {
         for (int i = ResxEntities.Count - 1; i >= 0; i--)
         {
@@ -69,4 +83,15 @@ public record ResxManager
                 ResxEntities.RemoveAt(i);
         }
     }
+    public void DeleteFile(string fullPath)
+    {
+        Tree.DeleteFileFromTree(fullPath);
+        DeleteEntries(fullPath);
+    }
+
+    public delegate void OnResxReadProgressChangedEventHandler(object sender, ResxFileReadProgressEventArg e);
+    public delegate void OnResxReadFinishedEventHandler(object sender, ResxReadFinishedEventArgs e);
+
+    public event OnResxReadProgressChangedEventHandler? OnResxReadProgressChanged;
+    public event OnResxReadFinishedEventHandler? OnResxReadFinished;
 }
