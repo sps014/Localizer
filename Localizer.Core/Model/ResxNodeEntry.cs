@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Concurrent;
-using System.Resources.NetStandard;
-
+using Localizer.Core.Resx;
 namespace Localizer.Core.Model;
 
 public class ResxNodeEntry : IEnumerable<KeyValuePair<string, ResxKeyValueCollection>>
@@ -74,9 +73,9 @@ public class ResxNodeEntry : IEnumerable<KeyValuePair<string, ResxKeyValueCollec
         if (culture is null)
             culture = string.Empty;
 
-        if (culturedKeyValues.ContainsKey(culture))
+        if (culturedKeyValues.TryGetValue(culture, value: out var value))
         {
-            path = culturedKeyValues[culture].FileName;
+            path = value.FileName;
             return true;
         }
         path = null;
@@ -121,23 +120,20 @@ public class ResxNodeEntry : IEnumerable<KeyValuePair<string, ResxKeyValueCollec
 
             if (path is null)
                 return;
-
-            ResXResourceReader? resxReader = null;
-
+            
             try
             {
-                resxReader = new ResXResourceReader(path);
+                var resxReader = new ResxResourceReader(path);
 
                 ClearKeysOfCulture(culture);
 
-                foreach (DictionaryEntry entry in resxReader)
+                foreach (var entry in resxReader)
                 {
-                    if (entry.Key is null)
-                        continue;
-
                     var key = entry.Key.ToString()!;
 
-                    var value = entry.Value is null ? string.Empty : entry.Value.ToString();
+                    var value = entry.Value;
+
+                    value ??= string.Empty;
 
                     AddKeyValuePair(culture, key, value);
                 }
@@ -145,10 +141,6 @@ public class ResxNodeEntry : IEnumerable<KeyValuePair<string, ResxKeyValueCollec
             catch
             {
                 // ignored
-            }
-            finally
-            {
-                resxReader?.Close();
             }
         });
     }

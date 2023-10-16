@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
-using Localizer.Core.Helper;
+using Localizer.Core.Helpers;
 
 namespace Localizer.Core.Model;
 

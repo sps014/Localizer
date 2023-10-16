@@ -9,22 +9,76 @@
 
     <div style="display:flex">
         <div>
-            <ResXTreeView Tree="Manager.Tree" />
+            <ResXTreeView Tree="Manager.Tree" ResxManager="Manager" Grid="gridView"/>
         </div>
         <div>
-            <ResxDataGridView Manager="Manager" />
+            <ResxDataGridView Manager="Manager" @ref="gridView"/>
         </div>
     </div>
+}
+else
+{
+    <MudCard>
+        <MudCardContent>
+            <MudProgressLinear Color="Color.Secondary" Buffer="true" Value="@Value" BufferValue="@(Value+Value/5)" Max="total"
+                Class="my-7" />
+            <MudText Typo="Typo.h6" Class="text-center">Reading Resx Files</MudText>
+            <MudText Typo="Typo.h6" Class="text-center">@FileName</MudText>
+                <MudText Typo="Typo.h6" Class="text-center">@Value/@total</MudText>
+            </MudCardContent>
+        </MudCard>
 }
 
 @code
 {
     ResxManager Manager;
+    int total = 0;
+    int Value = 0;
+    string FileName = string.Empty;
 
+    ResxDataGridView gridView;
+    System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
+
+    public bool _isOpen;
+
+    public void ToggleOpen()
+    {
+        if (_isOpen)
+            _isOpen = false;
+        else
+            _isOpen = true;
+    }
     protected override async Task OnInitializedAsync()
     {
         //Manager = await ResxLoader.LoadAsync(@"C:\Users\shive\OneDrive\Desktop\ResXUse");
-        Manager = await ResxLoader.LoadAsync(@"C:\Users\shive\OneDrive\Desktop\Projects\ResXBenchmark\test_folder");
+        var manager = await ResxLoader.LoadAsync(@"C:\SVN\ES_Latest\Implementation");
+        //var manager = new ResxManager(@"C:\SVN\ES_Latest\Implementation\Engineering.Device.ControllerPlatform\ControllerPlatform.Gui\Navigation");
+        manager.OnResxReadProgressChanged += Manager_OnResxReadProgressChanged;
+        manager.OnResxReadFinished += Manager_OnResxReadFinished;
+        watch.Start();
+        await manager.BuildCollectionAsync();
+        Manager = manager;
+    }
+
+    async void Manager_OnResxReadFinished(object sender, ResxReadFinishedEventArgs e)
+    {
+        await InvokeAsync(() =>
+        {
+            watch.Stop();
+            StateHasChanged();
+        });
+    }
+
+    async void Manager_OnResxReadProgressChanged(object sender, ResxFileReadProgressEventArg e)
+    {
+        await InvokeAsync(() =>
+        {
+            Value = e.Progress;
+            total = e.Total;
+            FileName = e.FileName;
+            StateHasChanged();
+        });
 
     }
+
 }

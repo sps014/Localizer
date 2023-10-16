@@ -1,5 +1,5 @@
 using System.Collections;
-using Localizer.Core.Helper;
+using Localizer.Core.Helpers;
 
 namespace Localizer.Core.Model;
 

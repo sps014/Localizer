@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 using System.Text.Json.Serialization;
-using Localizer.Core.Helper;
+using Localizer.Core.Helpers;
 using Localizer.Core.Watcher;
 
 namespace Localizer.Core.Model;

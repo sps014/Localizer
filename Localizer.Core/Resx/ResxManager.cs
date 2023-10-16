@@ -40,6 +40,10 @@ public record ResxManager
 
         await Parallel.ForEachAsync(nodes, parallelOptions, async (fileNode, token) =>
         {
+            Interlocked.Increment(ref _filesRead);
+
+            OnResxReadProgressChanged?.Invoke(this, new ResxFileReadProgressEventArg(fileNode.FullPath, _filesRead, _total));
+            
             if (fileNode is null)
                 return;
 
@@ -54,10 +58,6 @@ public record ResxManager
                 var entity = new ResxEntity(key, fileNode);
                 COncurrentResxEntities.Add(entity);
             }
-
-            Interlocked.Increment(ref _filesRead);
-
-            OnResxReadProgressChanged?.Invoke(this, new ResxFileReadProgressEventArg(fileNode.FullPath, _filesRead, _total));
         });
 
         ResxEntities = new ObservableCollection<ResxEntity>(COncurrentResxEntities);

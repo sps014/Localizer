@@ -1,5 +1,5 @@
 ﻿@using Localizer.Core.Model;
-@using Localizer.Core.Helper
+@using Localizer.Core.Helpers;
 @using System.Text;
 @implements IDisposable
 
@@ -7,7 +7,8 @@
 {
     if (TreeNode is ResxFileSystemLeafNode leaf)
     {
-        <MudTreeViewItem Value="leaf.NodeName" Icon="@Icons.Custom.FileFormats.FileDocument" IconColor="Color.Info" />
+        <MudTreeViewItem OnClick="FileClicked" Value="leaf.NodeName" Icon="@Icons.Custom.FileFormats.FileDocument"
+            IconColor="Color.Info" />
     }
     else if (TreeNode is ResxFileSystemFolderNode folderNode)
     {
@@ -17,7 +18,7 @@
             {
                 <Virtualize Context="child" Items="folderNode.SortedChildren().ToList()" TItem="ResxFileSystemNodeBase"
                     OverscanCount="5">
-                    <ResxTreeNodeView TreeNode="child" />
+                    <ResxTreeNodeView TreeNode="child" ResxManager="ResxManager" Grid="Grid" />
                 </Virtualize>
             }
         </MudTreeViewItem>
@@ -28,6 +29,11 @@
 {
     [Parameter]
     public ResxFileSystemNodeBase TreeNode { get; set; }
+
+    [Parameter]
+    public ResxManager ResxManager { get; set; }
+    [Parameter]
+    public ResxDataGridView Grid { get; set; }
 
     bool IsExpanded { get; set; } = false;
     protected override void OnParametersSet()
@@ -45,9 +51,41 @@
         }
     }
 
+    System.Collections.ObjectModel.ObservableCollection<ResxEntity> entities1;
+    private void FileClicked()
+    {
+        if (TreeNode is null)
+        {
+            return;
+        }
+
+        var path = TreeNode.FullPath;
+        entities1 ??= new System.Collections.ObjectModel.ObservableCollection<ResxEntity>(ResxManager.ResxEntities.ToList());
+
+        var entities = entities1
+        .Where(x =>
+        {
+            (TreeNode as ResxFileSystemLeafNode).ResxEntry.TryGetFilePath(string.Empty, out var filePath);
+            x.Node.ResxEntry.TryGetFilePath(string.Empty, out var filePath2);
+            return filePath == filePath2;
+        }).ToList();
+
+
+        ResxManager.ResxEntities.Clear();
+
+        entities.Select(x =>
+        {
+            ResxManager.ResxEntities.Add(x);
+            return 1;
+        });
+
+        Grid.Refresh();
+        StateHasChanged();
+    }
+
     private void OnNodeChanged(object sender)
     {
-        InvokeAsync(()=>
+        InvokeAsync(() =>
         {
             StateHasChanged();
         });

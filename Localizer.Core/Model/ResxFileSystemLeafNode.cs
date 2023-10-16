@@ -2,8 +2,7 @@ namespace Localizer.Core.Model;
 
 using System.Collections;
 using System.Collections.ObjectModel;
-using System.Resources.NetStandard;
-using Localizer.Core.Helper;
+using Localizer.Core.Helpers;
 public record ResxFileSystemLeafNode : ResxFileSystemNodeBase
 {
     public ResxNodeEntry ResxEntry { get; init; }
@@ -31,7 +30,7 @@ public record ResxFileSystemLeafNode : ResxFileSystemNodeBase
 
         if (ResxEntry.ContainsCulture(cultureName))
         {
-            throw new ArgumentException($"Duplicate culture file : {path} found");
+            return;
         }
 
         ResxEntry.Add(cultureName, new ResxKeyValueCollection(path));

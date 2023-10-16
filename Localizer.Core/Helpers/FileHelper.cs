@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
 using Localizer.Core.Helpers;
 
-namespace Localizer.Core.Helper;
+namespace Localizer.Core.Helpers;
 
 public static class FileHelperExtension
 {

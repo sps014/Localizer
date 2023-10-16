@@ -1,6 +1,6 @@
 @using System.Collections.ObjectModel;
 
-@if (Manager!= null && Manager.Tree is not null && entriesLoaded)
+@if (Manager != null && Manager.Tree is not null && entriesLoaded)
 {
     <MudPaper Style="min-width:1000px;width:100vw" Height="90vh">
         <MudDataGrid Items="@Entries" Virtualize="true" FixedHeader="true" Height="89vh" HorizontalScrollbar="true"
@@ -9,17 +9,17 @@
                 <TemplateColumn Title="Key" Sortable="true" CellStyle="min-width:400px">
                     <CellTemplate>
                         <MudText Typo="Typo.h6">@context.Item.Key</MudText>
-                    </CellTemplate>
-                </TemplateColumn>
-                @* <PropertyColumn Property="x => x.Column1" Title="Key" CellStyle="min-width:300px" /> *@
-                @foreach (var culture in Manager.Tree.Cultures)
+                        </CellTemplate>
+                    </TemplateColumn>
+                    @* <PropertyColumn Property="x => x.Column1" Title="Key" CellStyle="min-width:300px" /> *@
+                    @foreach (var culture in Manager.Tree.Cultures)
                 {
                     <TemplateColumn Title="@(culture==string.Empty?"Neutral":culture)" Sortable="true"
                         CellStyle="min-width:400px">
                         <CellTemplate>
                             <MudText Typo="Typo.h6">@context.Item.GetValue(culture)</MudText>
-                        </CellTemplate>
-                    </TemplateColumn>
+                            </CellTemplate>
+                        </TemplateColumn>
                 }
             </Columns>
         </MudDataGrid>
@@ -33,7 +33,7 @@
     public bool entriesLoaded = false;
 
     public ObservableCollection<ResxEntity> Entries;
-    int i=0;
+    int i = 0;
 
     protected override void OnParametersSet()
     {
@@ -45,7 +45,13 @@
         Entries = Manager.ResxEntities;
         int count = Entries.Count;
         entriesLoaded = Entries is not null;
-
+        StateHasChanged();
+    }
+    public void Refresh()
+    {
+        Entries = Manager.ResxEntities;
+        int count = Entries.Count;
+        entriesLoaded = Entries is not null;
         StateHasChanged();
     }
 
