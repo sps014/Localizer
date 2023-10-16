@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Text.Json.Serialization;
 using Localizer.Core.Helpers;
+using Localizer.Core.Resx;
 using Localizer.Core.Watcher;
 
 namespace Localizer.Core.Model;
@@ -15,14 +16,14 @@ public record ResxLoadDataTree
 
     public HashSet<string> Cultures { get; } = new();
 
-    public ResxLoadDataTree(string solutionPath)
+    public ResxLoadDataTree(string solutionPath,ResxManager manager)
     {
         if (!Directory.Exists(solutionPath))
             throw new ArgumentException("Invalid solution path");
 
         Root = new ResxFileSystemFolderNode(solutionPath.GetDirectoryName()!, solutionPath);
         SolutionFolder = solutionPath;
-        resxFileWatcher = new ResxFileWatcher(this);
+        resxFileWatcher = new ResxFileWatcher(this,manager);
     }
     public Task BuildTreeAsync(CancellationTokenSource? cts = default)
     {

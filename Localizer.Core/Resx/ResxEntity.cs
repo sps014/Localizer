@@ -13,7 +13,10 @@ public record ResxEntity
 
     public ImmutableList<string> Cultures => Node.ResxEntry.Cultures.ToImmutableList();
 
-
+    public bool TryGetAbsolutePath(string culture, out string? path)
+    {
+        return Node.TryGetAbsolutePath(culture, out path);
+    }
     public string? GetValue(string? culture = null)
     {
         var value = Node.ResxEntry.GetValue(Key, culture);

@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Security.Cryptography.X509Certificates;
+using Localizer.Core.Helpers;
 using Localizer.Core.Model;
 
 namespace Localizer.Core.Resx;
@@ -10,7 +11,7 @@ namespace Localizer.Core.Resx;
 public record ResxManager
 {
     public ObservableCollection<ResxEntity> ResxEntities { get; private set; } = new();
-    private ConcurrentBag<ResxEntity> COncurrentResxEntities { get; init; } = new();
+    private ConcurrentBag<ResxEntity> ConcurrentResxEntities { get; init; } = new();
     public ResxLoadDataTree Tree { get; }
 
     public string SolutionPath => Tree.SolutionFolder;
@@ -19,7 +20,7 @@ public record ResxManager
 
     public ResxManager(string solutionPath)
     {
-        Tree = new ResxLoadDataTree(solutionPath);
+        Tree = new ResxLoadDataTree(solutionPath,this);
     }
 
     public async Task BuildCollectionAsync()
@@ -28,7 +29,7 @@ public record ResxManager
 
         await Tree.BuildTreeAsync();
 
-        COncurrentResxEntities.Clear();
+        ConcurrentResxEntities.Clear();
 
         var parallelOptions = new ParallelOptions
         {
@@ -56,11 +57,11 @@ public record ResxManager
             foreach (var key in keys)
             {
                 var entity = new ResxEntity(key, fileNode);
-                COncurrentResxEntities.Add(entity);
+                ConcurrentResxEntities.Add(entity);
             }
         });
 
-        ResxEntities = new ObservableCollection<ResxEntity>(COncurrentResxEntities);
+        ResxEntities = new ObservableCollection<ResxEntity>(ConcurrentResxEntities);
 
         OnResxReadFinished?.Invoke(this, new ResxReadFinishedEventArgs("All files", _total));
     }
@@ -94,4 +95,46 @@ public record ResxManager
 
     public event OnResxReadProgressChangedEventHandler? OnResxReadProgressChanged;
     public event OnResxReadFinishedEventHandler? OnResxReadFinished;
+
+    public async void UpdateFileNode(string fullPath)
+    {
+        if(!fullPath.EndsWith(".resx",StringComparison.OrdinalIgnoreCase))
+            return;
+
+        var node = Tree.GetNodeFromPath(fullPath) as ResxFileSystemLeafNode;
+        
+        if(node is null)
+            return;
+        
+        await node.UpdateFile(fullPath);
+        
+        // remove resource entries for that neutral item
+        var exactNeutralPath = fullPath.GetNeutralFileName();
+
+        for (int i = ResxEntities.Count-1; i >=0; i--)
+        {
+            var item = ResxEntities[i];
+            if (item.TryGetAbsolutePath(string.Empty, out string? curPath))
+            {
+                if (exactNeutralPath == curPath)
+                {
+                    ResxEntities.RemoveAt(i);
+                }
+            }
+        }
+        
+        //add new entries
+        var keys = node.Keys;
+        foreach (var key in keys)
+        {
+            var entity = new ResxEntity(key, node);
+            ResxEntities.Add(entity);
+        }
+        
+        OnResxRefresh?.Invoke(fullPath);
+    }
+
+    public delegate void ResxFIleRefreshHandler(string name);
+
+    public event ResxFIleRefreshHandler? OnResxRefresh;
 }

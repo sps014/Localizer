@@ -57,6 +57,14 @@
 
     protected override void OnInitialized()
     {
+        Manager.OnResxRefresh += ResxRefresh;
+    }
 
+    async void ResxRefresh(string file)
+    {
+        await InvokeAsync(() =>
+        {
+            Refresh();
+        });
     }
 }

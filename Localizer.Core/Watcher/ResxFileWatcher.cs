@@ -8,9 +8,10 @@ public class ResxFileWatcher
 {
     private readonly FileSystemWatcher _watcher;
     private ResxLoadDataTree _tree;
-    public ResxManager? ResxManager { get; set; }
-    public ResxFileWatcher(ResxLoadDataTree tree)
+    public ResxManager? ResxManager { get; init; }
+    public ResxFileWatcher(ResxLoadDataTree tree,ResxManager manager)
     {
+        ResxManager = manager;
         _tree = tree;
         _watcher = new FileSystemWatcher(tree.SolutionFolder, "*.resx");
         _watcher.IncludeSubdirectories = true;
@@ -19,9 +20,7 @@ public class ResxFileWatcher
                                  | NotifyFilters.CreationTime
                                  | NotifyFilters.DirectoryName
                                  | NotifyFilters.FileName
-                                 | NotifyFilters.LastAccess
                                  | NotifyFilters.LastWrite
-                                 | NotifyFilters.Security
                                  | NotifyFilters.Size;
 
         _watcher.Created += OnCreated;
@@ -44,6 +43,7 @@ public class ResxFileWatcher
 
     private void OnChanged(object sender, FileSystemEventArgs e)
     {
+        ResxManager?.UpdateFileNode(e.FullPath);
     }
 
     private void OnCreated(object sender, FileSystemEventArgs e)

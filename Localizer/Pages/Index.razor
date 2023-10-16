@@ -50,9 +50,9 @@ else
     }
     protected override async Task OnInitializedAsync()
     {
-        //Manager = await ResxLoader.LoadAsync(@"C:\Users\shive\OneDrive\Desktop\ResXUse");
-        var manager = await ResxLoader.LoadAsync(@"C:\SVN\ES_Latest\Implementation");
-        //var manager = new ResxManager(@"C:\SVN\ES_Latest\Implementation\Engineering.Device.ControllerPlatform\ControllerPlatform.Gui\Navigation");
+        //var manager = await ResxLoader.LoadAsync(@"C:\Users\shive\OneDrive\Desktop\ResXUse");
+        //var manager = await ResxLoader.LoadAsync(@"C:\SVN\ES_Latest\Implementation");
+        var manager = new ResxManager(@"C:\SVN\ES_Latest\Implementation\Engineering.Device.ControllerPlatform\ControllerPlatform.Gui\Navigation");
         manager.OnResxReadProgressChanged += Manager_OnResxReadProgressChanged;
         manager.OnResxReadFinished += Manager_OnResxReadFinished;
         watch.Start();

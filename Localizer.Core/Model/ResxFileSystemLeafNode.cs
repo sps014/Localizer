@@ -19,6 +19,11 @@ public record ResxFileSystemLeafNode : ResxFileSystemNodeBase
         ResxEntry = new(this);
     }
 
+    public bool TryGetAbsolutePath(string culture, out string? path)
+    {
+        return ResxEntry.TryGetFilePath(culture, out path);
+    }
+
     /// <summary>
     /// Adds a culture file to the current node group of resx files
     /// </summary>
@@ -27,12 +32,7 @@ public record ResxFileSystemLeafNode : ResxFileSystemNodeBase
     public void AddFile(string path)
     {
         var cultureName = path.GetCultureName();
-
-        if (ResxEntry.ContainsCulture(cultureName))
-        {
-            return;
-        }
-
+        
         ResxEntry.Add(cultureName, new ResxKeyValueCollection(path));
 
     }
@@ -48,5 +48,10 @@ public record ResxFileSystemLeafNode : ResxFileSystemNodeBase
     public record ResxKeyValue(string Key, string? Value)
     {
         public override string ToString() => $"{Key} : {Value}";
+    }
+
+    public async Task UpdateFile(string fullPath)
+    {
+        await ResxEntry.ReadFileOfCulture(fullPath);
     }
 }
