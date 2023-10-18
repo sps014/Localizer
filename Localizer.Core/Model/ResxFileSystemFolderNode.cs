@@ -54,7 +54,7 @@ public record class ResxFileSystemFolderNode : ResxFileSystemNodeBase
         }
         else
         {
-            var leafNode = new ResxFileSystemLeafNode(neutralName)
+            var leafNode = new ResxFileSystemLeafNode(fileName)
             {
                 Parent = this
             };

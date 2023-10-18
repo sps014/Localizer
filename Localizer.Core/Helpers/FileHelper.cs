@@ -49,6 +49,13 @@ public static class FileHelperExtension
         return string.Join(separator, strings);
     }
 
+    public static string GetNeutralFileFullPath(this string fullPath)
+    {
+        var neutralFile = fullPath.GetNeutralFileNameWithExtension();
+        
+        return Path.Combine(Path.GetDirectoryName(fullPath)!,neutralFile);
+    }
+
     /// <summary>
     /// Returns the neutral file name from the path (relative or full path)
     /// </summary>
@@ -69,9 +76,9 @@ public static class FileHelperExtension
         }
     }
 
-    public static string GetNeutralFileNameWithoutExtension(this string fullpath)
+    public static string GetNeutralFileNameWithExtension(this string fullpath)
     {
-        return Path.GetFileNameWithoutExtension(fullpath.GetNeutralFileName());
+        return fullpath.GetNeutralFileName()+".resx";
     }
     /// <summary>
     /// Returns the culture name from the path (relative or full path)

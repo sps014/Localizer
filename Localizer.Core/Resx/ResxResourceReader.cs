@@ -8,8 +8,9 @@ public class ResxResourceReader:IEnumerable<ResxResourceReader.ResxRecord>
     private readonly Dictionary<string, ResxRecord> _records = new();
     
     public ResxResourceReader(string path)
-    {
-        XDocument doc = XDocument.Load(path);
+    { 
+        Stream s = File.OpenRead(path);
+        XDocument doc = XDocument.Load(s);
 
         foreach (XElement element in doc.Descendants("data"))
         {
@@ -24,6 +25,7 @@ public class ResxResourceReader:IEnumerable<ResxResourceReader.ResxRecord>
             
             _records.Add(key,rec);
         }
+        s.Close();
     }
 
     public record ResxRecord(string Key, string? Value, string? Comment);

@@ -77,7 +77,7 @@ public record ResxLoadDataTree
             // if it is file part will be neutral file name
             if (i == parts.Count - 1 && isFile)
             {
-                part = fullPath.GetNeutralFileNameWithoutExtension();
+                part = fullPath.GetNeutralFileName();
             }
 
             if (currentFolder is ResxFileSystemFolderNode node)

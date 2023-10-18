@@ -96,8 +96,11 @@ public record ResxManager
     public event OnResxReadProgressChangedEventHandler? OnResxReadProgressChanged;
     public event OnResxReadFinishedEventHandler? OnResxReadFinished;
 
+    private SemaphoreSlim semaphore = new SemaphoreSlim(1,1);
+
     public async void UpdateFileNode(string fullPath)
     {
+        await semaphore.WaitAsync();
         if(!fullPath.EndsWith(".resx",StringComparison.OrdinalIgnoreCase))
             return;
 
@@ -109,7 +112,7 @@ public record ResxManager
         await node.UpdateFile(fullPath);
         
         // remove resource entries for that neutral item
-        var exactNeutralPath = fullPath.GetNeutralFileName();
+        var exactNeutralPath = fullPath.GetNeutralFileFullPath();
 
         for (int i = ResxEntities.Count-1; i >=0; i--)
         {
@@ -130,8 +133,10 @@ public record ResxManager
             var entity = new ResxEntity(key, node);
             ResxEntities.Add(entity);
         }
-        
+
+        var values = ResxEntities.Select(x => x.GetValue(string.Empty)).ToList();
         OnResxRefresh?.Invoke(fullPath);
+        semaphore.Release();
     }
 
     public delegate void ResxFIleRefreshHandler(string name);

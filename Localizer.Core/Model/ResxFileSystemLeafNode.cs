@@ -14,7 +14,7 @@ public record ResxFileSystemLeafNode : ResxFileSystemNodeBase
     /// </summary>
     public HashSet<string> Keys => ResxEntry.Keys;
 
-    public ResxFileSystemLeafNode(string resXFile) : base(resXFile, resXFile.GetNeutralFileNameWithoutExtension())
+    public ResxFileSystemLeafNode(string resXFile) : base(resXFile, resXFile.GetNeutralFileName())
     {
         ResxEntry = new(this);
     }
@@ -52,6 +52,6 @@ public record ResxFileSystemLeafNode : ResxFileSystemNodeBase
 
     public async Task UpdateFile(string fullPath)
     {
-        await ResxEntry.ReadFileOfCulture(fullPath);
+        await ResxEntry.ReadFileOfCulture(fullPath.GetCultureName());
     }
 }
