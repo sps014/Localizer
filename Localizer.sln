@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34009.444
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Localizer.Application", "Localizer.Application\Localizer.Application.csproj", "{7BBE4A28-10EA-460C-901C-F287D33B188D}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Localizer", "Localizer\Localizer.csproj", "{15C069DD-FE3D-4C66-A71D-55FC83C1FBA3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Localizer.Core", "Localizer.Core\Localizer.Core.csproj", "{A740BC46-365F-4CC8-ACEE-B3AB7551805A}"

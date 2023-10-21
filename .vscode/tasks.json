@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/Localizer.App/Localizer.App.csproj",
+                "${workspaceFolder}/Localizer/Localizer.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -19,7 +19,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/Localizer.App/Localizer.App.csproj",
+                "${workspaceFolder}/Localizer/Localizer.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -33,7 +33,7 @@
                 "watch",
                 "run",
                 "--project",
-                "${workspaceFolder}/Localizer.App.csproj"
+                "${workspaceFolder}/Localizer.csproj"
             ],
             "problemMatcher": "$msCompile"
         }
