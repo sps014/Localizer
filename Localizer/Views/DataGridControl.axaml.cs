@@ -11,7 +11,10 @@ public partial class DataGridControl : UserControl
     public DataGridControl()
     {
         InitializeComponent();
-        viewModel = new DataGridViewModel();
+        viewModel = new DataGridViewModel()
+        {
+            DataGrid = dataGrid
+        };
         DataContext = viewModel;
     }
 

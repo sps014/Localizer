@@ -6,6 +6,6 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 x:DataType="vm:DataGridViewModel"
              x:Class="Localizer.DataGridControl">
-	<TreeDataGrid Name="treeDataGrid" Source="{Binding Source}">
-	</TreeDataGrid>
+	<DataGrid Name="dataGrid" ItemsSource="{Binding Source}">
+	</DataGrid>
 </UserControl>

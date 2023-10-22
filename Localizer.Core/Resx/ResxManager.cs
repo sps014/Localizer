@@ -27,10 +27,14 @@ public record ResxManager
     public ResxManager(string solutionPath)
     {
         Tree = new ResxLoadDataTree(solutionPath,this);
-        _timer.Elapsed += _timer_Elapsed;
+        _timer.Elapsed += timer_Elapsed;
+    }
+    ~ResxManager()
+    {
+        _timer.Elapsed -= timer_Elapsed;
     }
 
-    private void _timer_Elapsed(object? sender, ElapsedEventArgs e)
+    private void timer_Elapsed(object? sender, ElapsedEventArgs e)
     {
         OnResxReadProgressChanged?.Invoke(this, new ResxFileReadProgressEventArg(currentFileName, _filesRead, _total));
     }
@@ -59,9 +63,11 @@ public record ResxManager
 
         await Parallel.ForEachAsync(nodes, parallelOptions, async (fileNode, token) =>
         {
-            if (token.IsCancellationRequested) {
+            if (token.IsCancellationRequested)
+            {
+                _timer.Stop();
                 return;
-             }
+            }
 
             Interlocked.Increment(ref _filesRead);
             currentFileName = fileNode.FullPath;
@@ -124,7 +130,7 @@ public record ResxManager
     public event OnResxReadStartedEventHandler? OnResxReadStarted;
 
 
-    private SemaphoreSlim semaphore = new SemaphoreSlim(1,1);
+    private readonly SemaphoreSlim semaphore = new(1,1);
 
     public async void UpdateFileNode(string fullPath)
     {

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
 using Avalonia.Data;
+using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Localizer.Core.Resx;
 
@@ -20,7 +21,9 @@ internal partial class DataGridViewModel:ObservableObject
     private ResxManager ResxManager;
 
     [ObservableProperty]
-    public FlatTreeDataGridSource<ResxEntityViewModel> source;
+    public ObservableCollection<ResxEntityViewModel> source;
+
+    public required DataGrid? DataGrid { get; set; }
 
     public DataGridViewModel()
     {
@@ -34,6 +37,25 @@ internal partial class DataGridViewModel:ObservableObject
     }
     void LoadEntries()
     {
+       
+
+        DataGrid.Columns.Add(new DataGridTextColumn()
+        {
+            Header = nameof(ResxEntityViewModel.Key),
+            Binding = new Binding(nameof(ResxEntityViewModel.Key),BindingMode.TwoWay),
+        });
+
+        foreach(var culture in ResxManager.Tree.Cultures)
+        {
+            var key = culture == string.Empty ? "ntrKey" : culture;
+
+            DataGrid.Columns.Add(new DataGridTextColumn()
+            {
+                Header = culture==string.Empty?"Neutral":culture,
+                Binding = new Binding(nameof(ResxEntityViewModel.CultureValues) + $"[{key}]", BindingMode.TwoWay),
+            });
+        }
+
         var entries = ResxManager.ResxEntities;
         foreach (var entry in entries)
         {
@@ -43,15 +65,7 @@ internal partial class DataGridViewModel:ObservableObject
             });
         }
 
-        Source = new FlatTreeDataGridSource<ResxEntityViewModel>(Entries);
-
-        Source.Columns.Add(new TextColumn<ResxEntityViewModel, string>(nameof(ResxEntityViewModel.Key), x => x.Key));
-
-        foreach(var c in ResxManager.Tree.Cultures)
-        {
-            var header = c == string.Empty ? "Neutral" : c;
-            Source.Columns.Add(new TextColumn<ResxEntityViewModel, string>(header, x => x.CultureValues[c]));
-        }
+        Source = Entries;
     }
 
 }
@@ -63,8 +77,11 @@ public class ResxEntityViewModel
 
     public ResxEntityViewModel(ResxEntity entity)
     {
-        foreach(var culture in entity.Cultures)
+        foreach(var culture in MainWindowViewModel.Instance!.ResxManager.Tree.Cultures)
         {
+            if(culture==string.Empty)
+                CultureValues.Add("ntrKey", entity.GetValue(culture));
+            else
             CultureValues.Add(culture,entity.GetValue(culture));
         }
     }

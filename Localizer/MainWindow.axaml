@@ -45,7 +45,7 @@
 				</Grid>
 				<Grid Grid.Row="1">
 					<Grid ColumnDefinitions="400,4,*">
-						<views:TreeViewControl/>
+						<views:TreeViewControl Padding="10"/>
 						<GridSplitter Grid.Column="1" Background="Black" ResizeDirection="Columns"/>
 						<views:DataGridControl Grid.Column="2"/>
 					</Grid>
