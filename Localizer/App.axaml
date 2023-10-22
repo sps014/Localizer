@@ -6,11 +6,12 @@
 
     <Application.Styles>
         <FluentTheme DensityStyle="Compact">
-      <FluentTheme.Palettes>
+		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+			<FluentTheme.Palettes>
         <!-- Palette for Light theme variant -->
         <ColorPaletteResources x:Key="Light" Accent="Green" RegionColor="White" ErrorText="Red" />
         <!-- Palette for Dark theme variant -->
-        <ColorPaletteResources x:Key="Dark" Accent="DarkGreen" RegionColor="Black" ErrorText="Yellow" />
+        <ColorPaletteResources x:Key="Dark" Accent="DodgerBlue" RegionColor="Black" ErrorText="Yellow" />
       </FluentTheme.Palettes>
     </FluentTheme>
     </Application.Styles>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,10 +46,8 @@ public abstract record class ResxFileSystemNodeBase
     /// Denotes if the current node is a leaf node (resxFile)
     /// </summary>
     /// <returns>true if leaf node</returns>
-    public bool IsLeafResXFileNode()
-    {
-        return this is ResxFileSystemLeafNode;
-    }
+    public bool IsLeafResXFileNode=>this is ResxFileSystemLeafNode;
+    public bool IsCSharpProjectDirectory => this is ResxFileSystemFolderNode && ((ResxFileSystemFolderNode)this).IsCsProjNode;
 
     /// <summary>
     /// Adds a child node to the current node
@@ -84,6 +83,13 @@ public abstract record class ResxFileSystemNodeBase
             {
                 yield return childChild;
             }
+        }
+    }
+    public ObservableCollection<ResxFileSystemNodeBase> ChildrenCollection
+    {
+        get
+        {
+            return new ObservableCollection<ResxFileSystemNodeBase>(Children.Values);
         }
     }
 }

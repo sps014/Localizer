@@ -32,6 +32,7 @@ public partial class StartupPageWindow : Window
         var mainWindow = new MainWindow(path);
         mainWindow.Show();
         this.Close();
+        settings.AddFolder(path,true);
     }
 
     async void BrowseNew()

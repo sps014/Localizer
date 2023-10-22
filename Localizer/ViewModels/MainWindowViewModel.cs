@@ -12,6 +12,14 @@ namespace Localizer.ViewModels
 {
     internal partial class MainWindowViewModel: ObservableObject
     {
+        private static MainWindowViewModel? instance = null;
+        internal static MainWindowViewModel? Instance 
+        {
+            get
+            {
+                return instance;
+            }
+        }
         public string SolutionFolder { get; }
         public ResxManager ResxManager { get; }
 
@@ -36,6 +44,7 @@ namespace Localizer.ViewModels
 
         public MainWindowViewModel(string solutionFolder)
         {
+            instance = this;
             SolutionFolder = solutionFolder;
             ResxManager = new ResxManager(SolutionFolder);
             ResxManager.OnResxReadProgressChanged += ResxManager_OnResxReadProgressChanged;

@@ -89,7 +89,7 @@ public class AppSettings
         }
     }
 
-    public void AddFolder(string path)
+    public void AddFolder(string path,bool save=false)
     {
         if(FolderTimeStampMap.ContainsKey(path))
         {
@@ -97,6 +97,9 @@ public class AppSettings
         }
         else
             FolderTimeStampMap.Add(path, DateTime.Now);
+
+        if (save)
+            SaveSettings();
 
     }
     public void RemoveFolder(ResxFolderPath folder)
