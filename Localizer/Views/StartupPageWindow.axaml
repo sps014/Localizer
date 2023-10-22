@@ -2,22 +2,49 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:vm="using:Localizer.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="Localizer.StartupPageWindow"
+        x:Class="Localizer.StartupPageWindow" x:DataType="vm:AppSettings"
         Background="Transparent" ExtendClientAreaToDecorationsHint="True">
 
-	<Grid Margin="10">
+	<Window.Styles>
+		<Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+			<Setter Property="Background" Value="Transparent"/>
+		</Style>
+	</Window.Styles>
+
+	<Grid Margin="10" RowDefinitions="Auto,*">
 		<StackPanel Orientation="Vertical">
 			<Label Content="Localizer" Margin="10" FontSize="28"/>
 			<Label Content="Open Recent" Margin="10" FontSize="16"/>
 			<StackPanel Orientation="Horizontal">
-				<AutoCompleteBox FilterMode="Contains" Width="400" Margin="10" HorizontalAlignment="Left"/>
-				<Button Margin="0,0,10,0">Search</Button>
-				<Button Margin="5,0">Browse New</Button>
+				<Label VerticalAlignment="Center">Search</Label>
+				<AutoCompleteBox FilterMode="Contains" Width="400"
+								 Margin="10" HorizontalAlignment="Left"
+								 x:Name="searchBox" SelectionChanged="AutoCompleteBox_SelectionChanged"/>
+				<Button Margin="28,0" Click="BrowseNewClicked">Browse New</Button>
 			</StackPanel>
 		</StackPanel>
-		<StackPanel Grid.Column="1" Margin="40,80">
-		</StackPanel>
+		<ListBox Grid.Row="1" Margin="10" x:Name="listView" 
+				 ItemsSource="{Binding Folders,Mode=OneWay}" Background="Transparent"
+				 SelectionMode="Single" SelectionChanged="ListBox_SelectionChanged">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+						<Grid ColumnDefinitions="Auto,*,Auto,Auto">
+							<StackPanel>
+								<TextBlock Text="{Binding FolderName}" FontSize="18" Margin="5"/>
+								<TextBlock Text="{Binding FolderPath}" Margin="5"/>
+							</StackPanel>
+							<Rectangle Grid.Column="1"/>
+							<TextBlock Grid.Column="2" Text="{Binding DateTimeFormat}" Margin="5" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+							<Button Grid.Column="3"  Margin="5" HorizontalAlignment="Right" VerticalAlignment="Center"
+									Background="Transparent" Click="Button_Click">
+								<Image Source="/Assets/clear.png" Width="32" Height="32"/>
+							</Button>
+						</Grid>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
 	</Grid>
   
 </Window>
