@@ -51,4 +51,10 @@ public partial class MainWindow : Window
         base.OnLoaded(e);
         viewModel.LoadAsync();
     }
+
+    protected override void OnClosing(WindowClosingEventArgs e)
+    {
+        base.OnClosing(e);
+        viewModel.RequestCacellationOfLoadingResx();
+    }
 }

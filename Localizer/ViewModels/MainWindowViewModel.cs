@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -29,13 +30,16 @@ namespace Localizer.ViewModels
         private int totalCount;
 
         [ObservableProperty]
-        private string currentLoadItemName;
+        private string? currentLoadItemName;
+
+        private CancellationTokenSource cancellationToken=  new CancellationTokenSource();
 
         public MainWindowViewModel(string solutionFolder)
         {
             SolutionFolder = solutionFolder;
             ResxManager = new ResxManager(SolutionFolder);
             ResxManager.OnResxReadProgressChanged += ResxManager_OnResxReadProgressChanged;
+            ResxManager.OnResxReadStarted += ResxManager_OnResxReadStartedChanged;
             ResxManager.OnResxReadFinished += ResxManager_OnResxReadFinished;
         }
 
@@ -43,26 +47,53 @@ namespace Localizer.ViewModels
         {
             ResxManager.OnResxReadProgressChanged -= ResxManager_OnResxReadProgressChanged;
             ResxManager.OnResxReadFinished -= ResxManager_OnResxReadFinished;
+            ResxManager.OnResxReadStarted -= ResxManager_OnResxReadStartedChanged;
+
         }
 
-        private void ResxManager_OnResxReadFinished(object sender, Core.Model.ResxReadFinishedEventArgs e)
+        private async void ResxManager_OnResxReadFinished(object sender, Core.Model.ResxReadFinishedEventArgs e)
         {
-            IsResxContentLoaded = true;
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                CurrentLoadedCount = e.Total;
+                IsResxContentLoaded = true;
+
+            });
+        }
+        private void ResxManager_OnResxReadStartedChanged(object sender, Core.Model.ResxReadStartedEventArgs e)
+        {
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                TotalCount = e.Total;
+            });
+
         }
 
         private void ResxManager_OnResxReadProgressChanged(object sender, Core.Model.ResxFileReadProgressEventArg e)
         {
-            Dispatcher.UIThread.Invoke(() =>
+            try
             {
-                CurrentLoadedCount = e.Progress;
-                TotalCount = e.Total;
-                CurrentLoadItemName = e.FileName;
-            });
+                Dispatcher.UIThread.Invoke(() =>
+               {
+
+                   CurrentLoadedCount = e.Progress;
+                   CurrentLoadItemName = e.FileName;
+               }, DispatcherPriority.Render, cancellationToken.Token);
+            }
+            catch (Exception)
+            {
+                //
+            }
         }
 
         public async void LoadAsync()
         {
-            await ResxManager.BuildCollectionAsync();
+            await ResxManager.BuildCollectionAsync(cancellationToken);
+        }
+
+        public void RequestCacellationOfLoadingResx()
+        {
+            cancellationToken.Cancel();
         }
     }
 }

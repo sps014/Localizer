@@ -29,3 +29,12 @@ public class ResxReadFinishedEventArgs : EventArgs
         Total = total;
     }
 }
+
+public class ResxReadStartedEventArgs : EventArgs
+{
+    public int Total { get; set; }
+    public ResxReadStartedEventArgs(int total)
+    {
+        Total = total;
+    }
+}

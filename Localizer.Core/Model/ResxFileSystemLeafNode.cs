@@ -2,6 +2,7 @@ namespace Localizer.Core.Model;
 
 using System.Collections;
 using System.Collections.ObjectModel;
+using System.Reflection.Metadata.Ecma335;
 using Localizer.Core.Helpers;
 public record ResxFileSystemLeafNode : ResxFileSystemNodeBase
 {
@@ -37,10 +38,11 @@ public record ResxFileSystemLeafNode : ResxFileSystemNodeBase
 
     }
 
-    public async Task ReadAllResourceFiles()
+    public async Task ReadAllResourceFiles(CancellationToken token)
     {
         foreach (var culture in ResxEntry.Cultures)
         {
+            if(token.IsCancellationRequested) return;
             await ResxEntry.ReadFileOfCulture(culture);
         }
     }

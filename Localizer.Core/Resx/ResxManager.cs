@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Security.Cryptography.X509Certificates;
+using System.Timers;
 using Localizer.Core.Helpers;
 using Localizer.Core.Model;
 
@@ -17,38 +19,58 @@ public record ResxManager
     public string SolutionPath => Tree.SolutionFolder;
 
     private int _filesRead = 0;
+    private int _total = 0;
+    private string currentFileName = string.Empty;
+
+    internal System.Timers.Timer _timer = new System.Timers.Timer(TimeSpan.FromMilliseconds(100));
 
     public ResxManager(string solutionPath)
     {
         Tree = new ResxLoadDataTree(solutionPath,this);
+        _timer.Elapsed += _timer_Elapsed;
     }
 
-    public async Task BuildCollectionAsync()
+    private void _timer_Elapsed(object? sender, ElapsedEventArgs e)
+    {
+        OnResxReadProgressChanged?.Invoke(this, new ResxFileReadProgressEventArg(currentFileName, _filesRead, _total));
+    }
+
+    public async Task BuildCollectionAsync(CancellationTokenSource tokenSource)
     {
         _filesRead = 0;
 
-        await Tree.BuildTreeAsync();
+        await Tree.BuildTreeAsync(tokenSource);
 
         ConcurrentResxEntities.Clear();
 
         var parallelOptions = new ParallelOptions
         {
-            MaxDegreeOfParallelism = Environment.ProcessorCount
+            MaxDegreeOfParallelism = Environment.ProcessorCount,
+            CancellationToken = tokenSource.Token
         };
 
         var nodes = GetAllFileNodes().ToImmutableArray();
-        int _total = nodes.Length;
+
+        _total = nodes.Length;
+
+        OnResxReadStarted?.Invoke(this, new ResxReadStartedEventArgs(_total));
+
+        _timer.Start();
 
         await Parallel.ForEachAsync(nodes, parallelOptions, async (fileNode, token) =>
         {
-            Interlocked.Increment(ref _filesRead);
+            if (token.IsCancellationRequested) {
+                return;
+             }
 
-            OnResxReadProgressChanged?.Invoke(this, new ResxFileReadProgressEventArg(fileNode.FullPath, _filesRead, _total));
-            
+            Interlocked.Increment(ref _filesRead);
+            currentFileName = fileNode.FullPath;
+
+
             if (fileNode is null)
                 return;
 
-            await fileNode.ReadAllResourceFiles();
+            await fileNode.ReadAllResourceFiles(token);
 
             //group by key
 
@@ -62,6 +84,8 @@ public record ResxManager
         });
 
         ResxEntities = new ObservableCollection<ResxEntity>(ConcurrentResxEntities);
+
+        _timer.Stop();
 
         OnResxReadFinished?.Invoke(this, new ResxReadFinishedEventArgs("All files", _total));
     }
@@ -92,9 +116,13 @@ public record ResxManager
 
     public delegate void OnResxReadProgressChangedEventHandler(object sender, ResxFileReadProgressEventArg e);
     public delegate void OnResxReadFinishedEventHandler(object sender, ResxReadFinishedEventArgs e);
+    public delegate void OnResxReadStartedEventHandler(object sender, ResxReadStartedEventArgs e);
+
 
     public event OnResxReadProgressChangedEventHandler? OnResxReadProgressChanged;
     public event OnResxReadFinishedEventHandler? OnResxReadFinished;
+    public event OnResxReadStartedEventHandler? OnResxReadStarted;
+
 
     private SemaphoreSlim semaphore = new SemaphoreSlim(1,1);
 

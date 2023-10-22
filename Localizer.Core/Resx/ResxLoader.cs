@@ -13,7 +13,7 @@ namespace Localizer.Core.Resx
         {
 
             var resxManager = new ResxManager(path);
-            await resxManager.BuildCollectionAsync();
+            await resxManager.BuildCollectionAsync(cts);
             return resxManager;
         }
     }
