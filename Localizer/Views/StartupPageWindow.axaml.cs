@@ -12,7 +12,9 @@ public partial class StartupPageWindow : Window
     public StartupPageWindow()
     {
         InitializeComponent();
-        TransparencyLevelHint = new[] {WindowTransparencyLevel.Mica};
+
+        MainWindow.SetThemeOfWindow(this);
+
         settings = AppSettings.Instance;
         //settings.AddFolder(@"C:\DoIt\App.Test");
         //settings.AddFolder(@"C:\SFSF\Bwopler.Test");
@@ -27,23 +29,31 @@ public partial class StartupPageWindow : Window
 
     void LoadFolder(string path)
     {
+        var mainWindow = new MainWindow(path);
+        mainWindow.Show();
         this.Close();
     }
+
     async void BrowseNew()
     {
-        var folderDialog = new OpenFolderDialog()
+        var folders =await StorageProvider.OpenFolderPickerAsync(new Avalonia.Platform.Storage.FolderPickerOpenOptions
         {
-            Title = "Open Folder",
-        };
+            AllowMultiple = false,
+            Title = "Open Folder with .resx files",
+        });
 
-        var path = await folderDialog.ShowAsync(this);
-        if (path != null)
+
+        var folder = folders.FirstOrDefault();
+
+        if(folder != null)
         {
+            var path = folder.Path.LocalPath;
             settings.AddFolder(path);
             LoadFolder(path);
         }
+
     }
-    
+
 
     private void AutoCompleteBox_SelectionChanged(object? sender, Avalonia.Controls.SelectionChangedEventArgs e)
     {

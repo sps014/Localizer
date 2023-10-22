@@ -1,29 +1,39 @@
 using System;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Platform;
+using Localizer.ViewModels;
 
 namespace Localizer;
 
 public partial class MainWindow : Window
 {
-    public MainWindow()
+    MainWindowViewModel viewModel;
+    public MainWindow(string selectedFolder)
     {
-        InitializeComponent();
+        viewModel = new MainWindowViewModel(selectedFolder);
 
+        InitializeComponent();
+        SetThemeOfWindow(this);
+        DataContext = viewModel;
+    }
+
+    public static void SetThemeOfWindow(Window window)
+    {
         if (IsWindows11)
         {
-            TransparencyLevelHint = new[] { WindowTransparencyLevel.Mica };
+            window.TransparencyLevelHint = new[] { WindowTransparencyLevel.Mica };
         }
         else
         {
-            TransparencyLevelHint = new[] { WindowTransparencyLevel.None };
-            Background = new SolidColorBrush(Colors.Black);
+            window.TransparencyLevelHint = new[] { WindowTransparencyLevel.None };
+            window.Background = new SolidColorBrush(Colors.Black);
         }
-    }
 
-    bool IsWindows11
+    }
+    public static bool IsWindows11
     {
         get
         {
@@ -34,5 +44,11 @@ public partial class MainWindow : Window
             }
             return false;
         }
+    }
+
+    protected override void OnLoaded(RoutedEventArgs e)
+    {
+        base.OnLoaded(e);
+        viewModel.LoadAsync();
     }
 }

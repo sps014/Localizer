@@ -18,7 +18,7 @@
 			<Label Content="Localizer" Margin="10" FontSize="28"/>
 			<Label Content="Open Recent" Margin="10" FontSize="16"/>
 			<StackPanel Orientation="Horizontal">
-				<Label VerticalAlignment="Center">Search</Label>
+				<Label Margin="10" VerticalAlignment="Center">Search</Label>
 				<AutoCompleteBox FilterMode="Contains" Width="400"
 								 Margin="10" HorizontalAlignment="Left"
 								 x:Name="searchBox" SelectionChanged="AutoCompleteBox_SelectionChanged"/>

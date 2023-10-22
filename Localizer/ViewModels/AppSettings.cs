@@ -30,19 +30,26 @@ public class AppSettings
 
     public Dictionary<string, DateTime> FolderTimeStampMap { get; set; } = new Dictionary<string, DateTime>();
 
+    private ObservableCollection<ResxFolderPath>? folders=null;
+
+
     [JsonIgnore]
     public ObservableCollection<ResxFolderPath> Folders
     {
         get
         {
-            var list = new ObservableCollection<ResxFolderPath>();
+            if (folders!=null)
+            {
+                return folders;
+            }
+
+            folders = new ObservableCollection<ResxFolderPath>();
 
             foreach (var item in FolderTimeStampMap.OrderByDescending(x=>x.Value))
             {
-                list.Add(new ResxFolderPath(item.Key, item.Value));
+                folders.Add(new ResxFolderPath(item.Key, item.Value));
             }
-
-            return list;
+            return folders;
         }
     }
 
@@ -94,6 +101,7 @@ public class AppSettings
     }
     public void RemoveFolder(ResxFolderPath folder)
     {
+        Folders.Remove(folder);
         FolderTimeStampMap.Remove(folder.FolderPath);
     }
 }

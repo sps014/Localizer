@@ -2,19 +2,55 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:vm="using:Localizer.ViewModels"
 		xmlns:views="using:Localizer"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Localizer.MainWindow"
-        Background="Transparent"
-        Title="Localizer">
-	
-	<Grid RowDefinitions="Auto, *,Auto">
-		<Grid Grid.Row="0" Background="Transparent" Height="48">
-				<views:ToolbarControl/>
-			</Grid>
-		<Grid Grid.Row="1" Background="Black"/>
-		<Grid Grid.Row="2" Background="Transparent" Height="32"/>
+        Background="Transparent" ExtendClientAreaToDecorationsHint="True"
+        Title="Localizer" x:DataType="vm:MainWindowViewModel">
 
+	<Grid>
+		<Grid IsVisible="{Binding ShowProgress}">
+			<StackPanel Margin="20">
+				<Label Content="Localizer" FontSize="24"/>
+				<StackPanel Margin="0,200" VerticalAlignment="Center" HorizontalAlignment="Center"
+							MaxHeight="300" Width="800">
+					<StackPanel Orientation="Horizontal" Margin="20" HorizontalAlignment="Center">
+						<Label>Loading : </Label>
+						<Label Content="{Binding CurrentLoadedCount}"/>
+						<Label Content="/"/>
+						<Label Content="{Binding TotalCount}"/>
+					</StackPanel>
+					<ProgressBar Value="{Binding CurrentLoadedCount,Mode=OneWay}"
+								 ShowProgressText="True" Height="20" Foreground="DodgerBlue"
+								 Maximum="{Binding TotalCount,Mode=OneWay}"/>
+					<TextBlock Margin="20" Text="{Binding CurrentLoadItemName}" TextWrapping="WrapWithOverflow"/>
+
+				</StackPanel>
+			</StackPanel>
+		</Grid>
+		<Grid IsVisible="{Binding IsResxContentLoaded}">
+			<Grid RowDefinitions="Auto, *,Auto">
+				<Grid Grid.Row="0" Background="Transparent" Height="80" Margin="20,20,20,10"
+					  RowDefinitions="Auto,*">
+					<Grid ColumnDefinitions="Auto,*,Auto">
+						<Label Content="Localizer" FontSize="24">
+							<ToolTip.Tip>
+								<Label Margin="5,0,0,0" Content="{Binding SolutionFolder,Mode=OneTime}" Grid.Column="2"
+								VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="14"/>
+							</ToolTip.Tip>
+						</Label>
+					</Grid>
+					<views:ToolbarControl Grid.Row="2" Margin="0,10,0,0"/>
+				</Grid>
+				<Grid Grid.Row="1">
+
+				</Grid>
+				<Grid Grid.Row="2" Background="Transparent" Height="32"/>
+
+			</Grid>
+
+		</Grid>
 	</Grid>
-    
+
 </Window>
