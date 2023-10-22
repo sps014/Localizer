@@ -7,6 +7,8 @@
     <Application.Styles>
         <FluentTheme DensityStyle="Compact">
 		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+		<StyleInclude Source="avares://Avalonia.Controls.TreeDataGrid/Themes/Fluent.axaml"/>
+
 			<FluentTheme.Palettes>
         <!-- Palette for Light theme variant -->
         <ColorPaletteResources x:Key="Light" Accent="Green" RegionColor="White" ErrorText="Red" />
