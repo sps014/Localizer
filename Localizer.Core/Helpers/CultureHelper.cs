@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Localizer.Core.Helpers;
 
-internal static class Culture
+public static class Culture
 {
     private static HashSet<string>? cultures = null;
     private static Dictionary<string, string> OverrrideCultures = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -37,5 +37,12 @@ internal static class Culture
             }
             return cultures;
         }
+    }
+    public static string? GetLanguageName(string cultureCode)
+    {
+        if(OverrrideCultures.Values.Contains(cultureCode))
+            cultureCode = OverrrideCultures.FirstOrDefault(x=>x.Value == cultureCode).Key;
+
+        return new CultureInfo(cultureCode).DisplayName;
     }
 }

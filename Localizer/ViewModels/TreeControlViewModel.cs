@@ -29,7 +29,7 @@ internal partial class TreeControlViewModel:ObservableObject
     {
         ResxManager.OnResxReadFinished -= ResxManager_OnResxReadFinished;
     }
-    private void ResxManager_OnResxReadFinished(object sender, Core.Model.ResxReadFinishedEventArgs e)
+    private void ResxManager_OnResxReadFinished(object sender, ResxReadFinishedEventArgs e)
     {
         ProcessNodes();
     }

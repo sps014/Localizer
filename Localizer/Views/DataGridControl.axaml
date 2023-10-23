@@ -6,6 +6,8 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 x:DataType="vm:DataGridViewModel"
              x:Class="Localizer.DataGridControl">
-	<DataGrid Name="dataGrid" ItemsSource="{Binding Source}">
+	<DataGrid Name="dataGrid" ItemsSource="{Binding Source}" CanUserReorderColumns="True"
+			  HeadersVisibility="All"
+			  CanUserResizeColumns="True" CanUserSortColumns="True" LoadingRow="AddRowNumbers">
 	</DataGrid>
 </UserControl>
