@@ -19,10 +19,17 @@
 			<Label Content="Open Recent" Margin="10" FontSize="16"/>
 			<StackPanel Orientation="Horizontal">
 				<Label Margin="10" VerticalAlignment="Center">Search</Label>
+				
 				<AutoCompleteBox FilterMode="Contains" Width="400"
 								 Margin="10" HorizontalAlignment="Left"
 								 x:Name="searchBox" SelectionChanged="AutoCompleteBox_SelectionChanged"/>
-				<Button Margin="28,0" Click="BrowseNewClicked">Browse New</Button>
+				<Image Source="/Assets/search.png" Width="32" Height="32" Margin="4,0"/>
+				<Button Margin="28,0" Click="BrowseNewClicked">
+					<StackPanel Orientation="Horizontal">
+						<Image Source="/Assets/browse.png" Width="32" Height="32" Margin="4,0"/>
+						<TextBlock VerticalAlignment="Center">Browse New</TextBlock>
+					</StackPanel>
+				</Button>
 			</StackPanel>
 		</StackPanel>
 		<ListBox Grid.Row="1" Margin="10" x:Name="listView" 

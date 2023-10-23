@@ -13,9 +13,12 @@ public partial class TreeViewControl : UserControl
    private TreeControlViewModel viewModel;
     public TreeViewControl()
     {
-        
+
         InitializeComponent();
-        viewModel = new TreeControlViewModel();
+        viewModel = new TreeControlViewModel()
+        {
+            TreeView = treeNode
+        };
         DataContext = viewModel;
     }
     private void AutoCompleteBox_TextChanged(object sender, TextChangedEventArgs e)

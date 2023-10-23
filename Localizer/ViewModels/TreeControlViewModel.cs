@@ -25,6 +25,8 @@ internal partial class TreeControlViewModel:ObservableObject
     [ObservableProperty]
     private ObservableCollection<string>? nodeNames = null;
 
+    public required TreeView TreeView { get; internal set; }
+
     public TreeControlViewModel()
     {
         ResxManager = MainWindowViewModel.Instance!.ResxManager;
@@ -53,16 +55,52 @@ internal partial class TreeControlViewModel:ObservableObject
         CreateSearchTree("Form");
     }
 
+    bool IsSearchedTree(string searchTerm)
+    {
+        return !string.IsNullOrWhiteSpace(searchTerm);
+    }
 
     public void SearchNodes(string searchTerm)
     {
         Nodes = CreateSearchTree(searchTerm);
+
+        if (IsSearchedTree(searchTerm))
+            ExpandAllNodes();
     }
 
-    
+    async void ExpandAllNodes()
+    {
+        foreach (var item in TreeView.Items)
+        {
+            TreeViewItem? container = TreeView.TreeContainerFromItem(item!) as TreeViewItem;
+            if (container != null)
+            {
+                container.IsExpanded = true;
+                await Task.Delay(TimeSpan.FromMilliseconds(10)); //let parent expand 
+                await ExpandChildNodes(container);
+
+            }
+        }
+    }
+
+    async Task ExpandChildNodes(TreeViewItem parentContainer)
+    {
+        foreach (var item in parentContainer.Items)
+        {
+            TreeViewItem? container = parentContainer.ContainerFromItem(item!) as TreeViewItem;
+            if (container != null)
+            {
+                container.IsExpanded = true;
+                await Task.Delay(TimeSpan.FromSeconds(10)); //let parent expand 
+                await ExpandChildNodes(container);
+            }
+        }
+    }
+
+
     ObservableCollection<ResxFileSystemNodeBase> CreateSearchTree(string searchTerm)
     {
-        if(string.IsNullOrWhiteSpace(searchTerm))
+        if(!IsSearchedTree(searchTerm))
         {
             return new ObservableCollection<ResxFileSystemNodeBase>
             {
@@ -98,7 +136,7 @@ internal partial class TreeControlViewModel:ObservableObject
             return anyTrue;
         }
 
-        if (parent.NodeName.Contains(searchTerm))
+        if (parent.NodeName.Contains(searchTerm,StringComparison.InvariantCultureIgnoreCase))
         {
             return true;
         }
