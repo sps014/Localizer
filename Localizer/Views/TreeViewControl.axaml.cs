@@ -23,6 +23,15 @@ public partial class TreeViewControl : UserControl
     }
     private void AutoCompleteBox_TextChanged(object sender, TextChangedEventArgs e)
     {
-        viewModel.SearchNodes((sender as AutoCompleteBox)!.Text!);
+        viewModel.SearchNodes();
+    }
+
+    private void TreeView_SelectionChanged(object? sender, Avalonia.Controls.SelectionChangedEventArgs e)
+    {
+        var dt = treeNode.SelectedItem as ResxFileSystemNodeBase;
+        if(dt == null)
+            return;
+
+        viewModel.OnTreeNodeSelection(dt);
     }
 }

@@ -25,6 +25,11 @@ internal partial class TreeControlViewModel:ObservableObject
     [ObservableProperty]
     private ObservableCollection<string>? nodeNames = null;
 
+    [ObservableProperty]
+    private string? searchedQuery;
+
+    private bool IsInSearchMode => !string.IsNullOrWhiteSpace(SearchedQuery);
+
     public required TreeView TreeView { get; internal set; }
 
     public TreeControlViewModel()
@@ -55,16 +60,11 @@ internal partial class TreeControlViewModel:ObservableObject
         CreateSearchTree("Form");
     }
 
-    bool IsSearchedTree(string searchTerm)
+    public void SearchNodes()
     {
-        return !string.IsNullOrWhiteSpace(searchTerm);
-    }
+        Nodes = CreateSearchTree(SearchedQuery);
 
-    public void SearchNodes(string searchTerm)
-    {
-        Nodes = CreateSearchTree(searchTerm);
-
-        if (IsSearchedTree(searchTerm))
+        if (IsInSearchMode)
             ExpandAllNodes();
     }
 
@@ -75,8 +75,8 @@ internal partial class TreeControlViewModel:ObservableObject
             TreeViewItem? container = TreeView.TreeContainerFromItem(item!) as TreeViewItem;
             if (container != null)
             {
-                container.IsExpanded = true;
-                await Task.Delay(TimeSpan.FromMilliseconds(10)); //let parent expand 
+                container.IsExpanded = true; 
+                await Task.Delay(TimeSpan.FromMilliseconds(20)); //let parent expand 
                 await ExpandChildNodes(container);
 
             }
@@ -91,16 +91,77 @@ internal partial class TreeControlViewModel:ObservableObject
             if (container != null)
             {
                 container.IsExpanded = true;
-                await Task.Delay(TimeSpan.FromSeconds(10)); //let parent expand 
+                await Task.Delay(TimeSpan.FromSeconds(20)); //let parent expand 
                 await ExpandChildNodes(container);
             }
         }
     }
 
 
-    ObservableCollection<ResxFileSystemNodeBase> CreateSearchTree(string searchTerm)
+    public void OnTreeNodeSelection(ResxFileSystemNodeBase node)
     {
-        if(!IsSearchedTree(searchTerm))
+        if (IsInSearchMode)
+        {
+            var nodeInOriginalTree = NodeFromNodeKeys(node);
+
+            SearchedQuery = string.Empty;
+
+            if (nodeInOriginalTree == null)
+                return;
+
+
+            ExpandNodeWithPath(nodeInOriginalTree);
+
+            TreeView.SelectedItem = nodeInOriginalTree;
+        }
+    }
+
+    private async void ExpandNodeWithPath(ResxFileSystemNodeBase nodeInOriginalTree)
+    {
+        var pathParts = nodeInOriginalTree.NodePathPartsFromParent;
+        var container = TreeView.ContainerFromItem(Nodes.First()) as TreeViewItem;
+        if(container != null)
+        {
+            container.IsExpanded = true;
+
+            await Task.Delay(TimeSpan.FromMilliseconds(10));
+
+            foreach(var path in pathParts)
+            {
+                var items = container.Items;
+
+                var childItem = items.FirstOrDefault(x=>(x as ResxFileSystemNodeBase)!.NodeName == path); 
+
+                if(childItem==null) return;
+
+                container = container.ContainerFromItem(childItem) as TreeViewItem;
+                container.IsExpanded = true;
+                await Task.Delay(TimeSpan.FromMilliseconds(10));
+            }
+        }
+
+    }
+
+    public static ResxFileSystemNodeBase? NodeFromNodeKeys(ResxFileSystemNodeBase node)
+    {
+        var pathparts = node.NodePathPartsFromParent;
+        ResxFileSystemNodeBase curNode = MainWindowViewModel.Instance!.ResxManager.Tree.Root!;
+
+        foreach (var path in  pathparts)
+        {
+            if(curNode.Children.ContainsKey(path))
+                curNode = curNode.Children[path];
+            else
+                return null;
+        }
+
+        return curNode;
+    }
+
+
+    ObservableCollection<ResxFileSystemNodeBase> CreateSearchTree(string? searchTerm)
+    {
+        if(!IsInSearchMode)
         {
             return new ObservableCollection<ResxFileSystemNodeBase>
             {
@@ -110,7 +171,7 @@ internal partial class TreeControlViewModel:ObservableObject
 
         var newRoot = ResxManager.Tree.Root! with { Children = new() };
 
-        DfsQueryBuildTree(searchTerm, ResxManager.Tree.Root!, newRoot);
+        DfsQueryBuildTree(searchTerm!, ResxManager.Tree.Root!, newRoot);
 
         return new ObservableCollection<ResxFileSystemNodeBase>
             {

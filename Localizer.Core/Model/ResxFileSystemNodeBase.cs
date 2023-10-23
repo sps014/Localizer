@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
@@ -34,6 +35,22 @@ public abstract record class ResxFileSystemNodeBase
     /// Name of the current node (file or directory name)
     /// </summary>
     public string NodeName { get; init; }
+
+    public ImmutableArray<string> NodePathPartsFromParent
+    {
+        get
+        {
+            if(Parent == null)
+            {
+                return ImmutableArray<string>.Empty;
+            }
+
+            var collection = new List<string>();
+            collection.AddRange(Parent.NodePathPartsFromParent);
+            collection.Add(NodeName);
+            return collection.ToImmutableArray();
+        }
+    }
 
 
     public ResxFileSystemNodeBase(string fullPath, string nodeName)
