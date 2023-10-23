@@ -13,6 +13,7 @@ using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Localizer.Core.Helpers;
 using Localizer.Core.Resx;
+using Localizer.Events;
 using Microsoft.CodeAnalysis;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -20,13 +21,11 @@ namespace Localizer.ViewModels;
 
 internal partial class DataGridViewModel:ObservableObject
 {
-    [ObservableProperty]
-    private ObservableCollection<ResxEntityViewModel> entries=new();
 
     private ResxManager ResxManager;
 
     [ObservableProperty]
-    public ObservableCollection<ResxEntityViewModel> source;
+    public ObservableCollection<ResxEntityViewModel> source=new();
 
     public required DataGrid? DataGrid { get; set; }
 
@@ -34,6 +33,18 @@ internal partial class DataGridViewModel:ObservableObject
     {
         ResxManager = MainWindowViewModel.Instance!.ResxManager;
         ResxManager.OnResxReadFinished += ResxManager_OnResxReadFinished;
+        EventBus.Instance.Subscribe<TableColmnVisibilityChangeEvent>(OnLanguageColumnVisiblityChanged);
+    }
+
+    public void OnLanguageColumnVisiblityChanged(TableColmnVisibilityChangeEvent e)
+    {
+        var nameOfTheColumn = GetColumnHeaderName(e.ColumnInfo.Culture, e.ColumnInfo.IsComment);
+        var column = DataGrid!.Columns.FirstOrDefault(x => nameOfTheColumn.Equals(x.Tag));
+        
+        if(column==null)
+            return;
+
+        column.IsVisible = e.ColumnInfo.IsVisible;
     }
 
     private void ResxManager_OnResxReadFinished(object sender, Core.Model.ResxReadFinishedEventArgs e)
@@ -48,43 +59,59 @@ internal partial class DataGridViewModel:ObservableObject
         foreach (var culture in ResxManager.Tree.Cultures.OrderBy(x=>x))
         {
 
-            var key = culture == string.Empty ? "ntrKey" : culture;
+            //for value col
+            DataGrid.Columns.Add(CreateColumn(GetColumnHeaderName(culture), GetKeyPath(culture)));
 
-            key = $"{nameof(ResxEntityViewModel.CultureValues)}[{key}]";
-
-            var languageInfo = Culture.GetLanguageName(culture);
-            languageInfo = $"{languageInfo} ({culture})";
-
-            if (culture == string.Empty)
-            {
-                languageInfo = "Neutral";
-            }
-
-            DataGrid.Columns.Add(CreateColumn(languageInfo, key));
-
-            key = culture == string.Empty ? "ntrKey" : culture;
-
-            key = $"{nameof(ResxEntityViewModel.CultureComments)}[{key}]";
-
-            languageInfo = $"Comment {languageInfo} ({culture})";
-
-            if (culture == string.Empty)
-            {
-                languageInfo = "Comment Neutral";
-            }
-            DataGrid.Columns.Add(CreateColumn(languageInfo, key));
+            //for comment col
+            DataGrid.Columns.Add(CreateColumn(GetColumnHeaderName(culture,true), GetKeyPath(culture,true)));
 
         }
 
         var entries = ResxManager.ResxEntities;
         foreach (var entry in entries)
         {
-            Entries.Add(new ResxEntityViewModel(entry)
+            Source.Add(new ResxEntityViewModel(entry)
             {
                 Key = entry.Key,
             });
         }
-        Source = Entries;
+    }
+
+    string GetKeyPath(string culture, bool isComment=false)
+    {
+
+        var key = culture == string.Empty ? "ntrKey" : culture;
+
+
+        if(isComment)
+            key = $"{nameof(ResxEntityViewModel.CultureComments)}[{key}]";
+        else
+            key = $"{nameof(ResxEntityViewModel.CultureValues)}[{key}]";
+
+        return key ;
+    }
+    string GetColumnHeaderName(string culture,bool isComment=false)
+    {
+        if(isComment)
+        {
+            var language = $"Comment ({culture})";
+
+            if (culture == string.Empty)
+            {
+                language = "Comment Neutral";
+            }
+            return language;
+        }
+
+        var languageInfo = Culture.GetLanguageName(culture);
+        languageInfo = $"{languageInfo} ({culture})";
+
+        if (culture == string.Empty)
+        {
+            languageInfo = "Neutral";
+        }
+
+        return languageInfo;
     }
 
     private DataGridColumn CreateColumn(string nameOfColumn, string bindingPath=null)
@@ -123,6 +150,7 @@ internal partial class DataGridViewModel:ObservableObject
             MaxWidth = 1024,
             Width = new DataGridLength(1,DataGridLengthUnitType.Star),
             MinWidth = 56,
+            Tag = nameOfColumn,
         };
 
         return column;
