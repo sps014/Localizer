@@ -14,8 +14,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Localizer.Core.Helpers;
 using Localizer.Core.Resx;
 using Localizer.Events;
-using Microsoft.CodeAnalysis;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Localizer.ViewModels;
 
@@ -165,10 +163,11 @@ public class ResxEntityViewModel
     public string? Key { get; set; }
     public Dictionary<string, string?> CultureValues { get; set; } = new();
     public Dictionary<string, string?> CultureComments { get; set; } = new();
-
+    public ResxEntity ResxEntity { get; init; }
 
     public ResxEntityViewModel(ResxEntity entity)
     {
+        ResxEntity = entity;
         foreach(var culture in MainWindowViewModel.Instance!.ResxManager.Tree.Cultures)
         {
             if (culture == string.Empty)

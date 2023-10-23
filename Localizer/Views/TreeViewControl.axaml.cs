@@ -18,4 +18,8 @@ public partial class TreeViewControl : UserControl
         viewModel = new TreeControlViewModel();
         DataContext = viewModel;
     }
+    private void AutoCompleteBox_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        viewModel.SearchNodes((sender as AutoCompleteBox)!.Text!);
+    }
 }
