@@ -25,10 +25,11 @@ internal partial class TreeControlViewModel:ObservableObject
     [ObservableProperty]
     private ObservableCollection<string>? nodeNames = null;
 
+    [NotifyPropertyChangedFor(nameof(IsInSearchMode))]
     [ObservableProperty]
     private string? searchedQuery;
 
-    private bool IsInSearchMode => !string.IsNullOrWhiteSpace(SearchedQuery);
+    public bool IsInSearchMode => !string.IsNullOrWhiteSpace(SearchedQuery);
 
     public required TreeView TreeView { get; internal set; }
 

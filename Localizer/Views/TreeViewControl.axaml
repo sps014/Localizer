@@ -6,12 +6,15 @@
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450" 
 			 x:DataType="vm:TreeControlViewModel"
              x:Class="Localizer.TreeViewControl">
-	<Grid RowDefinitions="Auto,*">
+	<Grid RowDefinitions="Auto,,Auto,*">
 		<AutoCompleteBox Text="{Binding SearchedQuery}"
-						 ItemsSource="{Binding NodeNames}"
+						 ItemsSource="{Binding NodeNames}" Margin="10"
 						 TextChanged="AutoCompleteBox_TextChanged"/>
 		
-		<ScrollViewer Grid.Row="1" Margin="0,10">
+		<TextBlock TextWrapping="Wrap" Grid.Row="1" Margin="10"
+				 Text="Please Select the Node you want to open from search tree below" FontWeight="Bold" IsVisible="{Binding IsInSearchMode,Mode=OneWay}"/>
+		
+		<ScrollViewer Grid.Row="2" Margin="0,10">
 			<TreeView ItemsSource="{Binding Nodes}" x:Name="treeNode" SelectionChanged="TreeView_SelectionChanged"
 					  AutoScrollToSelectedItem="True">
 				<TreeView.ItemTemplate>
