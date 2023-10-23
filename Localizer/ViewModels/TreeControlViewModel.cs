@@ -76,7 +76,7 @@ internal partial class TreeControlViewModel:ObservableObject
             if (container != null)
             {
                 container.IsExpanded = true; 
-                await Task.Delay(TimeSpan.FromMilliseconds(20)); //let parent expand 
+                await Task.Delay(TimeSpan.FromMilliseconds(10)); //let parent expand 
                 await ExpandChildNodes(container);
 
             }
@@ -91,7 +91,7 @@ internal partial class TreeControlViewModel:ObservableObject
             if (container != null)
             {
                 container.IsExpanded = true;
-                await Task.Delay(TimeSpan.FromSeconds(20)); //let parent expand 
+                await Task.Delay(TimeSpan.FromMilliseconds(10)); //let parent expand 
                 await ExpandChildNodes(container);
             }
         }
