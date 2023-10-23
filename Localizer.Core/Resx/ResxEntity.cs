@@ -22,6 +22,11 @@ public record ResxEntity
         var value = Node.ResxEntry.GetValue(Key, culture);
         return value;
     }
+    public string? GetComment(string? culture = null)
+    {
+        var value = Node.ResxEntry.GetComment(Key, culture);
+        return value;
+    }
 
     public ResxFileSystemLeafNode Node { get; init; }
 

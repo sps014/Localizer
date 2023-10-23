@@ -5,7 +5,7 @@ namespace Localizer.Core.Model;
 
 public class ResxNodeEntry : IEnumerable<KeyValuePair<string, ResxKeyValueCollection>>
 {
-    private ConcurrentDictionary<string, ResxKeyValueCollection> culturedKeyValues = new();
+    private ConcurrentDictionary<string, ResxKeyValueCollection> culturedKeyValues = new(); //culture -> localized value of culture
 
     public ResxFileSystemLeafNode LeafNode { get; init; }
 
@@ -57,11 +57,12 @@ public class ResxNodeEntry : IEnumerable<KeyValuePair<string, ResxKeyValueCollec
         return culturedKeyValues.GetEnumerator();
     }
 
-    public void AddKeyValuePair(string culture, string key, string? value)
+    public void AddKeyValuePair(string culture, string key, string? value,string? comment)
     {
         if (culturedKeyValues.ContainsKey(culture))
         {
             culturedKeyValues[culture].Add(key, value);
+            culturedKeyValues[culture].AddComment(key, comment);
         }
     }
 
@@ -95,6 +96,21 @@ public class ResxNodeEntry : IEnumerable<KeyValuePair<string, ResxKeyValueCollec
             }
         }
         return null;
+    }
+    public string? GetComment(string key,string? culture)
+    {
+        if (culture is null)
+            culture = string.Empty;
+
+        if (culturedKeyValues.ContainsKey(culture))
+        {
+            if (culturedKeyValues[culture].ContainsKey(key))
+            {
+                return culturedKeyValues[culture].GetComment(key);
+            }
+        }
+        return null;
+
     }
 
     public bool TryGetValue(string key,string? culture,out string? value)
@@ -135,7 +151,10 @@ public class ResxNodeEntry : IEnumerable<KeyValuePair<string, ResxKeyValueCollec
 
                     value ??= string.Empty;
 
-                    AddKeyValuePair(culture, key, value);
+                    var comment = entry.Comment;
+                    comment ??= string.Empty;
+
+                    AddKeyValuePair(culture, key, value,comment);
                 }
             }
             catch

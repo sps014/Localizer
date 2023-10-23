@@ -9,6 +9,8 @@ namespace Localizer.Core.Model;
 public record ResxKeyValueCollection : IEnumerable<KeyValuePair<string, string?>>
 {
     private Dictionary<string, string?> KeyValuePairs = new();
+    private Dictionary<string, string?> KeyCommentPairs = new();
+
     public string CurrentCulture { get; init; }
     public string FileName { get; init; } = string.Empty;
 
@@ -32,6 +34,14 @@ public record ResxKeyValueCollection : IEnumerable<KeyValuePair<string, string?>
             KeyValuePairs.Add(key, value);
     }
 
+    public void AddComment(string culture,string? comment)
+    {
+        if(KeyCommentPairs.ContainsKey(culture))
+            KeyCommentPairs[culture] = comment;
+        else
+            KeyCommentPairs.Add(culture, comment);
+    }
+
     /// <summary>
     /// Deletes a key value pair from the collection
     /// </summary>
@@ -41,7 +51,11 @@ public record ResxKeyValueCollection : IEnumerable<KeyValuePair<string, string?>
         if (KeyValuePairs.ContainsKey(key))
             KeyValuePairs.Remove(key);
     }
-
+    public void DeleteComment(string culture)
+    {
+        if (KeyCommentPairs.ContainsKey(culture))
+            KeyCommentPairs[culture] = null;
+    }
 
     /// <summary>
     /// Checks if the collection contains a key
@@ -76,6 +90,15 @@ public record ResxKeyValueCollection : IEnumerable<KeyValuePair<string, string?>
     internal void Clear()
     {
         KeyValuePairs.Clear();
+    }
+    internal void ClearComment()
+    {
+        KeyCommentPairs.Clear();
+    }
+
+    public string? GetComment(string key)
+    {
+        return KeyCommentPairs.GetValueOrDefault(key);
     }
 
     public string? this[string key]

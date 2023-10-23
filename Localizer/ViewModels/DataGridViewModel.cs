@@ -61,6 +61,19 @@ internal partial class DataGridViewModel:ObservableObject
             }
 
             DataGrid.Columns.Add(CreateColumn(languageInfo, key));
+
+            key = culture == string.Empty ? "ntrKey" : culture;
+
+            key = $"{nameof(ResxEntityViewModel.CultureComments)}[{key}]";
+
+            languageInfo = $"Comment {languageInfo} ({culture})";
+
+            if (culture == string.Empty)
+            {
+                languageInfo = "Comment Neutral";
+            }
+            DataGrid.Columns.Add(CreateColumn(languageInfo, key));
+
         }
 
         var entries = ResxManager.ResxEntities;
@@ -88,7 +101,8 @@ internal partial class DataGridViewModel:ObservableObject
             {
                 [!TextBlock.TextProperty] = binding,
                 TextWrapping=TextWrapping.NoWrap,
-                TextTrimming=TextTrimming.CharacterEllipsis
+                TextTrimming=TextTrimming.CharacterEllipsis,
+                VerticalAlignment=Avalonia.Layout.VerticalAlignment.Center,
             },
             supportsRecycling: true);
 
@@ -122,15 +136,24 @@ public class ResxEntityViewModel
 {
     public string? Key { get; set; }
     public Dictionary<string, string?> CultureValues { get; set; } = new();
+    public Dictionary<string, string?> CultureComments { get; set; } = new();
+
 
     public ResxEntityViewModel(ResxEntity entity)
     {
         foreach(var culture in MainWindowViewModel.Instance!.ResxManager.Tree.Cultures)
         {
-            if(culture==string.Empty)
+            if (culture == string.Empty)
+            {
                 CultureValues.Add("ntrKey", entity.GetValue(culture));
+                CultureComments.Add("ntrKey", entity.GetComment(culture));
+            }
             else
-            CultureValues.Add(culture,entity.GetValue(culture));
+            {
+                CultureValues.Add(culture, entity.GetValue(culture));
+                CultureComments.Add(culture, entity.GetComment(culture));
+            }
+
         }
     }
 }
