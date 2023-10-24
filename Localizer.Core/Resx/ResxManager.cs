@@ -16,11 +16,15 @@ public record ResxManager
     private ConcurrentBag<ResxEntity> ConcurrentResxEntities { get; init; } = new();
     public ResxLoadDataTree Tree { get; }
 
+    public HashSet<string> Cultures => Tree.Cultures;
+
     public string SolutionPath => Tree.SolutionFolder;
 
     private int _filesRead = 0;
     private int _total = 0;
     private string currentFileName = string.Empty;
+    private readonly SemaphoreSlim semaphore = new(1, 1);
+
 
     internal System.Timers.Timer _timer = new System.Timers.Timer(TimeSpan.FromMilliseconds(100));
 
@@ -84,7 +88,7 @@ public record ResxManager
 
             foreach (var key in keys)
             {
-                var entity = new ResxEntity(key, fileNode);
+                var entity = new ResxEntity(key, fileNode,this);
                 ConcurrentResxEntities.Add(entity);
             }
         });
@@ -120,17 +124,8 @@ public record ResxManager
         DeleteEntries(fullPath);
     }
 
-    public delegate void OnResxReadProgressChangedEventHandler(object sender, ResxFileReadProgressEventArg e);
-    public delegate void OnResxReadFinishedEventHandler(object sender, ResxReadFinishedEventArgs e);
-    public delegate void OnResxReadStartedEventHandler(object sender, ResxReadStartedEventArgs e);
 
 
-    public event OnResxReadProgressChangedEventHandler? OnResxReadProgressChanged;
-    public event OnResxReadFinishedEventHandler? OnResxReadFinished;
-    public event OnResxReadStartedEventHandler? OnResxReadStarted;
-
-
-    private readonly SemaphoreSlim semaphore = new(1,1);
 
     public async void UpdateFileNode(string fullPath)
     {
@@ -164,7 +159,7 @@ public record ResxManager
         var keys = node.Keys;
         foreach (var key in keys)
         {
-            var entity = new ResxEntity(key, node);
+            var entity = new ResxEntity(key, node, this);
             ResxEntities.Add(entity);
         }
 
@@ -173,7 +168,14 @@ public record ResxManager
         semaphore.Release();
     }
 
+    public delegate void OnResxReadProgressChangedEventHandler(object sender, ResxFileReadProgressEventArg e);
+    public delegate void OnResxReadFinishedEventHandler(object sender, ResxReadFinishedEventArgs e);
+    public delegate void OnResxReadStartedEventHandler(object sender, ResxReadStartedEventArgs e);
     public delegate void ResxFIleRefreshHandler(string name);
 
+
+    public event OnResxReadProgressChangedEventHandler? OnResxReadProgressChanged;
+    public event OnResxReadFinishedEventHandler? OnResxReadFinished;
+    public event OnResxReadStartedEventHandler? OnResxReadStarted;
     public event ResxFIleRefreshHandler? OnResxRefresh;
 }

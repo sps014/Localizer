@@ -5,7 +5,7 @@ namespace Localizer.Core.Model;
 
 public class ResxNodeEntry : IEnumerable<KeyValuePair<string, ResxKeyValueCollection>>
 {
-    private ConcurrentDictionary<string, ResxKeyValueCollection> culturedKeyValues = new(); //culture -> localized value of culture
+    private ConcurrentDictionary<string, ResxKeyValueCollection> culturedKeyValues = new(); //culture -> localized value,comment of culture
 
     public ResxFileSystemLeafNode LeafNode { get; init; }
 
@@ -97,6 +97,28 @@ public class ResxNodeEntry : IEnumerable<KeyValuePair<string, ResxKeyValueCollec
         }
         return null;
     }
+    public void SetValue(string key,string? value,string? culture)
+    {
+        if(culture is null)
+            culture = string.Empty;
+
+        if(culturedKeyValues.ContainsKey(culture))
+        {
+            if(culturedKeyValues.ContainsKey(culture))
+            {
+                culturedKeyValues[culture][key] = value;
+            }
+            else
+                culturedKeyValues[culture].Add(key, value);
+        }
+    }
+    public void AddUpdateOrDeleteKey(string key,KeyChangeOperationType type,string? newKey=null)
+    {
+        foreach(var culture in culturedKeyValues.Keys)
+        {
+            culturedKeyValues[culture].AddUpdateOrDeleteKey(key, type,newKey);
+        }
+    }
     public string? GetComment(string key,string? culture)
     {
         if (culture is null)
@@ -172,4 +194,11 @@ public class ResxNodeEntry : IEnumerable<KeyValuePair<string, ResxKeyValueCollec
         }
     }
 
+}
+
+public enum KeyChangeOperationType
+{
+    Add,
+    Update,
+    Delete
 }

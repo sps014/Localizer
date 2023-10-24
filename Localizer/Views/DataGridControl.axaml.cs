@@ -21,4 +21,11 @@ public partial class DataGridControl : UserControl
     {
         e.Row.Header = (e.Row.GetIndex() + 1).ToString();
     }
+
+
+
+    private void DataGrid_CellEditEnding(object? sender, Avalonia.Controls.DataGridCellEditEndingEventArgs e)
+    {
+        var cell = dataGrid.SelectedItem as DataGridCell;
+    }
 }

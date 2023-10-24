@@ -7,7 +7,7 @@
 			 x:DataType="vm:DataGridViewModel"
              x:Class="Localizer.DataGridControl">
 	<DataGrid Name="dataGrid" ItemsSource="{Binding Source}" CanUserReorderColumns="True"
-			  HeadersVisibility="All"
+			  HeadersVisibility="All" CellEditEnding="DataGrid_CellEditEnding"
 			  CanUserResizeColumns="True" CanUserSortColumns="True" LoadingRow="AddRowNumbers">
 	</DataGrid>
 </UserControl>

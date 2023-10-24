@@ -101,6 +101,25 @@ public record ResxKeyValueCollection : IEnumerable<KeyValuePair<string, string?>
         return KeyCommentPairs.GetValueOrDefault(key);
     }
 
+    internal void AddUpdateOrDeleteKey(string key, KeyChangeOperationType type,string? newKey)
+    {
+        if (type == KeyChangeOperationType.Delete)
+        {
+            KeyValuePairs.Remove(key);
+        }
+        else if (type == KeyChangeOperationType.Update)
+        {
+            var previousValue = KeyValuePairs[key];
+            KeyValuePairs.Remove(key);
+            newKey ??= string.Empty;
+            KeyValuePairs.Add(newKey, previousValue);
+        }
+        else
+        {
+            KeyValuePairs.Add(key,string.Empty);
+        }
+    }
+
     public string? this[string key]
     {
         get => KeyValuePairs.GetValueOrDefault(key, null);
