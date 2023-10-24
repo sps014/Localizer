@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:vm="using:Localizer.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="Localizer.StartupPageWindow" x:DataType="vm:AppSettings"
+        x:Class="Localizer.StartupPageWindow" x:DataType="vm:AppSettings" MinWidth="700" MinHeight="400"
         Background="Transparent" ExtendClientAreaToDecorationsHint="True">
 
 	<Window.Styles>
@@ -14,24 +14,25 @@
 	</Window.Styles>
 
 	<Grid Margin="10" RowDefinitions="Auto,*">
-		<StackPanel Orientation="Vertical">
+		<Grid RowDefinitions="Auto,Auto,Auto">
 			<Label Content="Localizer" Margin="10" FontSize="28"/>
-			<Label Content="Open Recent" Margin="10" FontSize="16"/>
-			<StackPanel Orientation="Horizontal">
+			<Label Content="Open Recent" Margin="10" FontSize="16" Grid.Row="1"/>
+			<Grid Grid.Row="2" ColumnDefinitions="Auto,Auto,Auto,*" HorizontalAlignment="Stretch">
 				<Label Margin="10" VerticalAlignment="Center">Search</Label>
 				
-				<AutoCompleteBox FilterMode="Contains" Width="400"
+				<AutoCompleteBox FilterMode="Contains" Width="400" Grid.Column="1"
 								 Margin="10" HorizontalAlignment="Left"
 								 x:Name="searchBox" SelectionChanged="AutoCompleteBox_SelectionChanged"/>
-				<Image Source="/Assets/search.png" Width="32" Height="32" Margin="4,0"/>
-				<Button Margin="28,0" Click="BrowseNewClicked">
+				<Image Source="/Assets/search.png" Grid.Column="2"
+					   Width="32" Height="32" Margin="4,0"/>
+				<Button Margin="28,0" Click="BrowseNewClicked" HorizontalAlignment="Right" Grid.Column="3">
 					<StackPanel Orientation="Horizontal">
 						<Image Source="/Assets/browse.png" Width="32" Height="32" Margin="4,0"/>
 						<TextBlock VerticalAlignment="Center">Browse New</TextBlock>
 					</StackPanel>
 				</Button>
-			</StackPanel>
-		</StackPanel>
+			</Grid>
+		</Grid>
 		<ListBox Grid.Row="1" Margin="10" x:Name="listView" 
 				 ItemsSource="{Binding Folders,Mode=OneWay}" Background="Transparent"
 				 SelectionMode="Single" SelectionChanged="ListBox_SelectionChanged">
