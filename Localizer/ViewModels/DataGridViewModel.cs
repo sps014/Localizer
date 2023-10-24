@@ -154,6 +154,10 @@ internal partial class DataGridViewModel:ObservableObject
         return column;
     }
 
+    internal void SaveChanges(ResxEntityViewModel? row)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 

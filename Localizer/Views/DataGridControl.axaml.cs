@@ -26,6 +26,8 @@ public partial class DataGridControl : UserControl
 
     private void DataGrid_CellEditEnding(object? sender, Avalonia.Controls.DataGridCellEditEndingEventArgs e)
     {
-        var cell = dataGrid.SelectedItem as DataGridCell;
+        var row = e.Row.DataContext as ResxEntityViewModel;
+
+        viewModel.SaveChanges(row);
     }
 }
