@@ -25,6 +25,14 @@ public record ResxFileSystemLeafNode : ResxFileSystemNodeBase
         return ResxEntry.TryGetFilePath(culture, out path);
     }
 
+    public string GetFilePathOfCulture(string culture)
+    {
+        var dir = Path.GetDirectoryName(ResxEntry.LeafNode.FullPath)!;
+        var cultureText = (culture==string.Empty?"":"."+culture) + ".resx";
+        dir = Path.Combine(dir, ResxEntry.LeafNode.NodeName+cultureText);
+        return dir;
+    }
+
     /// <summary>
     /// Adds a culture file to the current node group of resx files
     /// </summary>

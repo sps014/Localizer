@@ -34,12 +34,12 @@ public record ResxKeyValueCollection : IEnumerable<KeyValuePair<string, string?>
             KeyValuePairs.Add(key, value);
     }
 
-    public void AddComment(string culture,string? comment)
+    public void SetComment(string key,string? comment)
     {
-        if(KeyCommentPairs.ContainsKey(culture))
-            KeyCommentPairs[culture] = comment;
+        if(KeyCommentPairs.ContainsKey(key))
+            KeyCommentPairs[key] = comment;
         else
-            KeyCommentPairs.Add(culture, comment);
+            KeyCommentPairs.Add(key, comment);
     }
 
     /// <summary>
@@ -51,10 +51,10 @@ public record ResxKeyValueCollection : IEnumerable<KeyValuePair<string, string?>
         if (KeyValuePairs.ContainsKey(key))
             KeyValuePairs.Remove(key);
     }
-    public void DeleteComment(string culture)
+    public void DeleteComment(string key)
     {
-        if (KeyCommentPairs.ContainsKey(culture))
-            KeyCommentPairs[culture] = null;
+        if (KeyCommentPairs.ContainsKey(key))
+            KeyCommentPairs[key] = null;
     }
 
     /// <summary>

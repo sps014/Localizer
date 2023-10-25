@@ -43,6 +43,11 @@ public record ResxEntity
         Node.ResxEntry.SetValue(Key, value, culture);
     }
 
+    public void SetComment(string? comment,string? culture)
+    {
+        Node.ResxEntry.SetComment(Key, comment, culture);
+    }
+
     public void AddUpdateOrDeleteKey(KeyChangeOperationType type, string? newKey=null)
     {
         Node.ResxEntry.AddUpdateOrDeleteKey(Key, type, newKey);

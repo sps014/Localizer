@@ -112,7 +112,7 @@ internal partial class DataGridViewModel:ObservableObject
     string GetKeyPath(string culture, bool isComment=false)
     {
 
-        var key = culture == string.Empty ? "ntrKey" : culture;
+        var key = culture == string.Empty ? ResxEntityViewModel.NeutralKeyName : culture;
 
 
         if(isComment)
@@ -190,7 +190,9 @@ internal partial class DataGridViewModel:ObservableObject
 
     internal void SaveChanges(ResxEntityViewModel? row)
     {
-        throw new NotImplementedException();
+        if (row == null) return;
+
+        row.UpdateDiffToManager();
     }
 }
 
@@ -202,6 +204,8 @@ public record ResxEntityViewModel
     public Dictionary<string, string?> CultureValues { get; set; } = new();
     public Dictionary<string, string?> CultureComments { get; set; } = new();
 
+    public const string NeutralKeyName = "ntrKey";
+
     [JsonIgnore]
     public ResxEntity ResxEntity { get; init; }
 
@@ -212,8 +216,8 @@ public record ResxEntityViewModel
         {
             if (culture == string.Empty)
             {
-                CultureValues.Add("ntrKey", entity.GetValue(culture));
-                CultureComments.Add("ntrKey", entity.GetComment(culture));
+                CultureValues.Add(NeutralKeyName, entity.GetValue(culture));
+                CultureComments.Add(NeutralKeyName, entity.GetComment(culture));
             }
             else
             {
@@ -222,5 +226,31 @@ public record ResxEntityViewModel
             }
 
         }
+    }
+
+    public void UpdateDiffToManager()
+    {
+        if(Key != ResxEntity.Key)
+        {
+            ResxEntity.AddUpdateOrDeleteKey(KeyChangeOperationType.Update, Key);
+        }
+        else
+            foreach(var newCulture in CultureValues.Keys)
+            {
+                var culture = newCulture== NeutralKeyName?string.Empty:newCulture;
+
+                var originalVal = ResxEntity.GetValue(culture);
+
+                if(originalVal != CultureValues[newCulture])
+                    ResxEntity.SetValue(CultureValues[newCulture], culture);
+
+                var originalComment = ResxEntity.GetComment(culture);
+
+                if (originalComment != CultureComments[newCulture])
+                    ResxEntity.SetComment(CultureComments[newCulture], culture);
+
+            }
+
+
     }
 }

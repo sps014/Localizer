@@ -63,6 +63,10 @@ public class ResxResourceWriter
             }
             xmlDoc.Save(FilePath);
         }
+        else
+        {
+            AddResource(key, value, comment);
+        }
 
     }
     private void CreateNewFileIfNotExists()

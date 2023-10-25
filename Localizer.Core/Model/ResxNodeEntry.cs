@@ -9,11 +9,11 @@ public class ResxNodeEntry : IEnumerable<KeyValuePair<string, ResxKeyValueCollec
 
     public ResxFileSystemLeafNode LeafNode { get; init; }
 
-    public HashSet<string> Keys 
+    public HashSet<string> Keys
     {
         get
         {
-            if(culturedKeyValues.ContainsKey(string.Empty))
+            if (culturedKeyValues.ContainsKey(string.Empty))
             {
                 return culturedKeyValues[string.Empty].Keys.ToHashSet();
             }
@@ -22,12 +22,13 @@ public class ResxNodeEntry : IEnumerable<KeyValuePair<string, ResxKeyValueCollec
                 return new HashSet<string>();
             }
         }
-}
+    }
 
     public ResxNodeEntry(ResxFileSystemLeafNode leafNode)
     {
         LeafNode = leafNode;
     }
+
 
     public void Add(string culture, ResxKeyValueCollection keyValuePairs)
     {
@@ -39,7 +40,7 @@ public class ResxNodeEntry : IEnumerable<KeyValuePair<string, ResxKeyValueCollec
     public void Delete(string culture)
     {
         if (culturedKeyValues.ContainsKey(culture))
-            culturedKeyValues.TryRemove(culture,out var _);
+            culturedKeyValues.TryRemove(culture, out var _);
     }
     public bool ContainsCulture(string culture)
     {
@@ -57,12 +58,12 @@ public class ResxNodeEntry : IEnumerable<KeyValuePair<string, ResxKeyValueCollec
         return culturedKeyValues.GetEnumerator();
     }
 
-    public void AddKeyValuePair(string culture, string key, string? value,string? comment)
+    public void AddKeyValuePair(string culture, string key, string? value, string? comment)
     {
         if (culturedKeyValues.ContainsKey(culture))
         {
             culturedKeyValues[culture].Add(key, value);
-            culturedKeyValues[culture].AddComment(key, comment);
+            culturedKeyValues[culture].SetComment(key, comment);
         }
     }
 
@@ -83,7 +84,7 @@ public class ResxNodeEntry : IEnumerable<KeyValuePair<string, ResxKeyValueCollec
         return false;
     }
 
-    public string? GetValue(string key,string? culture)
+    public string? GetValue(string key, string? culture)
     {
         if (culture is null)
             culture = string.Empty;
@@ -97,29 +98,37 @@ public class ResxNodeEntry : IEnumerable<KeyValuePair<string, ResxKeyValueCollec
         }
         return null;
     }
-    public void SetValue(string key,string? value,string? culture)
+    public void SetValue(string key, string? value, string? culture)
     {
-        if(culture is null)
+        if (culture is null)
             culture = string.Empty;
 
-        if(culturedKeyValues.ContainsKey(culture))
+        var path = LeafNode.GetFilePathOfCulture(culture);
+        ResxResourceWriter writer = new ResxResourceWriter(path);
+
+
+        if (culturedKeyValues.ContainsKey(culture))
         {
-            if(culturedKeyValues.ContainsKey(culture))
+            if (culturedKeyValues.ContainsKey(culture))
             {
                 culturedKeyValues[culture][key] = value;
+                writer.UpdateResource(key, value, culturedKeyValues[culture].GetComment(key));
             }
             else
+            {
                 culturedKeyValues[culture].Add(key, value);
+                writer.AddResource(key, value, culturedKeyValues[culture].GetComment(key));
+            }
         }
     }
-    public void AddUpdateOrDeleteKey(string key,KeyChangeOperationType type,string? newKey=null)
+    public void AddUpdateOrDeleteKey(string key, KeyChangeOperationType type, string? newKey = null)
     {
-        foreach(var culture in culturedKeyValues.Keys)
+        foreach (var culture in culturedKeyValues.Keys)
         {
-            culturedKeyValues[culture].AddUpdateOrDeleteKey(key, type,newKey);
+            culturedKeyValues[culture].AddUpdateOrDeleteKey(key, type, newKey);
         }
     }
-    public string? GetComment(string key,string? culture)
+    public string? GetComment(string key, string? culture)
     {
         if (culture is null)
             culture = string.Empty;
@@ -134,8 +143,22 @@ public class ResxNodeEntry : IEnumerable<KeyValuePair<string, ResxKeyValueCollec
         return null;
 
     }
+    public void SetComment(string key, string? comment, string? culture = null)
+    {
+        if (culture is null)
+            culture = string.Empty;
 
-    public bool TryGetValue(string key,string? culture,out string? value)
+        var path = LeafNode.GetFilePathOfCulture(culture);
+        ResxResourceWriter writer = new ResxResourceWriter(path);
+
+        if (culturedKeyValues.ContainsKey(culture))
+        {
+            culturedKeyValues[culture].SetComment(key, comment);
+            writer.UpdateResource(key, culturedKeyValues[culture][key],comment);
+        }
+    }
+
+    public bool TryGetValue(string key, string? culture, out string? value)
     {
         var val = GetValue(key, culture);
         if (val is null)
@@ -149,7 +172,7 @@ public class ResxNodeEntry : IEnumerable<KeyValuePair<string, ResxKeyValueCollec
 
     public Task ReadFileOfCulture(string? culture = null)
     {
-        return Task.Run(() => 
+        return Task.Run(() =>
         {
             if (culture is null)
                 culture = string.Empty;
@@ -158,7 +181,7 @@ public class ResxNodeEntry : IEnumerable<KeyValuePair<string, ResxKeyValueCollec
 
             if (path is null)
                 return;
-            
+
             try
             {
                 var resxReader = new ResxResourceReader(path);
@@ -176,7 +199,7 @@ public class ResxNodeEntry : IEnumerable<KeyValuePair<string, ResxKeyValueCollec
                     var comment = entry.Comment;
                     comment ??= string.Empty;
 
-                    AddKeyValuePair(culture, key, value,comment);
+                    AddKeyValuePair(culture, key, value, comment);
                 }
             }
             catch

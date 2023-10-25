@@ -43,7 +43,7 @@ public class ResxFileWatcher
 
     private void OnChanged(object sender, FileSystemEventArgs e)
     {
-        ResxManager?.UpdateFileNode(e.FullPath);
+       // ResxManager?.UpdateFileNode(e.FullPath);
     }
 
     private void OnCreated(object sender, FileSystemEventArgs e)
