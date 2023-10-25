@@ -125,7 +125,13 @@ public class ResxNodeEntry : IEnumerable<KeyValuePair<string, ResxKeyValueCollec
     {
         foreach (var culture in culturedKeyValues.Keys)
         {
+            var path = LeafNode.GetFilePathOfCulture(culture);
+            ResxResourceWriter writer = new ResxResourceWriter(path);
+
             culturedKeyValues[culture].AddUpdateOrDeleteKey(key, type, newKey);
+
+            if(type == KeyChangeOperationType.Delete)
+                writer.DeleteResource(key);
         }
     }
     public string? GetComment(string key, string? culture)

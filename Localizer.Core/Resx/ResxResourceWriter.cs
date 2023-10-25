@@ -201,4 +201,16 @@ public class ResxResourceWriter
         File.WriteAllText(FilePath, emptyXml);
         
     }
+
+    internal void DeleteResource(string key)
+    {
+        var elementToUpdate = xmlDoc.Descendants("data")
+                            .FirstOrDefault(el => el.Attribute("name")?.Value == key);
+
+        if (elementToUpdate != null)
+        {
+            elementToUpdate.Remove();
+            xmlDoc.Save(FilePath);
+        }
+    }
 }

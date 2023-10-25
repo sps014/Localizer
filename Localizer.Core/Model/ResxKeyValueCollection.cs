@@ -1,5 +1,7 @@
 using System.Collections;
+using System.Text.RegularExpressions;
 using Localizer.Core.Helpers;
+using Localizer.Core.Resx;
 
 namespace Localizer.Core.Model;
 
