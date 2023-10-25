@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
@@ -49,7 +52,7 @@ internal partial class DataGridViewModel:ObservableObject
     {
         LoadEntries();
     }
-    void LoadEntries()
+    async void LoadEntries()
     {
 
         DataGrid!.Columns.Add(CreateColumn(nameof(ResxEntityViewModel.Key)));
@@ -66,13 +69,22 @@ internal partial class DataGridViewModel:ObservableObject
         }
 
         var entries = ResxManager.ResxEntities;
-        foreach (var entry in entries)
+        var concurrentBag = new ConcurrentBag<ResxEntityViewModel>();
+
+        await Parallel.ForEachAsync(entries,new ParallelOptions()
         {
-            Source.Add(new ResxEntityViewModel(entry)
+            MaxDegreeOfParallelism = Environment.ProcessorCount
+        }, async (item, token) =>
+        {
+            concurrentBag.Add(new ResxEntityViewModel(item)
             {
-                Key = entry.Key,
+                Key = item.Key,
             });
-        }
+        });
+
+        Source = new ObservableCollection<ResxEntityViewModel>(concurrentBag);
+        //File.WriteAllText("test.json", System.Text.Json.JsonSerializer.Serialize(Source));
+
     }
 
     string GetKeyPath(string culture, bool isComment=false)
@@ -162,11 +174,13 @@ internal partial class DataGridViewModel:ObservableObject
 
 
 
-public class ResxEntityViewModel
+public record ResxEntityViewModel
 {
     public string? Key { get; set; }
     public Dictionary<string, string?> CultureValues { get; set; } = new();
     public Dictionary<string, string?> CultureComments { get; set; } = new();
+
+    [JsonIgnore]
     public ResxEntity ResxEntity { get; init; }
 
     public ResxEntityViewModel(ResxEntity entity)

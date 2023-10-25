@@ -6,7 +6,16 @@ namespace Localizer.Core.Resx;
 public class ResxResourceReader:IEnumerable<ResxResourceReader.ResxRecord>
 {
     private readonly Dictionary<string, ResxRecord> _records = new();
-    
+    private static readonly XName SpaceAttributeName = XNamespace.Xml + "space";
+    private const string Preserve = "preserve";
+
+    private bool IsStringType(XElement element)
+    {
+        // Check if the "xml:space" attribute exists and its value is "preserve"
+        var spaceAttribute = element.Attribute(SpaceAttributeName);
+        return spaceAttribute != null && spaceAttribute.Value== Preserve;
+    }
+
     public ResxResourceReader(string path)
     { 
         Stream s = File.OpenRead(path);
@@ -18,7 +27,7 @@ public class ResxResourceReader:IEnumerable<ResxResourceReader.ResxRecord>
             string? value = element.Element("value")?.Value;
             string? comment = element.Element("comment")?.Value;
 
-            if(key is null)
+            if(key is null ||!IsStringType(element) || key.StartsWith(">>"))
                 continue;
             
             var rec = new ResxRecord(key, value, comment);
