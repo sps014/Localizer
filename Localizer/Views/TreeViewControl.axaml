@@ -19,7 +19,17 @@
 					  AutoScrollToSelectedItem="True">
 				<TreeView.ItemTemplate>
 					<TreeDataTemplate ItemsSource="{Binding ChildrenCollection}">
-						<Grid>
+						<Grid Background="Transparent">
+							<Grid.ContextMenu>
+								<ContextMenu>
+									<Menu Tapped="Menu_Tapped">
+										<StackPanel Orientation="Horizontal">
+											<Image Height="20" Width="20" Source="/Assets/load_cur.png"/>
+											<TextBlock Text="Display Entries" VerticalAlignment="Center"/>
+										</StackPanel>
+									</Menu>
+								</ContextMenu>
+							</Grid.ContextMenu>
 							<StackPanel IsVisible="{Binding IsSimpleFolderNodeFileNode}"
 										Orientation="Horizontal" >
 								<Image Source="/Assets/folder.png" Width="20" Height="20"></Image>

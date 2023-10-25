@@ -15,6 +15,7 @@ using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Localizer.Core.Helpers;
+using Localizer.Core.Model;
 using Localizer.Core.Resx;
 using Localizer.Events;
 
@@ -30,11 +31,32 @@ internal partial class DataGridViewModel:ObservableObject
 
     public required DataGrid? DataGrid { get; set; }
 
+    private ObservableCollection<ResxEntityViewModel> AllEntries= new ObservableCollection<ResxEntityViewModel>();
+
     public DataGridViewModel()
     {
         ResxManager = MainWindowViewModel.Instance!.ResxManager;
         ResxManager.OnResxReadFinished += ResxManager_OnResxReadFinished;
         EventBus.Instance.Subscribe<TableColmnVisibilityChangeEvent>(OnLanguageColumnVisiblityChanged);
+        EventBus.Instance.Subscribe<TreeRequestsLoadDisplayEntryEvent>(LoadDisplayItemForNode);
+    }
+
+    private void LoadDisplayItemForNode(TreeRequestsLoadDisplayEntryEvent e)
+    {
+        if(e.Node == null) return;
+
+        //if root node 
+        if (e.Node == ResxManager.Tree.Root)
+            Source = AllEntries;
+
+        var childNodes = e.Node.GetAllChildren().OfType<ResxFileSystemLeafNode>().ToHashSet();
+
+        var newSource = AllEntries.Where(x => childNodes.Contains(x.ResxEntity.Node));
+
+        if (!newSource.Any())
+            return;
+
+        Source = new ObservableCollection<ResxEntityViewModel>(newSource);
     }
 
     public void OnLanguageColumnVisiblityChanged(TableColmnVisibilityChangeEvent e)
@@ -82,7 +104,7 @@ internal partial class DataGridViewModel:ObservableObject
             });
         });
 
-        Source = new ObservableCollection<ResxEntityViewModel>(concurrentBag);
+        AllEntries = Source = new ObservableCollection<ResxEntityViewModel>(concurrentBag);
         //File.WriteAllText("test.json", System.Text.Json.JsonSerializer.Serialize(Source));
 
     }
