@@ -20,12 +20,28 @@
 				<TreeView.ItemTemplate>
 					<TreeDataTemplate ItemsSource="{Binding ChildrenCollection}">
 						<Grid>
-						<TextBlock Text="{Binding NodeName}"/>
-						<TextBlock Text="{Binding NodeName}" Foreground="Yellow"
-								   IsVisible="{Binding IsCSharpProjectDirectory}"/>
-						<TextBlock Text="{Binding NodeName}" 
-								   IsVisible="{Binding IsLeafResXFileNode,Mode=OneWay}"
-								   Foreground="DodgerBlue"/>
+							<StackPanel IsVisible="{Binding IsSimpleFolderNodeFileNode}"
+										Orientation="Horizontal" >
+								<Image Source="/Assets/folder.png" Width="20" Height="20"></Image>
+								<TextBlock Text="{Binding NodeName}"
+										   Margin="10" VerticalAlignment="Center"/>
+							</StackPanel>
+
+
+							<StackPanel IsVisible="{Binding IsCSharpProjectDirectory}"
+										Orientation="Horizontal">
+								<Image Source="/Assets/csproj.png" Width="20" Height="20"></Image>
+								<TextBlock Text="{Binding NodeName}"
+										   Margin="10" VerticalAlignment="Center"/>
+							</StackPanel>
+
+							<StackPanel Orientation="Horizontal"
+										IsVisible="{Binding IsLeafResXFileNode,Mode=OneWay}">
+								<Image Source="/Assets/resx.png" Width="20" Height="20"></Image>
+								<TextBlock Text="{Binding NodeName}"
+										   Margin="10" VerticalAlignment="Center"/>
+							</StackPanel>
+						
 						</Grid>
 					</TreeDataTemplate>
 				</TreeView.ItemTemplate>

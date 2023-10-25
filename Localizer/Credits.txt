@@ -1,0 +1,3 @@
+﻿Icons->
+		https://www.iconfinder.com/icons/199317/resx_file_extension_format_icon
+		https://icons8.com/icons

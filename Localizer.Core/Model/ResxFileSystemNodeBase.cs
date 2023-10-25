@@ -64,6 +64,7 @@ public abstract record class ResxFileSystemNodeBase
     /// </summary>
     /// <returns>true if leaf node</returns>
     public bool IsLeafResXFileNode=>this is ResxFileSystemLeafNode;
+    public bool IsSimpleFolderNodeFileNode => this is ResxFileSystemFolderNode && !((ResxFileSystemFolderNode)this).IsCsProjNode;
     public bool IsCSharpProjectDirectory => this is ResxFileSystemFolderNode && ((ResxFileSystemFolderNode)this).IsCsProjNode;
 
     /// <summary>
