@@ -28,8 +28,8 @@ public partial class MainWindow : Window
         }
         else
         {
-            window.TransparencyLevelHint = new[] { WindowTransparencyLevel.None };
-            window.Background = new SolidColorBrush(Colors.Black);
+            window.TransparencyLevelHint = new[] { WindowTransparencyLevel.AcrylicBlur };
+            window.Background = new SolidColorBrush(Colors.Transparent);
         }
 
     }
