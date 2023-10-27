@@ -128,10 +128,22 @@ public class ResxNodeEntry : IEnumerable<KeyValuePair<string, ResxKeyValueCollec
             var path = LeafNode.GetFilePathOfCulture(culture);
             ResxResourceWriter writer = new ResxResourceWriter(path);
 
-            culturedKeyValues[culture].AddUpdateOrDeleteKey(key, type, newKey);
-
-            if(type == KeyChangeOperationType.Delete)
+            if (type == KeyChangeOperationType.Add)
+            {
+                culturedKeyValues[culture].AddKey(key);
+                writer.UpdateResource(key, culturedKeyValues[culture][key], culturedKeyValues[culture].GetComment(key));
+            }
+            else if (type == KeyChangeOperationType.Update)
+            {
                 writer.DeleteResource(key);
+                writer.UpdateResource(newKey, culturedKeyValues[culture][key], culturedKeyValues[culture].GetComment(key));
+                culturedKeyValues[culture].UpdateKey(key, newKey);
+            }
+            if (type == KeyChangeOperationType.Delete)
+            {
+                culturedKeyValues[culture].DeleteKey(key);
+                writer.DeleteResource(key);
+            }
         }
     }
     public string? GetComment(string key, string? culture)
