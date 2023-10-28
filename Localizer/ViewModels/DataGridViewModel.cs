@@ -39,6 +39,25 @@ internal partial class DataGridViewModel:ObservableObject
         ResxManager.OnResxReadFinished += ResxManager_OnResxReadFinished;
         EventBus.Instance.Subscribe<TableColmnVisibilityChangeEvent>(OnLanguageColumnVisiblityChanged);
         EventBus.Instance.Subscribe<TreeRequestsLoadDisplayEntryEvent>(LoadDisplayItemForNode);
+        EventBus.Instance.Subscribe<RequestSourceDataEvent>(SendDataToRequester);
+        EventBus.Instance.Subscribe<DataGridSelectionChangeEvent>(ChangeSelectionToIndex);
+
+    }
+
+    private void ChangeSelectionToIndex(DataGridSelectionChangeEvent e)
+    {
+        if(Source==null)
+            return;
+
+        if (e.Index > Source.Count)
+            return;
+
+        DataGrid.ScrollIntoView(Source[e.Index],null);
+    }
+
+    private void SendDataToRequester(RequestSourceDataEvent e)
+    {
+        e.DataInGrid = Source;
     }
 
     private void LoadDisplayItemForNode(TreeRequestsLoadDisplayEntryEvent e)

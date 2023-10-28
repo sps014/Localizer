@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
@@ -55,9 +56,19 @@ public partial class ToolbarControl : UserControl
         EventBus.Instance.Publish(new TableColmnVisibilityChangeEvent(dt));
     }
 
-    private void CheckBox_DoubleTapped(object? sender, Avalonia.Input.TappedEventArgs e)
+    private void CheckBox_DoubleTapped(object? sender, TappedEventArgs e)
     {
         PublishLanguageChanged(sender);
+    }
+
+    private void search_Click(object? sender, RoutedEventArgs e)
+    {
+        FindReplaceWindow fnd = new FindReplaceWindow();
+        if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            fnd.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            fnd.ShowDialog(desktop.Windows.First(x=>x is MainWindow));
+        }
     }
 }
 

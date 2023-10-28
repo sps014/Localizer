@@ -1,0 +1,31 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:vm="using:Localizer.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="450" d:DesignHeight="250"
+		Width="600" Height="150" MaxHeight="150" MinHeight="150"
+        x:Class="Localizer.FindReplaceWindow" Background="Transparent"
+		ExtendClientAreaToDecorationsHint="True" CanResize="False"
+		ExtendClientAreaChromeHints="NoChrome" x:DataType="vm:FindReplaceViewModel"
+        Title="FindReplaceWindow">
+	<Grid RowDefinitions="Auto,Auto,Auto" Margin="10,30">
+		<Grid ColumnDefinitions="*,Auto" Margin="10">
+			<TextBox Watermark="Find" TabIndex="1"/>
+			<Button Grid.Column="1" Command="{Binding FindCommand}" Margin="10,0">Find Next</Button>
+		</Grid>
+		<Grid Grid.Row="1" Margin="10" ColumnDefinitions="*,Auto,Auto">
+			<TextBox Watermark="Replace"/>
+			<Button Grid.Column="1" Margin="10,0">Replace</Button>
+			<Button Grid.Column="2">Replace All</Button>
+		</Grid>
+		<Grid Grid.Row="2" Margin="10" ColumnDefinitions="Auto,*,Auto">
+			<TextBlock VerticalAlignment="Center">Find in </TextBlock>
+			<ComboBox Grid.Column="1" MinWidth="100" ItemsSource="{Binding ColumnNames}"
+					  SelectedIndex="{Binding Selection}"
+					  x:Name="findScopeCombo" Margin="10,0"/>
+			<Button Grid.Column="2" x:Name="closeBtn" HorizontalAlignment="Right"
+					Click="closeBtn_Click">Close</Button>
+		</Grid>
+	</Grid>
+</Window>
