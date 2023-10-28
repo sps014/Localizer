@@ -49,10 +49,12 @@ internal partial class DataGridViewModel:ObservableObject
         if(Source==null)
             return;
 
-        if (e.Index > Source.Count)
+        if (e.Index >= Source.Count)
             return;
 
-        DataGrid.ScrollIntoView(Source[e.Index],null);
+        DataGrid.SelectedIndex = e.Index;
+        DataGrid.ScrollIntoView(Source[e.Index], null);
+
     }
 
     private void SendDataToRequester(RequestSourceDataEvent e)
