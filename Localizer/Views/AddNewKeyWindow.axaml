@@ -1,0 +1,18 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="100"
+		Height="140" Width="500" Title="Add Key"
+        x:Class="Localizer.AddNewKeyWindow" Background="Transparent" CanResize="False"
+		ExtendClientAreaToDecorationsHint="True" ExtendClientAreaChromeHints="NoChrome">
+	<Grid>
+		<Grid Margin="10,40" RowDefinitions="Auto,Auto">
+			<TextBox Watermark="Key name" x:Name="keyBox" Margin="10"/>
+			<Grid  ColumnDefinitions="*,Auto" Margin="10" Grid.Row="1">
+				<Button x:Name="OkBtn" Click="Button_Click">Ok</Button>
+				<Button x:Name="CancelBtn" Click="Button_Click_1" Grid.Column="2">Close</Button>
+			</Grid>
+		</Grid>
+	</Grid>
+</Window>

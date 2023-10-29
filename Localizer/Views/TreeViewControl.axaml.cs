@@ -1,5 +1,7 @@
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -58,7 +60,16 @@ public partial class TreeViewControl : UserControl
         if (dtc == null)
             return;
 
-        EventBus.Instance.Publish(new AddNewKeyToResourceEvent("NewKe123z", dtc));
+        AddNewKeyWindow addNewKeyWindow = new AddNewKeyWindow()
+        {
+            Node =dtc
+        };
+
+        if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            addNewKeyWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            addNewKeyWindow.ShowDialog(desktop.Windows.First(x => x is MainWindow));
+        }
 
     }
         

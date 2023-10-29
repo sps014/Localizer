@@ -43,4 +43,10 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Localizer.Core\Localizer.Core.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Views\AddNewKeyWindow.axaml.cs">
+	    <DependentUpon>AddNewKeyWindow.axaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
 </Project>
