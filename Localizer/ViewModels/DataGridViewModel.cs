@@ -41,7 +41,26 @@ internal partial class DataGridViewModel:ObservableObject
         EventBus.Instance.Subscribe<TreeRequestsLoadDisplayEntryEvent>(LoadDisplayItemForNode);
         EventBus.Instance.Subscribe<RequestSourceDataEvent>(SendDataToRequester);
         EventBus.Instance.Subscribe<DataGridSelectionChangeEvent>(ChangeSelectionToIndex);
+        EventBus.Instance.Subscribe<AddNewKeyToResourceEvent>(AddNewKeyToResource);
 
+    }
+    private void AddNewKeyToResource(AddNewKeyToResourceEvent e)
+    {
+        if (e.Key == null || e.GetType == null)
+            return;
+
+        var node = e.Node.AddNewKey(e.Key,ResxManager);
+        var nodevm = new ResxEntityViewModel(node)
+        {
+            Key = node.Key
+        };
+
+        if(Source!=AllEntries)
+            Source.Add(nodevm);
+
+        AllEntries.Add(nodevm);
+
+        EventBus.Instance.Publish(new DataGridSelectionChangeEvent(Source.IndexOf(nodevm)));
     }
 
     private void ChangeSelectionToIndex(DataGridSelectionChangeEvent e)
@@ -111,7 +130,7 @@ internal partial class DataGridViewModel:ObservableObject
 
         }
 
-        var entries = ResxManager.ResxEntities;
+        var entries = ResxManager.ResxEntities.AsParallel().OrderBy(x=>x.Key);
         var concurrentBag = new ConcurrentBag<ResxEntityViewModel>();
 
         await Parallel.ForEachAsync(entries,new ParallelOptions()
@@ -221,7 +240,7 @@ internal partial class DataGridViewModel:ObservableObject
 
 public record ResxEntityViewModel
 {
-    public string? Key { get; set; }
+    public required string? Key { get; set; }
     public Dictionary<string, string?> CultureValues { get; set; } = new();
     public Dictionary<string, string?> CultureComments { get; set; } = new();
 

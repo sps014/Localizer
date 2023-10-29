@@ -23,9 +23,18 @@
 							<Grid.ContextMenu>
 								<ContextMenu>
 									<Menu Tapped="Menu_Tapped">
+											<StackPanel Orientation="Horizontal">
+												<Image Height="20" Width="20" Source="/Assets/load.png"
+													   Margin="10,0"/>
+												<TextBlock>Display this Entries</TextBlock>
+											</StackPanel>
+									</Menu>
+									<Menu IsVisible="{Binding IsLeafResXFileNode,Mode=OneWay}"
+										  Tapped="addNewTapped">
 										<StackPanel Orientation="Horizontal">
-											<Image Height="20" Width="20" Source="/Assets/load_cur.png"/>
-											<TextBlock Text="Display Entries" VerticalAlignment="Center"/>
+											<Image Height="20" Width="20"  Margin="10,0"
+												   Source="/Assets/add.png"/>
+											<TextBlock>Add New Key</TextBlock>
 										</StackPanel>
 									</Menu>
 								</ContextMenu>
@@ -51,7 +60,6 @@
 								<TextBlock Text="{Binding NodeName}"
 										   Margin="10" VerticalAlignment="Center"/>
 							</StackPanel>
-						
 						</Grid>
 					</TreeDataTemplate>
 				</TreeView.ItemTemplate>

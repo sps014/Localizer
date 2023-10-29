@@ -23,6 +23,9 @@ public class ResxResourceWriter
 
     public void AddResource(string key,string? value,string? comment=null)
     {
+        if (key == null)
+            return;
+
         XElement newElement;
         if(comment != null)
         {

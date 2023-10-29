@@ -12,7 +12,7 @@ namespace Localizer.Core.Resx;
 
 public record ResxManager
 {
-    public ObservableCollection<ResxEntity> ResxEntities { get; private set; } = new();
+    public ObservableCollection<ResxEntity> ResxEntities { get; internal set; } = new();
     private ConcurrentBag<ResxEntity> ConcurrentResxEntities { get; init; } = new();
     public ResxLoadDataTree Tree { get; }
 

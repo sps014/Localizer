@@ -3,7 +3,10 @@ namespace Localizer.Core.Model;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Reflection.Metadata.Ecma335;
+using System.Text.RegularExpressions;
 using Localizer.Core.Helpers;
+using Localizer.Core.Resx;
+
 public record ResxFileSystemLeafNode : ResxFileSystemNodeBase
 {
     public ResxNodeEntry ResxEntry { get; init; }
@@ -63,5 +66,13 @@ public record ResxFileSystemLeafNode : ResxFileSystemNodeBase
     public async Task UpdateFile(string fullPath)
     {
         await ResxEntry.ReadFileOfCulture(fullPath.GetCultureName());
+    }
+
+    public ResxEntity AddNewKey(string key,ResxManager manager)
+    {
+        ResxEntry.AddUpdateOrDeleteKey(key, KeyChangeOperationType.Add);
+        var entity = new ResxEntity(key, this, manager);
+        manager.ResxEntities.Add(entity);
+        return entity;
     }
 }

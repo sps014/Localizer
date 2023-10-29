@@ -48,4 +48,18 @@ public partial class TreeViewControl : UserControl
 
         EventBus.Instance.Publish(new TreeRequestsLoadDisplayEntryEvent(dtc));
     }
+    private void addNewTapped(object? sender, TappedEventArgs e)
+    {
+        var dt = (sender as Menu);
+        if (dt == null)
+            return;
+        var dtc = dt.DataContext as ResxFileSystemLeafNode;
+
+        if (dtc == null)
+            return;
+
+        EventBus.Instance.Publish(new AddNewKeyToResourceEvent("NewKe123z", dtc));
+
+    }
+        
 }
