@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -36,6 +37,37 @@ namespace Localizer.ViewModels
 
         [ObservableProperty]
         private bool isReplaceMode = false;
+
+       
+
+        private static bool IsRegexMode = false;
+
+        public bool IsRegex
+        {
+            get
+            {
+                return IsRegexMode;
+            }
+            set
+            {
+                SetProperty(ref IsRegexMode, value);
+                ResetIndex();
+            }
+        }
+        private static bool IsIgnoreCase = true;
+
+        public bool IgnoreCase
+        {
+            get
+            {
+                return IsIgnoreCase;
+            }
+            set
+            {
+                SetProperty(ref IsIgnoreCase, value);
+                ResetIndex();
+            }
+        }
 
         public int WinHeight => IsReplaceMode ? 150 : 100;
 
@@ -92,7 +124,7 @@ namespace Localizer.ViewModels
 
         public void ResetIndex()
         {
-            subIndex = 0;
+            subIndex = -1;
         }
 
         [RelayCommand]
@@ -112,9 +144,6 @@ namespace Localizer.ViewModels
 
         (ResxEntityViewModel? item,int index) SearchColumn(int column)
         {
-
-            StringComparison comparer = StringComparison.OrdinalIgnoreCase;
-
             var data = DataInGrid;
 
             if (data == null || findStr==null)
@@ -131,7 +160,7 @@ namespace Localizer.ViewModels
                 if (column==0)
                 {
                     if (v.Key != null)
-                    if(v.Key.Contains(findStr,comparer))
+                    if(Comparer(v.Key))
                     {
                         return (v,i);
                     }
@@ -139,7 +168,7 @@ namespace Localizer.ViewModels
                     foreach(var c in v.CultureValues)
                     {
                         if (c.Value != null)
-                        if (c.Value.Contains(findStr, comparer))
+                        if (Comparer(c.Value))
                         {
                             return (v, i);
                         }
@@ -148,7 +177,7 @@ namespace Localizer.ViewModels
                 else if(column==1)
                 {
                     if (v.Key != null)
-                        if (v.Key.Contains(findStr, comparer))
+                        if (Comparer(v.Key))
                         {
                             return (v, i);
                         }
@@ -157,7 +186,7 @@ namespace Localizer.ViewModels
                 {
                     if (v.CultureValues[columnKey] != null)
                     {
-                        if (v.CultureValues[columnKey]!.Contains(findStr, comparer))
+                        if (Comparer(v.CultureValues[columnKey]!))
                         {
                             return (v, i);
                         }
@@ -166,6 +195,21 @@ namespace Localizer.ViewModels
             }
 
             return (null, -1);
+        }
+
+        private bool Comparer(string a)
+        {
+            if(IsRegex)
+            {
+                if(!IsIgnoreCase)
+                    return Regex.IsMatch(a, findStr);
+                return Regex.IsMatch(a, findStr,RegexOptions.IgnoreCase);
+
+            }
+
+            if (IsIgnoreCase)
+                return a.Contains(findStr,StringComparison.OrdinalIgnoreCase);
+            return a.Contains(findStr);
         }
 
     }

@@ -10,6 +10,7 @@ namespace Localizer.Events
     internal class DataGridSelectionChangeEvent
     {
         public int Index { get; }
+        public int ColummnSelection { get; set; }
 
         public DataGridSelectionChangeEvent(int index)
         {

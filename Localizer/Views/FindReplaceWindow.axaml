@@ -10,11 +10,16 @@
 		ExtendClientAreaChromeHints="NoChrome" x:DataType="vm:FindReplaceViewModel"
         Title="FindReplaceWindow">
 	<Grid RowDefinitions="Auto,Auto,Auto" Margin="10,30">
-		<Grid ColumnDefinitions="*,Auto,Auto" Margin="10">
+		<Grid ColumnDefinitions="*,Auto,Auto,Auto" Margin="10">
 			<TextBox Watermark="Find" Width="400" Text="{Binding FindStr}" x:Name="findBox"
 					 TextChanged="findBox_TextChanged"/>
-			<Button Grid.Column="1" Command="{Binding FindCommand}" Margin="10,0">Find Next</Button>
-			<Button Grid.Column="2" Command="{Binding FindCommand}">Regex</Button>
+			<Button Grid.Column="1" Command="{Binding FindCommand}" Margin="5,0">Find Next</Button>
+			<ToggleButton Grid.Column="2" 
+						  ToolTip.Tip="Ignore Case" Content="aA" IsChecked="{Binding IgnoreCase}">
+			</ToggleButton>
+			<ToggleButton Grid.Column="3" 
+						  ToolTip.Tip="Use Regex" Content=".*" IsChecked="{Binding IsRegex}">
+			</ToggleButton>
 		</Grid>
 		<Grid Grid.Row="1" Margin="10" ColumnDefinitions="*,Auto,Auto" IsVisible="{Binding IsReplaceMode}">
 			<TextBox Width="400" Watermark="Replace"/>
