@@ -37,5 +37,8 @@
 		<Button Height="32" Width="32" x:Name="searchBtn" Click="search_Click">
 			<Image Source="/Assets/search.png"/>
 		</Button>
+		<Button Height="32" Width="32" >
+			<Image Source="/Assets/excel.png"/>
+		</Button>
 	</StackPanel>
 </UserControl>
