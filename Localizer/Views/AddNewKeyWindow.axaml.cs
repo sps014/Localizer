@@ -23,6 +23,7 @@ public partial class AddNewKeyWindow : Window
             return;
 
         EventBus.Instance.Publish(new AddNewKeyToResourceEvent(keyBox.Text,Node));
+        this.Close();
     }
 
     private void Button_Click_1(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

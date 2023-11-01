@@ -38,6 +38,7 @@
 
 	<ItemGroup>
 	  <None Remove="Assets\clear.png" />
+	  <None Remove="Assets\cross.png" />
 	</ItemGroup>
 
 	<ItemGroup>

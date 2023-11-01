@@ -46,6 +46,10 @@ public partial class ToolbarControl : UserControl
         PublishLanguageChanged(sender);
     }
 
+    void cross_Clicked(object sender, RoutedEventArgs e)
+    {
+        EventBus.Instance.Publish(new RemoveKeyFromResourceEvent(true));
+    }
 
     void PublishLanguageChanged(object sender)
     {

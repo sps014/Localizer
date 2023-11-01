@@ -34,6 +34,9 @@
 				</Flyout>
 			</Button.Flyout>
 		</Button>
+		<Button Height="32" Width="32" Click="cross_Clicked">
+			<Image Source="/Assets/cross.png"/>
+		</Button>
 		<Button Height="32" Width="32" x:Name="searchBtn" Click="search_Click">
 			<Image Source="/Assets/search.png"/>
 		</Button>

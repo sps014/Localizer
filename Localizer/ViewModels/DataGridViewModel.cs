@@ -42,7 +42,30 @@ internal partial class DataGridViewModel:ObservableObject
         EventBus.Instance.Subscribe<RequestSourceDataEvent>(SendDataToRequester);
         EventBus.Instance.Subscribe<DataGridSelectionChangeEvent>(ChangeSelectionToIndex);
         EventBus.Instance.Subscribe<AddNewKeyToResourceEvent>(AddNewKeyToResource);
+        EventBus.Instance.Subscribe<RemoveKeyFromResourceEvent>(RemoveKeyFromResource);
 
+
+    }
+    private void RemoveKeyFromResource(RemoveKeyFromResourceEvent e)
+    {
+        if (Source == null)
+            return;
+
+        var index = DataGrid!.SelectedIndex;
+
+        if (index >= Source.Count)
+            return;
+
+        var nodevm = Source[index];
+
+        if (Source != AllEntries)
+            Source.Remove(nodevm);
+
+        AllEntries.Remove(nodevm);
+
+        nodevm.ResxEntity.AddUpdateOrDeleteKey(KeyChangeOperationType.Delete);
+
+        EventBus.Instance.Publish(new DataGridSelectionChangeEvent(index-1));
     }
     private void AddNewKeyToResource(AddNewKeyToResourceEvent e)
     {
@@ -243,6 +266,15 @@ public record ResxEntityViewModel
 
     public const string NeutralKeyName = "ntrKey";
 
+    public static string GetVmKeyName(string key)
+    {
+        return key==string.Empty ? NeutralKeyName : key;
+    }
+    public static string GetKeyNameFromVm(string vmkey)
+    {
+        return vmkey == NeutralKeyName ? string.Empty:vmkey;
+    }
+
     [JsonIgnore]
     public ResxEntity ResxEntity { get; init; }
 
@@ -251,19 +283,23 @@ public record ResxEntityViewModel
         ResxEntity = entity;
         foreach(var culture in MainWindowViewModel.Instance!.ResxManager.Tree.Cultures)
         {
-            if (culture == string.Empty)
-            {
-                CultureValues.Add(NeutralKeyName, entity.GetValue(culture));
-                CultureComments.Add(NeutralKeyName, entity.GetComment(culture));
-            }
-            else
-            {
-                CultureValues.Add(culture, entity.GetValue(culture));
-                CultureComments.Add(culture, entity.GetComment(culture));
-            }
-
+            var keyName = GetVmKeyName(culture);
+            CultureValues.Add(keyName, entity.GetValue(culture));
+            CultureComments.Add(keyName, entity.GetComment(culture));
         }
     }
+
+    public void UpdateValue(string value,string culture)
+    {
+        ResxEntity.SetValue(value, culture);
+    }
+
+    public void UpdateComment(string comment,string culture)
+    {
+        ResxEntity.SetComment(comment, culture);
+    }
+
+
 
     public void UpdateDiffToManager()
     {
@@ -274,17 +310,17 @@ public record ResxEntityViewModel
         else
             foreach(var newCulture in CultureValues.Keys)
             {
-                var culture = newCulture== NeutralKeyName?string.Empty:newCulture;
+                var culture = GetKeyNameFromVm(newCulture);
 
                 var originalVal = ResxEntity.GetValue(culture);
 
                 if(originalVal != CultureValues[newCulture])
-                    ResxEntity.SetValue(CultureValues[newCulture], culture);
+                    UpdateValue(CultureValues[newCulture]!, culture);
 
                 var originalComment = ResxEntity.GetComment(culture);
 
                 if (originalComment != CultureComments[newCulture])
-                    ResxEntity.SetComment(CultureComments[newCulture], culture);
+                    UpdateComment(CultureComments[newCulture]!, culture);
 
             }
 
