@@ -53,7 +53,7 @@ internal partial class DataGridViewModel:ObservableObject
 
         var index = DataGrid!.SelectedIndex;
 
-        if (index >= Source.Count)
+        if (index<0 || index >= Source.Count)
             return;
 
         var nodevm = Source[index];
@@ -91,7 +91,7 @@ internal partial class DataGridViewModel:ObservableObject
         if(Source==null)
             return;
 
-        if (e.Index >= Source.Count)
+        if (e.Index<0 && e.Index >= Source.Count)
             return;
 
         DataGrid.SelectedIndex = e.Index;

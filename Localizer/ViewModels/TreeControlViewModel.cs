@@ -113,6 +113,7 @@ internal partial class TreeControlViewModel:ObservableObject
 
             ExpandNodeWithPath(nodeInOriginalTree);
 
+            TreeView.AutoScrollToSelectedItem = true;
             TreeView.SelectedItem = nodeInOriginalTree;
         }
     }
