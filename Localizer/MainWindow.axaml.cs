@@ -4,6 +4,8 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Platform;
+using Localizer.Events;
+using Localizer.Helper;
 using Localizer.ViewModels;
 
 namespace Localizer;
@@ -18,6 +20,8 @@ public partial class MainWindow : Window
         InitializeComponent();
         SetThemeOfWindow(this);
         DataContext = viewModel;
+
+        EventBus.Instance.Subscribe<ReloadResourcesEvent>(ReloadResources);
     }
 
     public static void SetThemeOfWindow(Window window)
@@ -52,9 +56,25 @@ public partial class MainWindow : Window
         viewModel.LoadAsync();
     }
 
+    private void ReloadResources(ReloadResourcesEvent e)
+    {
+        if (viewModel.IsResxContentLoaded)
+        {
+            viewModel = new MainWindowViewModel(viewModel.SolutionFolder);
+            DataContext = viewModel;
+            viewModel.LoadAsync();
+        }
+    }
+
+
     protected override void OnClosing(WindowClosingEventArgs e)
     {
         base.OnClosing(e);
         viewModel.RequestCacellationOfLoadingResx();
+    }
+    protected override void OnClosed(EventArgs e)
+    {
+        //save resx files info in csproj
+        IncludeAllResxFiles.Build(viewModel.SolutionFolder);
     }
 }

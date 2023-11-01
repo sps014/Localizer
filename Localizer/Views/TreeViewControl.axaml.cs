@@ -50,6 +50,7 @@ public partial class TreeViewControl : UserControl
 
         EventBus.Instance.Publish(new TreeRequestsLoadDisplayEntryEvent(dtc));
     }
+
     private void addNewTapped(object? sender, TappedEventArgs e)
     {
         var dt = (sender as Menu);
