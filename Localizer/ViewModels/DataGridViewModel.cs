@@ -93,9 +93,6 @@ internal partial class DataGridViewModel:ObservableObject
 
         var newSource = AllEntries.Where(x => childNodes.Contains(x.ResxEntity.Node));
 
-        if (!newSource.Any())
-            return;
-
         Source = new ObservableCollection<ResxEntityViewModel>(newSource);
     }
 
