@@ -23,6 +23,23 @@ public record ResxFileSystemLeafNode : ResxFileSystemNodeBase
         ResxEntry = new(this);
     }
 
+    public string? GetProjectName()
+    {
+        var parent = Parent;
+
+        while(parent!=null)
+        {
+            if(parent is ResxFileSystemFolderNode folder)
+            {
+                if (folder.IsCsProjNode)
+                    return folder.NodeName;
+            }
+            parent = parent.Parent;
+        }
+
+        return null;
+    }
+
     public bool TryGetAbsolutePath(string culture, out string? path)
     {
         return ResxEntry.TryGetFilePath(culture, out path);

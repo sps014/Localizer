@@ -18,6 +18,7 @@ using Localizer.Core.Helpers;
 using Localizer.Core.Model;
 using Localizer.Core.Resx;
 using Localizer.Events;
+using Localizer.Helper;
 
 namespace Localizer.ViewModels;
 
@@ -43,9 +44,16 @@ internal partial class DataGridViewModel:ObservableObject
         EventBus.Instance.Subscribe<DataGridSelectionChangeEvent>(ChangeSelectionToIndex);
         EventBus.Instance.Subscribe<AddNewKeyToResourceEvent>(AddNewKeyToResource);
         EventBus.Instance.Subscribe<RemoveKeyFromResourceEvent>(RemoveKeyFromResource);
+        EventBus.Instance.Subscribe<ExportToExcelEvent>(ExportToExcel);
 
 
     }
+
+    private async void ExportToExcel(ExportToExcelEvent e)
+    {
+        await ExcelExporter.WriteToExcelAsync(Source, e.Path,ResxManager.Cultures);
+    }
+
     private void RemoveKeyFromResource(RemoveKeyFromResourceEvent e)
     {
         if (Source == null)
