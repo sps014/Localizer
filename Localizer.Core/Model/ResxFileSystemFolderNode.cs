@@ -38,7 +38,7 @@ public record class ResxFileSystemFolderNode : ResxFileSystemNodeBase
     }
     public void AddLeafFile(string fileName)
     {
-        var neutralName = fileName.GetNeutralFileName();
+        var neutralName = $"{fileName.GetNeutralFileName()}.resx";
         if (this.Children.ContainsKey(neutralName))
         {
             var node = this.Children[neutralName];
