@@ -14,6 +14,7 @@
 		</Style>
 	</UserControl.Styles>
 	<DataGrid Name="dataGrid" ItemsSource="{Binding Source}" CanUserReorderColumns="True"
+			  SelectionChanged="DataGrid_SelectionChanged"
 			  HeadersVisibility="All" CellEditEnding="DataGrid_CellEditEnding"
 			  CanUserResizeColumns="True" CanUserSortColumns="True" LoadingRow="AddRowNumbers">
 	</DataGrid>

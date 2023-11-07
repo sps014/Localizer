@@ -73,7 +73,10 @@ internal partial class DataGridViewModel:ObservableObject
 
         nodevm.ResxEntity.AddUpdateOrDeleteKey(KeyChangeOperationType.Delete);
 
-        EventBus.Instance.Publish(new DataGridSelectionChangeEvent(index-1));
+        EventBus.Instance.Publish(
+            new DataGridSelectionChangeEvent(index-1)
+        {
+        });
     }
     private void AddNewKeyToResource(AddNewKeyToResourceEvent e)
     {

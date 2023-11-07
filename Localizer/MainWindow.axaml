@@ -50,7 +50,7 @@
 						<views:DataGridControl Grid.Column="2"/>
 					</Grid>
 				</Grid>
-				<Grid Grid.Row="2" Background="Transparent" Height="32"/>
+				<views:StatusBarControl Grid.Row="2" Height="32"/>
 
 			</Grid>
 

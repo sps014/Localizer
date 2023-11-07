@@ -10,7 +10,7 @@ namespace Localizer.Events
 {
     internal class RequestSourceDataEvent
     {
-        public ObservableCollection<ResxEntityViewModel> DataInGrid { get; set; }
+        public ObservableCollection<ResxEntityViewModel>? DataInGrid { get; set; }
 
 
     }

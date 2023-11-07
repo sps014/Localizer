@@ -106,7 +106,7 @@ namespace Localizer.ViewModels
             }
         }
 
-        private ObservableCollection<ResxEntityViewModel> DataInGrid
+        private ObservableCollection<ResxEntityViewModel>? DataInGrid
         {
             get
             {
@@ -118,7 +118,7 @@ namespace Localizer.ViewModels
 
         internal FindReplaceViewModel()
         {
-            ResxManager = MainWindowViewModel.Instance.ResxManager;
+            ResxManager = MainWindowViewModel.Instance!.ResxManager;
         }
         private int subIndex =-1 ;
 
