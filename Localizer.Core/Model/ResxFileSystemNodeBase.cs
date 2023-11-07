@@ -107,7 +107,8 @@ public abstract record class ResxFileSystemNodeBase
     {
         get
         {
-            return new ObservableCollection<ResxFileSystemNodeBase>(Children.Values);
+            //folders first
+            return new ObservableCollection<ResxFileSystemNodeBase>(Children.Values.OrderByDescending(x=>x is ResxFileSystemFolderNode));
         }
     }
 }

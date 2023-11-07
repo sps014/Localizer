@@ -54,7 +54,7 @@ public class ResxResourceWriter
 
         if (elementToUpdate != null)
         {
-            elementToUpdate.Element("value")!.Value = value;
+            elementToUpdate.Element("value")!.Value = value??string.Empty;
             var commentElement = elementToUpdate.Element("comment");
             if (commentElement != null && comment!=null)
             {

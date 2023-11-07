@@ -6,6 +6,13 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 x:DataType="vm:DataGridViewModel"
              x:Class="Localizer.DataGridControl">
+	<UserControl.Styles>
+		<Style Selector="DataGridCell">
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="BorderBrush" Value="Black"/>
+			<Setter Property="Padding" Value="2"/>
+		</Style>
+	</UserControl.Styles>
 	<DataGrid Name="dataGrid" ItemsSource="{Binding Source}" CanUserReorderColumns="True"
 			  HeadersVisibility="All" CellEditEnding="DataGrid_CellEditEnding"
 			  CanUserResizeColumns="True" CanUserSortColumns="True" LoadingRow="AddRowNumbers">

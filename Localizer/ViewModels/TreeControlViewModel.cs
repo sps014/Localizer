@@ -146,7 +146,14 @@ internal partial class TreeControlViewModel:ObservableObject
 
     public static ResxFileSystemNodeBase? NodeFromNodeKeys(ResxFileSystemNodeBase node)
     {
-        var pathparts = node.NodePathPartsFromParent;
+
+        var pathparts = node.NodePathPartsFromParent.ToList();
+
+        if(node is ResxFileSystemLeafNode)
+        {
+            pathparts[^1] = pathparts[^1]+".resx";
+        }
+
         ResxFileSystemNodeBase curNode = MainWindowViewModel.Instance!.ResxManager.Tree.Root!;
 
         foreach (var path in  pathparts)

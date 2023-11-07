@@ -230,6 +230,7 @@ internal partial class DataGridViewModel:ObservableObject
                 TextWrapping=TextWrapping.NoWrap,
                 TextTrimming=TextTrimming.CharacterEllipsis,
                 VerticalAlignment=Avalonia.Layout.VerticalAlignment.Center,
+                MaxLines = 1
             },
             supportsRecycling: true);
 
