@@ -15,7 +15,9 @@
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <PublishReadyToRun>true</PublishReadyToRun>
     <PublishTrimmed>true</PublishTrimmed>
-  </PropertyGroup>
+	<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+	<PublishSingleFile>true</PublishSingleFile>
+	</PropertyGroup>
 
 
   <ItemGroup>
