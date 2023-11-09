@@ -18,7 +18,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet publish -r win-x64 -c Release  --no-restore
+      run: dotnet publish -r win-x64 -c Release
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
