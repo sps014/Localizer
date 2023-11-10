@@ -8,7 +8,7 @@
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
-	<ApplicationIcon>Assets/logo.ico</ApplicationIcon>
+	<ApplicationIcon>Assets\\logo.ico</ApplicationIcon>
 
   </PropertyGroup>
 	
