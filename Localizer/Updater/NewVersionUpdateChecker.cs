@@ -92,9 +92,9 @@ namespace Localizer.Updater
 
             try
             {
-                string localFilePath = Path.Combine(Path.GetTempPath(),$"Localizer.{newVersion}.exe");
+                string localFilePath = Path.Combine(Path.GetTempPath(),$"Localizer.{newVersion}.{Extension}");
 
-                var url = $"https://github.com/sps014/Localizer/releases/download/v{newVersion}/Localizer.exe";
+                var url = $"https://github.com/sps014/Localizer/releases/download/v{newVersion}/Localizer.{Extension}";
 
                 using var response = await Http.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
 
@@ -139,6 +139,13 @@ namespace Localizer.Updater
                 }
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                 {
+                    //preserve permission to execute
+
+                    var permissionProcess = Process.Start("/bin/bash", $"-c chmod --reference={currentAppPath} {NewTempFilePath}");
+
+                    permissionProcess.WaitForExit();
+
+                    //execute original
                     var command = $"-c sleep 3; rm -f \"{currentAppPath}\"; mv -f {NewTempFilePath} {currentAppPath}";
 
                     psi = new ProcessStartInfo
