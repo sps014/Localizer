@@ -139,14 +139,8 @@ namespace Localizer.Updater
                 }
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                 {
-                    //preserve permission to execute
-
-                    var permissionProcess = Process.Start("/bin/bash", $"-c chmod --reference={currentAppPath} {NewTempFilePath}");
-
-                    permissionProcess.WaitForExit();
-
                     //execute original
-                    var command = $"-c sleep 3; rm -f \"{currentAppPath}\"; mv -f {NewTempFilePath} {currentAppPath}";
+                    var command = $"-c sleep 3; chmod --reference={currentAppPath} {NewTempFilePath}; rm -f \"{currentAppPath}\"; mv -f {NewTempFilePath} {currentAppPath}";
 
                     psi = new ProcessStartInfo
                     {
