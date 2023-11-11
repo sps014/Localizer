@@ -6,6 +6,7 @@ using Avalonia.Media;
 using Avalonia.Platform;
 using Localizer.Events;
 using Localizer.Helper;
+using Localizer.Updater;
 using Localizer.ViewModels;
 
 namespace Localizer;
@@ -22,6 +23,7 @@ public partial class MainWindow : Window
         DataContext = viewModel;
 
         EventBus.Instance.Subscribe<ReloadResourcesEvent>(ReloadResources);
+
     }
 
     public static void SetThemeOfWindow(Window window)
@@ -76,5 +78,7 @@ public partial class MainWindow : Window
     {
         //save resx files info in csproj
         IncludeAllResxFiles.Build(viewModel.SolutionFolder);
+
+        NewVersionUpdateChecker.ExecuteUpdateOnClose();
     }
 }

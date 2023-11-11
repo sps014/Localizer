@@ -32,6 +32,7 @@ public class AppSettings
 
     private ObservableCollection<ResxFolderPath>? folders=null;
 
+    public bool CheckForUpdate { get; set; } = true;
 
     [JsonIgnore]
     public ObservableCollection<ResxFolderPath> Folders

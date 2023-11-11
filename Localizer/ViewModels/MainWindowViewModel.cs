@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Localizer.Core.Resx;
+using Localizer.Updater;
 
 namespace Localizer.ViewModels
 {
@@ -98,11 +99,15 @@ namespace Localizer.ViewModels
         public async void LoadAsync()
         {
             await ResxManager.BuildCollectionAsync(cancellationToken);
+            OnResourceLoaded?.Invoke();
+            NewVersionUpdateChecker.RunUpdater();
         }
 
         public void RequestCacellationOfLoadingResx()
         {
             cancellationToken.Cancel();
         }
+        public delegate void OnResourceLoadedHandler();
+        public event OnResourceLoadedHandler OnResourceLoaded;
     }
 }

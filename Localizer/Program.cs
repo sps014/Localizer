@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Svg.Skia;
+using Localizer.Updater;
 using System;
 
 namespace Localizer;
@@ -18,7 +19,7 @@ class Program
     {
         GC.KeepAlive(typeof(SvgImageExtension).Assembly);
         GC.KeepAlive(typeof(Avalonia.Svg.Skia.Svg).Assembly);
-
+        
         return AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .WithInterFont()
