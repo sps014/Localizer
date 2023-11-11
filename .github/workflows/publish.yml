@@ -1,14 +1,15 @@
-name: Create Windows Package
+name: Create Packages
 
 on:
-  push:
-    branches: [ "main" ]
-    # Sequence of patterns matched against refs/tags
-    #tags:
-    #  - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+  workflow_dispatch: 
+  # push:
+  #   branches: [ "main" ]
+  #   # Sequence of patterns matched against refs/tags
+  #   #tags:
+  #   #  - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
       
-  pull_request:
-    branches: [ "main" ]
+  # pull_request:
+  #   branches: [ "main" ]
 
 jobs:
   build:
