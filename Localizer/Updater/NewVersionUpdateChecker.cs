@@ -11,6 +11,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Avalonia;
 using ExCSS;
+using Localizer.ViewModels;
 
 namespace Localizer.Updater
 {
@@ -164,6 +165,14 @@ namespace Localizer.Updater
 
         public static async void RunUpdater()
         {
+            //wait 10 min after preious update check to prevent API limit
+            if ((DateTime.Now.Ticks - AppSettings.Instance.LastUpdateCheckTime.Ticks)< 10 * 60 * 10000)
+            {
+                return;
+            }
+
+            AppSettings.Instance.LastUpdateCheckTime = DateTime.Now;
+
             await Task.Run(async() =>
             {
                 //Check if new version available 

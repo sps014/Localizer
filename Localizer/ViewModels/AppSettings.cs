@@ -34,6 +34,8 @@ public class AppSettings
 
     public bool CheckForUpdate { get; set; } = true;
 
+    public DateTime LastUpdateCheckTime { get; set; }
+
     [JsonIgnore]
     public ObservableCollection<ResxFolderPath> Folders
     {
@@ -108,6 +110,7 @@ public class AppSettings
         Folders.Remove(folder);
         FolderTimeStampMap.Remove(folder.FolderPath);
     }
+
 }
 
 [JsonSerializable(typeof(AppSettings))]
