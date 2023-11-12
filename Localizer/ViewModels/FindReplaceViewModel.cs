@@ -38,7 +38,19 @@ namespace Localizer.ViewModels
         [ObservableProperty]
         private bool isReplaceMode = false;
 
-       
+        //SearchCommentsColumn
+
+        private static bool searchCommentsColumn = true;
+        public bool SearchCommentsColumn
+        {
+            get { return searchCommentsColumn; }
+            set
+            {
+                searchCommentsColumn = value;
+                ResetIndex();
+            }
+        }
+
 
         private static bool IsRegexMode = false;
 
@@ -83,6 +95,7 @@ namespace Localizer.ViewModels
             {
                 SelectionIndex = value;
                 SetProperty(ref SelectionIndex, value);
+                ResetIndex();
             }
         }
 
@@ -90,12 +103,14 @@ namespace Localizer.ViewModels
         {
             get
             {
-                var col = new ObservableCollection<string>();
-                col.Add("All Columns");
-                col.Add("Key");
-                col.Add("Neutral");
+                var col = new ObservableCollection<string>
+                {
+                    "All Columns",
+                    "Key",
+                    "Neutral"
+                };
 
-                foreach(var culture in ResxManager.Cultures.OrderBy(x=>x))
+                foreach (var culture in ResxManager.Cultures.OrderBy(x=>x))
                 {
                     if (culture == string.Empty)
                         continue;
@@ -142,74 +157,104 @@ namespace Localizer.ViewModels
 
         }
 
-        (ResxEntityViewModel? item,int index) SearchColumn(int column)
+        (ResxEntityViewModel? item, int index) SearchColumn(int column)
         {
             var data = DataInGrid;
 
-            if (data == null || findStr==null)
-                return (null,-1);
+            if (data == null || findStr == null)
+                return (null, -1);
 
             string columnKey = column == 2 ? ResxEntityViewModel.NeutralKeyName : ColumnNames[column];
 
-            var start = subIndex+1;
+            var start = subIndex + 1;
 
             for (int i = start; i < data.Count; i++)
             {
                 ResxEntityViewModel? v = data[i];
 
-                if (column==0)
+                //only key
+                if (column==1 && CheckKey(v))
                 {
-                    if (v.Key != null)
-                    if(Comparer(v.Key))
-                    {
-                        return (v,i);
-                    }
+                    return (v, i);
+                }
 
-                    foreach(var c in v.CultureValues)
-                    {
-                        if (c.Value != null)
-                        if (Comparer(c.Value))
-                        {
-                            return (v, i);
-                        }
-                    }
-                }
-                else if(column==1)
+                //all option
+                if (column == 0 && CheckAllOptions(v))
                 {
-                    if (v.Key != null)
-                        if (Comparer(v.Key))
-                        {
-                            return (v, i);
-                        }
+                    return (v, i);
                 }
-                else
+
+                //specific column
+                if (column > 1 && CheckValuesAndComments(v, columnKey))
                 {
-                    if (v.CultureValues[columnKey] != null)
-                    {
-                        if (Comparer(v.CultureValues[columnKey]!))
-                        {
-                            return (v, i);
-                        }
-                    }
+                    return (v, i);
                 }
             }
 
             return (null, -1);
         }
 
+        private bool CheckKey(ResxEntityViewModel v)
+        {
+            return v.Key != null && Comparer(v.Key);
+        }
+
+        private bool CheckAllOptions(ResxEntityViewModel v)
+        {
+            return CheckKey(v) || CheckValues(v) || CheckComments(v);
+        }
+
+        private bool CheckValues(ResxEntityViewModel v)
+        {
+            foreach (var c in v.CultureValues)
+            {
+                if (c.Value != null && Comparer(c.Value))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool CheckComments(ResxEntityViewModel v)
+        {
+            if (!SearchCommentsColumn)
+                return false;
+
+            foreach (var c in v.CultureComments)
+            {
+                if (c.Value != null && Comparer(c.Value))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool CheckValuesAndComments(ResxEntityViewModel v,string columnKey)
+        {
+            return (v.CultureValues[columnKey] != null && Comparer(v.CultureValues[columnKey]!)) ||
+                   (SearchCommentsColumn && v.CultureComments.ContainsKey(columnKey) && Comparer(v.CultureComments[columnKey]!));
+        }
+
         private bool Comparer(string a)
         {
+            if(a==null)
+                 a = string.Empty;
+
             if(IsRegex)
             {
                 if(!IsIgnoreCase)
-                    return Regex.IsMatch(a, findStr);
-                return Regex.IsMatch(a, findStr,RegexOptions.IgnoreCase);
+                    return Regex.IsMatch(a, FindStr!);
+                return Regex.IsMatch(a, FindStr!, RegexOptions.IgnoreCase);
 
             }
 
             if (IsIgnoreCase)
-                return a.Contains(findStr,StringComparison.OrdinalIgnoreCase);
-            return a.Contains(findStr);
+                return a.Contains(FindStr!,StringComparison.OrdinalIgnoreCase);
+            return a.Contains(FindStr!);
         }
 
     }
