@@ -1,6 +1,6 @@
 Localizer
 
-![Screenshot 2023-11-14 232616](https://github.com/sps014/Localizer/assets/45932883/3dfee9fc-4814-421b-913b-b8e092a17056)
+![Screenshot 2023-11-14 232616](https://github.com/sps014/Localizer/assets/45932883/034c4992-9151-4946-b168-7638a353d509)
 
 
 It is a tool to Load thousand of Resx files in few seconds for adding editng Resx entries.
