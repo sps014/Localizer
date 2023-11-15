@@ -43,5 +43,10 @@ namespace Localizer
                 _subscriptions[typeof(T)] = new List<Delegate> { action };
             }
         }
+
+        public void ClearAllSubscriptions()
+        {
+            _subscriptions.Clear();
+        }
     }
 }

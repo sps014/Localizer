@@ -14,6 +14,7 @@ using Avalonia.Threading;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Localizer.Core.Helpers;
+using Localizer.Events;
 
 namespace Localizer.Helper
 {
@@ -142,6 +143,8 @@ namespace Localizer.Helper
                                 writer.UpdateResource(key,value??string.Empty, comment??string.Empty);
                             }
                         }
+
+                        EventBus.Instance.Publish(new ReloadResourcesEvent());
 
                     }
 

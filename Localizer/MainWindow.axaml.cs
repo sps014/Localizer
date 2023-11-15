@@ -4,6 +4,8 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Platform;
+using Avalonia.Threading;
+using Localizer.Core.Resx;
 using Localizer.Events;
 using Localizer.Helper;
 using Localizer.Updater;
@@ -60,12 +62,17 @@ public partial class MainWindow : Window
 
     private void ReloadResources(ReloadResourcesEvent e)
     {
-        if (viewModel.IsResxContentLoaded)
+        Dispatcher.UIThread.Invoke(() =>
         {
-            viewModel = new MainWindowViewModel(viewModel.SolutionFolder);
-            DataContext = viewModel;
-            viewModel.LoadAsync();
-        }
+            if (viewModel.IsResxContentLoaded)
+            {
+                EventBus.Instance.ClearAllSubscriptions();
+                MainWindow window = new MainWindow(viewModel.SolutionFolder);
+                window.Show();
+                Close();
+            }
+        });
+
     }
 
 
