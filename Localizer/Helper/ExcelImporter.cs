@@ -127,7 +127,7 @@ namespace Localizer.Helper
                                 var indexOfComment = group.First(x => x.IsComment).Index;
 
                                 var value = items[indexOfValue].ToString();
-                                var comment = items[indexOfValue].ToString();
+                                var comment = items[indexOfComment].ToString();
 
                                 var path = resxManager.SolutionPath;
 
