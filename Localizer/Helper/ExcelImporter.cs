@@ -81,8 +81,8 @@ namespace Localizer.Helper
                     {
                         var items = table.Rows[i].ItemArray;
 
-                        var location = items[0];
-                        var key = items[1];
+                        var location = items[0].ToString()!;
+                        var key = items[1].ToString()!;
 
                         var searchKey = location + "\\" + key;
 
@@ -117,8 +117,32 @@ namespace Localizer.Helper
                                 }
                             }
                         }
+                        //create a new file with keys
+                        else
+                        {
+                            foreach(var group in columns.GroupBy(x=>x.Culture))
+                            {
+                                var culture = group.First().Culture;
+                                var indexOfValue = group.First(x => !x.IsComment).Index;
+                                var indexOfComment = group.First(x => x.IsComment).Index;
 
-                        //create a new file
+                                var value = items[indexOfValue].ToString();
+                                var comment = items[indexOfValue].ToString();
+
+                                var path = resxManager.SolutionPath;
+
+                                var resxPath = Path.Combine(path, location.Replace('\\', Path.PathSeparator));
+
+                                //if not neutral append culture in fileName
+                                if (culture != string.Empty)
+                                    resxPath += $".{culture}";
+                                resxPath += ".resx";
+
+                                ResxResourceWriter writer = new ResxResourceWriter(resxPath);
+                                writer.UpdateResource(key,value??string.Empty, comment??string.Empty);
+                            }
+                        }
+
                     }
 
                 }
