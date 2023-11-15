@@ -43,5 +43,8 @@
 		<Button Height="32" Width="32" ToolTip.Tip="Export Excel" Click="exportExlClick">
 			<Image Source="/Assets/excel.png"/>
 		</Button>
+		<Button Height="32" Width="32" ToolTip.Tip="Import Excel" Click="importExlClick">
+			<Image Source="/Assets/excel.png"/>
+		</Button>
 	</StackPanel>
 </UserControl>

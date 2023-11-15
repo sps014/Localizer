@@ -58,7 +58,6 @@ internal partial class TreeControlViewModel:ObservableObject
 
         NodeNames = new ObservableCollection<string>(Root.GetAllChildren().Select(x => x.NodeName).ToHashSet());
 
-        CreateSearchTree("Form");
     }
 
     public void SearchNodes()

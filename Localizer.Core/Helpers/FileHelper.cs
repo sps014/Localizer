@@ -109,4 +109,9 @@ public static class FileHelperExtension
             }
         }
     }
+
+    public static string JoinBy(this IEnumerable<string> source, string separator)
+    {
+        return string.Join(separator,source);
+    }
 }

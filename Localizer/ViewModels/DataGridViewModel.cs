@@ -45,8 +45,13 @@ internal partial class DataGridViewModel:ObservableObject
         EventBus.Instance.Subscribe<AddNewKeyToResourceEvent>(AddNewKeyToResource);
         EventBus.Instance.Subscribe<RemoveKeyFromResourceEvent>(RemoveKeyFromResource);
         EventBus.Instance.Subscribe<ExportToExcelEvent>(ExportToExcel);
+        EventBus.Instance.Subscribe<ImportFromExcelEvent>(ImportFromExcel);
 
+    }
 
+    private async void ImportFromExcel(ImportFromExcelEvent e)
+    {
+        await ExcelImporter.ReadFromExcel(e.Path,e.ResxManager);
     }
 
     private async void ExportToExcel(ExportToExcelEvent e)

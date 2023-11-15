@@ -11,6 +11,7 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
 using Localizer.Events;
+using Localizer.Helper;
 using Localizer.ViewModels;
 
 namespace Localizer;
@@ -72,6 +73,32 @@ public partial class ToolbarControl : UserControl
     {
         PublishLanguageChanged(sender);
     }
+    async void importExlClick(object sender, RoutedEventArgs e)
+    {
+        var open = await TopLevel.GetTopLevel(this)!.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            Title = "Import to Excel",
+            AllowMultiple = false,
+            FileTypeFilter = new List<FilePickerFileType>
+            {
+                new("Excel File")
+                {
+                    Patterns = new[]{"*.xlsx"},
+                    MimeTypes = new[]{"xlsx/*"},
+                },
+            }
+        });
+
+        if(open==null || open.Count<=0 || open.First().Path==null || open.First().Path.LocalPath==null)
+        {
+            return;
+        }
+
+        var path = open.First().Path.LocalPath;
+        EventBus.Instance.Publish(new ImportFromExcelEvent(path,MainWindowViewModel.Instance.ResxManager));
+
+    }
+
     async void exportExlClick(object sender, RoutedEventArgs e)
     {
         var save = await TopLevel.GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
@@ -101,11 +128,8 @@ public partial class ToolbarControl : UserControl
     private void search_Click(object? sender, RoutedEventArgs e)
     {
         FindReplaceWindow fnd = new FindReplaceWindow();
-        if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            fnd.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            fnd.ShowDialog(desktop.Windows.First(x=>x is MainWindow));
-        }
+        fnd.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        fnd.ShowDialog(WindowHelper.ParentWindow<MainWindow>());
     }
 }
 

@@ -4,7 +4,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Avalonia.Threading;
+using Localizer.Core.Helpers;
 using Localizer.ViewModels;
+using MsBox.Avalonia;
 using SwiftExcel;
 
 namespace Localizer.Helper;
@@ -19,42 +22,51 @@ internal class ExcelExporter
         }
         await Task.Run(() =>
         {
-            using var excel = new ExcelWriter(path);
-
-            // write header
-            excel.Write("Project", 1, 1);
-            excel.Write("File", 2, 1);
-            excel.Write("Key", 3, 1);
-            int colNo = 4;
-
-            foreach (var culture in cultures.OrderBy(x => x))
+            try
             {
-                excel.Write(culture,colNo++,1);
-                var commentStr = culture == string.Empty ? "Comment":$"Comment.{culture}";
-                excel.Write(commentStr, colNo++, 1);
-            }
+                using var excel = new ExcelWriter(path);
 
-            //write data
+                // write header
+                excel.Write("Location", 1, 1);
+                excel.Write("Key", 2, 1);
+                int colNo = 3;
 
-            int row = 2;
-            int col = 1;
-
-            for (int i = 0; i < data.Count; i++)
-            {
-                col = 1;
-                excel.Write(data[i].ResxEntity.Node.GetProjectName(), col++, row);
-                excel.Write(data[i].ResxEntity.Node.NodeName, col++, row);
-                excel.Write(data[i].Key, col++, row);
-
-                foreach (var key in data[i].CultureValues.Keys.OrderBy(x=>ResxEntityViewModel.GetKeyNameFromVm(x)))
+                foreach (var culture in cultures.OrderBy(x => x))
                 {
-                    excel.Write(data[i].CultureValues[key],col++,row);
-                    excel.Write(data[i].CultureComments[key], col++, row);
+                    excel.Write(culture, colNo++, 1);
+                    var commentStr = culture == string.Empty ? "Comment" : $"Comment.{culture}";
+                    excel.Write(commentStr, colNo++, 1);
                 }
-                row++;
-            }
 
-            excel.Save();
+                //write data
+
+                int row = 2;
+                int col = 1;
+
+                for (int i = 0; i < data.Count; i++)
+                {
+                    col = 1;
+                    excel.Write(data[i].ResxEntity.Node.NodePathPartsFromParent.JoinBy("\\"), col++, row);
+                    excel.Write(data[i].Key, col++, row);
+
+                    foreach (var key in data[i].CultureValues.Keys.OrderBy(x => ResxEntityViewModel.GetKeyNameFromVm(x)))
+                    {
+                        excel.Write(data[i].CultureValues[key], col++, row);
+                        excel.Write(data[i].CultureComments[key], col++, row);
+                    }
+                    row++;
+                }
+
+                excel.Save();
+            }
+            catch(Exception ex)
+            {
+                Dispatcher.UIThread.Invoke(() =>
+                {
+                    var box = MessageBoxManager.GetMessageBoxStandard("Error importing", ex.Message, MsBox.Avalonia.Enums.ButtonEnum.Ok, MsBox.Avalonia.Enums.Icon.Error);
+                    box.ShowWindowDialogAsync(WindowHelper.ParentWindow<MainWindow>());
+                });
+            }
         });
 
         
