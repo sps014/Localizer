@@ -143,13 +143,11 @@ namespace Localizer.Helper
                                 writer.UpdateResource(key,value??string.Empty, comment??string.Empty);
                             }
                         }
-
-                        EventBus.Instance.Publish(new ReloadResourcesEvent());
-
                     }
 
+                    EventBus.Instance.Publish(new ReloadResourcesEvent());
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Dispatcher.UIThread.Invoke(() =>
                     {
