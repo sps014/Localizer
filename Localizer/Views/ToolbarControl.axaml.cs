@@ -170,8 +170,11 @@ public partial class ToolbarControl : UserControl
         EventBus.Instance.Publish(new LoadSnapshotEvent(path));
 
     }
+    void unloadSnapClick(object sender, RoutedEventArgs e)
+    {
+        EventBus.Instance.Publish(new UnloadSnapshotEvent());
+    }
 
-    
 
 
     private void search_Click(object? sender, RoutedEventArgs e)

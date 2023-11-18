@@ -54,6 +54,7 @@
 				<MenuFlyout>
 					<MenuItem Header="Create Snapshot" Click="exportSnapClick"></MenuItem>
 					<MenuItem Header="Load Snapshot" Click="importSnapClick"></MenuItem>
+					<MenuItem Header="Unload Snapshot" Click="unloadSnapClick"></MenuItem>
 
 				</MenuFlyout>
 			</Button.Flyout>

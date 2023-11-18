@@ -47,11 +47,31 @@ internal partial class DataGridViewModel:ObservableObject
         EventBus.Instance.Subscribe<ImportFromExcelEvent>(ImportFromExcel);
         EventBus.Instance.Subscribe<CreateSnapshotEvent>(CreateSnapshot);
         EventBus.Instance.Subscribe<LoadSnapshotEvent>(LoadSnapshot);
+        EventBus.Instance.Subscribe<UnloadSnapshotEvent>(UnloadSnapshot);
+
 
     }
+    private async void UnloadSnapshot(UnloadSnapshotEvent e)
+    {
+        await SnapshotLoader.UnloadSnapshot(Source);
+        RefreshGrid();
+    }
+
     private async void LoadSnapshot(LoadSnapshotEvent e)
     {
         await SnapshotLoader.LoadSnapshot(Source, e.Path);
+        RefreshGrid();
+    }
+
+    private async void RefreshGrid()
+    {
+        var selection = DataGrid!.SelectedItem;
+        var original = Source;
+        Source = new ObservableCollection<ResxEntityViewModel>();
+        Source = original;
+        await Task.Delay(10);
+        DataGrid.SelectedItem = selection;
+        DataGrid.ScrollIntoView(selection, null);
     }
     private async void CreateSnapshot(CreateSnapshotEvent e)
     {
@@ -246,15 +266,19 @@ internal partial class DataGridViewModel:ObservableObject
 
         // Create the DataTemplate for normal view
         var normalTemplate = new FuncDataTemplate<ResxEntityViewModel>((value, namescope) =>
-            new TextBlock
-            {
-                [!TextBlock.TextProperty] = binding,
-                TextWrapping=TextWrapping.NoWrap,
-                TextTrimming=TextTrimming.CharacterEllipsis,
-                VerticalAlignment=Avalonia.Layout.VerticalAlignment.Center,
-                MaxLines = 1,
-                [!ToolTip.TipProperty] = snapBinding?? binding
-            },
+           new ScrollViewer()
+           {
+               Content = new TextBlock
+               {
+                   [!TextBlock.TextProperty] = binding,
+                   TextWrapping = TextWrapping.NoWrap,
+                   TextTrimming = TextTrimming.CharacterEllipsis,
+                   VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+                   MaxLines = 1,
+                   //[!ToolTip.TipProperty] = snapBinding ?? binding
+               },
+               [!ToolTip.TipProperty] = snapBinding ?? binding
+           },
             supportsRecycling: true);
 
         // Create the DataTemplate for editing view
