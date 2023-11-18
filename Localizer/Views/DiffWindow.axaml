@@ -22,7 +22,7 @@
 		<Button Margin="0,10" Command="{Binding ExportChanges}">Export Changes</Button>
 		
 		<DataGrid Name="dataGrid" Grid.Row="1" CanUserReorderColumns="True" ItemsSource="{Binding Source}"
-					  HeadersVisibility="All" IsReadOnly="True"
+					  HeadersVisibility="All" IsReadOnly="True" LoadingRow="AddRowNumbers"
 					  CanUserResizeColumns="True" CanUserSortColumns="True">
 		</DataGrid>
 	</Grid>
