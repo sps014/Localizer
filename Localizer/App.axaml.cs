@@ -26,7 +26,7 @@ public partial class App : Application
         Window window = null;
 
         //if path is passed in command line
-        if (environmentArgs != null && environmentArgs.Length > 1 && Directory.Exists(environmentArgs[1]))
+        if (environmentArgs.Length > 1 && Directory.Exists(environmentArgs[1]))
         {
             window = new MainWindow(environmentArgs[1]);
         }
