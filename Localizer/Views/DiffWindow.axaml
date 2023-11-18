@@ -17,8 +17,11 @@
 		</Style>
 	</Window.Styles>
 
-	<Grid RowDefinitions="Auto">
-		<DataGrid Name="dataGrid" CanUserReorderColumns="True" ItemsSource="{Binding Source}"
+	<Grid RowDefinitions="Auto,*" Margin="10,30">
+		
+		<Button Margin="0,10" Command="{Binding ExportChanges}">Export Changes</Button>
+		
+		<DataGrid Name="dataGrid" Grid.Row="1" CanUserReorderColumns="True" ItemsSource="{Binding Source}"
 					  HeadersVisibility="All" IsReadOnly="True"
 					  CanUserResizeColumns="True" CanUserSortColumns="True">
 		</DataGrid>

@@ -5,9 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Localizer.Core.Resx;
 using Localizer.Events;
+using Localizer.Helper;
+using Localizer.Views;
+using MsBox.Avalonia;
 
 namespace Localizer.ViewModels
 {
@@ -16,6 +21,8 @@ namespace Localizer.ViewModels
         [ObservableProperty]
         private ObservableCollection<ResxEntityViewModel>? source;
         public required DataGrid DataGrid { get; init; }
+
+        
 
         private ObservableCollection<ResxEntityViewModel>? DataInOriginalGrid
         {
@@ -58,6 +65,38 @@ namespace Localizer.ViewModels
 
             Source = new ObservableCollection<ResxEntityViewModel>(data.Where(x => x.IsDiffWithSnapshot()));
 
+        }
+
+        [RelayCommand]
+        public async void ExportChanges()
+        {
+            if(Source ==null || Source.Count<=0)
+            {
+                var mb = MessageBoxManager.GetMessageBoxStandard("No Changes to export", "No changes were found , nothing to export.", MsBox.Avalonia.Enums.ButtonEnum.Ok, MsBox.Avalonia.Enums.Icon.Info);
+
+                await mb.ShowWindowDialogAsync(WindowHelper.ParentWindow<DiffWindow>());
+                return;
+            }
+
+            var save = await TopLevel.GetTopLevel(DataGrid)!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+            {
+                Title = "Export to Excel",
+                DefaultExtension = "xlsx",
+                ShowOverwritePrompt = true,
+                FileTypeChoices = new List<FilePickerFileType>
+            {
+                new("Excel File")
+                {
+                    Patterns = new[]{"*.xlsx"},
+                    MimeTypes = new[]{"xlsx/*"},
+                },
+            }
+
+            });
+            if (save == null || save.Path == null) return;
+
+            var fileName = save.Path.LocalPath;
+            await ExcelExporter.WriteToExcelAsync(Source, fileName,MainWindowViewModel.Instance!.ResxManager.Cultures);
         }
     }
 }
