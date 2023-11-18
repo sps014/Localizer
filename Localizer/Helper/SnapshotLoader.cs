@@ -38,7 +38,7 @@ namespace Localizer.Helper
 
                         var entity = mapOfEntityFullPath[key];
 
-                        entity.SnapshotCulturalValues = snapItem.Values;
+                        entity.SnapshotCultureValues = snapItem.Values;
                         entity.SnapshotCultureComments = snapItem.Comments;
                     }
 

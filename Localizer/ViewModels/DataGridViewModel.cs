@@ -253,6 +253,7 @@ internal partial class DataGridViewModel:ObservableObject
                 TextTrimming=TextTrimming.CharacterEllipsis,
                 VerticalAlignment=Avalonia.Layout.VerticalAlignment.Center,
                 MaxLines = 1,
+                [!ToolTip.TipProperty] = snapBinding?? binding
             },
             supportsRecycling: true);
 
@@ -274,8 +275,9 @@ internal partial class DataGridViewModel:ObservableObject
             Width = new DataGridLength(1,DataGridLengthUnitType.Star),
             MinWidth = 56,
             Tag = nameOfColumn,
-            
         };
+
+        
 
         return column;
     }

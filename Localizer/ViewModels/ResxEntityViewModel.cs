@@ -27,7 +27,7 @@ public record ResxEntityViewModel
 
     [JsonIgnore]
     public ResxEntity ResxEntity { get; init; }
-    public Dictionary<string, string?> SnapshotCulturalValues { get; internal set; } = new();
+    public Dictionary<string, string?> SnapshotCultureValues { get; internal set; } = new();
     public Dictionary<string, string?> SnapshotCultureComments { get; internal set; } = new();
 
     public ResxEntityViewModel(ResxEntity entity)
