@@ -1,0 +1,27 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Localizer.Views.DiffWindow" Background="Transparent"
+		xmlns:views="using:Localizer"
+		xmlns:vm="using:Localizer.ViewModels"
+		ExtendClientAreaToDecorationsHint="True" x:DataType="vm:DiffWindowViewModel"
+        Title="Diff Tool">
+
+	<Window.Styles>
+		<Style Selector="DataGridCell">
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="BorderBrush" Value="Black"/>
+			<Setter Property="Padding" Value="2"/>
+		</Style>
+	</Window.Styles>
+
+	<Grid RowDefinitions="Auto">
+		<DataGrid Name="dataGrid" CanUserReorderColumns="True" ItemsSource="{Binding Source}"
+					  HeadersVisibility="All" IsReadOnly="True"
+					  CanUserResizeColumns="True" CanUserSortColumns="True">
+		</DataGrid>
+	</Grid>
+
+</Window>

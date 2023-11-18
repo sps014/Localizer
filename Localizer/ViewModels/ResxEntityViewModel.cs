@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using Localizer.Core.Model;
 using Localizer.Core.Resx;
+using Localizer.Helper;
 
 namespace Localizer.ViewModels;
 
@@ -51,9 +53,47 @@ public record ResxEntityViewModel
         ResxEntity.SetComment(comment, culture);
     }
 
+    public bool IsDiffWithSnapshot()
+    {
+        //no snapshot loaded then its a new entry         
+        if(!SnapshotLoader.IsSnapshotLoaded)
+            return true;
+
+        if(SnapshotCultureValues.Count!=CultureValues.Count)
+            return true;
+
+        if(!SnapshotCultureValues.Keys.OrderBy(x=>x).SequenceEqual(CultureValues.Keys))
+            return true;
+
+        foreach(var culture in SnapshotCultureValues.Keys)
+        {
+            var snapVal = SnapshotCultureValues[culture]??string.Empty;
+
+            if (!snapVal.Equals(CultureValues[culture]??string.Empty))
+                return true;
+        }
+
+        //same thing for comment 
+        if (SnapshotCultureComments.Count != CultureComments.Count)
+            return true;
+
+        if (!SnapshotCultureComments.Keys.OrderBy(x => x).SequenceEqual(CultureComments.Keys))
+            return true;
+
+        foreach (var culture in SnapshotCultureComments.Keys)
+        {
+            var snapVal = SnapshotCultureComments[culture] ?? string.Empty;
+
+            if (!snapVal.Equals(CultureComments[culture]??string.Empty))
+                return true;
+        }
+
+        return false;
+    }
 
 
-    public void UpdateDiffToManager()
+
+    public void FindDiffAndUpdateOnResxManager()
     {
         if(Key != ResxEntity.Key)
         {

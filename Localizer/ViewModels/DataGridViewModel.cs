@@ -214,7 +214,7 @@ internal partial class DataGridViewModel:ObservableObject
 
     }
 
-    string GetKeyPath(string culture, bool isComment=false)
+    public static string GetKeyPath(string culture, bool isComment=false)
     {
 
         var key = culture == string.Empty ? ResxEntityViewModel.NeutralKeyName : culture;
@@ -227,7 +227,7 @@ internal partial class DataGridViewModel:ObservableObject
 
         return key ;
     }
-    string GetColumnHeaderName(string culture,bool isComment=false)
+    public static string GetColumnHeaderName(string culture,bool isComment=false)
     {
         if(isComment)
         {
@@ -251,7 +251,7 @@ internal partial class DataGridViewModel:ObservableObject
         return languageInfo;
     }
 
-    private DataGridColumn CreateColumn(string nameOfColumn, string? bindingPath=null)
+    public static DataGridColumn CreateColumn(string nameOfColumn, string? bindingPath=null)
     {
         bool isKey = bindingPath == null;
 
@@ -310,6 +310,6 @@ internal partial class DataGridViewModel:ObservableObject
     {
         if (row == null) return;
 
-        row.UpdateDiffToManager();
+        row.FindDiffAndUpdateOnResxManager();
     }
 }

@@ -49,7 +49,7 @@
 			</Button.Flyout>
 			<Image Source="/Assets/excel.png"/>
 		</Button>
-		<Button Height="32" Width="32" ToolTip.Tip="Snapshots" Margin="10,0,0,0">
+		<Button Height="32" Width="32" ToolTip.Tip="Snapshot" Margin="10,0,0,0">
 			<Button.Flyout>
 				<MenuFlyout>
 					<MenuItem Header="Create Snapshot" Click="exportSnapClick"></MenuItem>
@@ -60,8 +60,8 @@
 			</Button.Flyout>
 			<Image Source="/Assets/snap.png"/>
 		</Button>
-		<Button Height="32" Width="32" x:Name="infoBtn" Click="" ToolTip.Tip="View Info">
-			<Image Source="/Assets/info.png"/>
+		<Button Height="32" Width="32" x:Name="infoBtn" Click="diffClick" ToolTip.Tip="Diff">
+			<Image Source="/Assets/diff.png"/>
 		</Button>
 	</StackPanel>
 </UserControl>

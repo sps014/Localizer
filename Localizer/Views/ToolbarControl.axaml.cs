@@ -13,6 +13,9 @@ using Avalonia.Platform.Storage;
 using Localizer.Events;
 using Localizer.Helper;
 using Localizer.ViewModels;
+using Localizer.Views;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
 
 namespace Localizer;
 
@@ -173,6 +176,20 @@ public partial class ToolbarControl : UserControl
     void unloadSnapClick(object sender, RoutedEventArgs e)
     {
         EventBus.Instance.Publish(new UnloadSnapshotEvent());
+    }
+
+    async void diffClick(object sender, RoutedEventArgs e)
+    {
+        if(!SnapshotLoader.IsSnapshotLoaded)
+        {
+            var mb = MessageBoxManager.GetMessageBoxStandard("No Snapshot", "no snapshot file loaded cant find the difference without it, please load appropriate snapshot file then try again.", MsBox.Avalonia.Enums.ButtonEnum.Ok, MsBox.Avalonia.Enums.Icon.Warning);
+
+            await mb.ShowWindowDialogAsync(WindowHelper.ParentWindow<MainWindow>());
+            return;
+        }
+
+        DiffWindow window = new DiffWindow();
+        await window.ShowDialog(WindowHelper.ParentWindow<MainWindow>()!);
     }
 
 
