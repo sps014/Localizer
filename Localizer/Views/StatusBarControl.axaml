@@ -7,11 +7,8 @@
              x:Class="Localizer.StatusBarControl">
 	<Grid>
 		<StackPanel Orientation="Horizontal" IsVisible="{Binding IsDataGridItemSelected}">
-			<TextBlock Text="Key: " Margin="10,0"/>
-			<TextBlock Text="{Binding KeyName}" Margin="10,0"/>
-			<TextBlock Text="Resource Name : " Margin="10,0"/>
-			<TextBlock Text="{Binding TitleResourceName}" FontWeight="Bold"/>
-			<TextBlock Text="{Binding ResourceDir}" Margin="10,0"/>
+			<TextBlock Text="{Binding KeyName}" Margin="10,0" FontWeight="Bold"/>
+			<TextBlock Text="{Binding SnapValue}" Margin="10,0"/>
 		</StackPanel>
 	</Grid>
 </UserControl>

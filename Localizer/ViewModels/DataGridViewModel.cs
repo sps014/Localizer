@@ -5,7 +5,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
@@ -46,7 +45,17 @@ internal partial class DataGridViewModel:ObservableObject
         EventBus.Instance.Subscribe<RemoveKeyFromResourceEvent>(RemoveKeyFromResource);
         EventBus.Instance.Subscribe<ExportToExcelEvent>(ExportToExcel);
         EventBus.Instance.Subscribe<ImportFromExcelEvent>(ImportFromExcel);
+        EventBus.Instance.Subscribe<CreateSnapshotEvent>(CreateSnapshot);
+        EventBus.Instance.Subscribe<LoadSnapshotEvent>(LoadSnapshot);
 
+    }
+    private async void LoadSnapshot(LoadSnapshotEvent e)
+    {
+        await SnapshotLoader.LoadSnapshot(Source, e.Path);
+    }
+    private async void CreateSnapshot(CreateSnapshotEvent e)
+    {
+        await SnapshotCreator.CreateSnapshot(Source, e.Path);
     }
 
     private async void ImportFromExcel(ImportFromExcelEvent e)
@@ -222,13 +231,18 @@ internal partial class DataGridViewModel:ObservableObject
         return languageInfo;
     }
 
-    private DataGridColumn CreateColumn(string nameOfColumn, string bindingPath=null)
+    private DataGridColumn CreateColumn(string nameOfColumn, string? bindingPath=null)
     {
+        bool isKey = bindingPath == null;
+
         if (bindingPath == null)
             bindingPath = nameOfColumn;
 
         // Create the binding
         var binding = new Binding(bindingPath);
+        Binding? snapBinding = null;
+        if (!isKey)
+            snapBinding = new Binding($"Snapshot{bindingPath}");
 
         // Create the DataTemplate for normal view
         var normalTemplate = new FuncDataTemplate<ResxEntityViewModel>((value, namescope) =>
@@ -238,7 +252,7 @@ internal partial class DataGridViewModel:ObservableObject
                 TextWrapping=TextWrapping.NoWrap,
                 TextTrimming=TextTrimming.CharacterEllipsis,
                 VerticalAlignment=Avalonia.Layout.VerticalAlignment.Center,
-                MaxLines = 1
+                MaxLines = 1,
             },
             supportsRecycling: true);
 
@@ -260,6 +274,7 @@ internal partial class DataGridViewModel:ObservableObject
             Width = new DataGridLength(1,DataGridLengthUnitType.Star),
             MinWidth = 56,
             Tag = nameOfColumn,
+            
         };
 
         return column;
@@ -270,77 +285,5 @@ internal partial class DataGridViewModel:ObservableObject
         if (row == null) return;
 
         row.UpdateDiffToManager();
-    }
-}
-
-
-
-public record ResxEntityViewModel
-{
-    public required string? Key { get; set; }
-    public Dictionary<string, string?> CultureValues { get; set; } = new();
-    public Dictionary<string, string?> CultureComments { get; set; } = new();
-
-    public const string NeutralKeyName = "ntrKey";
-
-    public static string GetVmKeyName(string key)
-    {
-        return key==string.Empty ? NeutralKeyName : key;
-    }
-    public static string GetKeyNameFromVm(string vmkey)
-    {
-        return vmkey == NeutralKeyName ? string.Empty:vmkey;
-    }
-
-    [JsonIgnore]
-    public ResxEntity ResxEntity { get; init; }
-
-    public ResxEntityViewModel(ResxEntity entity)
-    {
-        ResxEntity = entity;
-        foreach(var culture in MainWindowViewModel.Instance!.ResxManager.Tree.Cultures)
-        {
-            var keyName = GetVmKeyName(culture);
-            CultureValues.Add(keyName, entity.GetValue(culture));
-            CultureComments.Add(keyName, entity.GetComment(culture));
-        }
-    }
-
-    public void UpdateValue(string value,string culture)
-    {
-        ResxEntity.SetValue(value, culture);
-    }
-
-    public void UpdateComment(string comment,string culture)
-    {
-        ResxEntity.SetComment(comment, culture);
-    }
-
-
-
-    public void UpdateDiffToManager()
-    {
-        if(Key != ResxEntity.Key)
-        {
-            ResxEntity.AddUpdateOrDeleteKey(KeyChangeOperationType.Update, Key);
-        }
-        else
-            foreach(var newCulture in CultureValues.Keys)
-            {
-                var culture = GetKeyNameFromVm(newCulture);
-
-                var originalVal = ResxEntity.GetValue(culture);
-
-                if(originalVal != CultureValues[newCulture])
-                    UpdateValue(CultureValues[newCulture]!, culture);
-
-                var originalComment = ResxEntity.GetComment(culture);
-
-                if (originalComment != CultureComments[newCulture])
-                    UpdateComment(CultureComments[newCulture]!, culture);
-
-            }
-
-
     }
 }

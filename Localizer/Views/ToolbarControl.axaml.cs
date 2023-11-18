@@ -122,14 +122,63 @@ public partial class ToolbarControl : UserControl
 
         EventBus.Instance.Publish(new ExportToExcelEvent(fileName));
     }
+    async void exportSnapClick(object sender, RoutedEventArgs e)
+    {
+        var save = await TopLevel.GetTopLevel(this)!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        {
+            Title = "Create Snapshot",
+            DefaultExtension = "json",
+            ShowOverwritePrompt = true,
+            FileTypeChoices = new List<FilePickerFileType>
+            {
+                new("Json File")
+                {
+                    Patterns = new[]{"*.json"},
+                    MimeTypes = new[]{"json/*"},
+                },
+            }
+
+        });
+        if (save == null || save.Path == null) return;
+
+        var fileName = save.Path.LocalPath;
+
+        EventBus.Instance.Publish(new CreateSnapshotEvent(fileName));
+    }
+    async void importSnapClick(object sender, RoutedEventArgs e)
+    {
+        var open = await TopLevel.GetTopLevel(this)!.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            Title = "Import Snapshot",
+            AllowMultiple = false,
+            FileTypeFilter = new List<FilePickerFileType>
+            {
+                new("Json File")
+                {
+                    Patterns = new[]{"*.json"},
+                    MimeTypes = new[]{"json/*"},
+                },
+            }
+        });
+
+        if (open == null || open.Count <= 0 || open.First().Path == null || open.First().Path.LocalPath == null)
+        {
+            return;
+        }
+
+        var path = open.First().Path.LocalPath;
+        EventBus.Instance.Publish(new LoadSnapshotEvent(path));
+
+    }
 
     
+
 
     private void search_Click(object? sender, RoutedEventArgs e)
     {
         FindReplaceWindow fnd = new FindReplaceWindow();
         fnd.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-        fnd.ShowDialog(WindowHelper.ParentWindow<MainWindow>());
+        fnd.ShowDialog(WindowHelper.ParentWindow<MainWindow>()!);
     }
 }
 

@@ -6,7 +6,7 @@
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450" 
 			 x:DataType="vm:TreeControlViewModel"
              x:Class="Localizer.TreeViewControl">
-	<Grid RowDefinitions="Auto,,Auto,*">
+	<Grid RowDefinitions="Auto,Auto,*">
 		<AutoCompleteBox Text="{Binding SearchedQuery}"
 						 ItemsSource="{Binding NodeNames}" Margin="10"
 						 TextChanged="AutoCompleteBox_TextChanged"/>

@@ -10,7 +10,7 @@ namespace Localizer.ViewModels;
 
 public record ResxEntityViewModel
 {
-    public required string? Key { get; set; }
+    public required string Key { get; set; }
     public Dictionary<string, string?> CultureValues { get; set; } = new();
     public Dictionary<string, string?> CultureComments { get; set; } = new();
 
@@ -27,6 +27,8 @@ public record ResxEntityViewModel
 
     [JsonIgnore]
     public ResxEntity ResxEntity { get; init; }
+    public Dictionary<string, string?> SnapshotCulturalValues { get; internal set; } = new();
+    public Dictionary<string, string?> SnapshotCultureComments { get; internal set; } = new();
 
     public ResxEntityViewModel(ResxEntity entity)
     {
@@ -76,18 +78,4 @@ public record ResxEntityViewModel
 
 
     }
-}
-
-public class SnapShot
-{
-    public string Location { get; set; }
-    public string Key { get; set; }
-    public Dictionary<string, string?> Values { get; set; }
-    public Dictionary<string, string?> Comments { get; set; }
-}
-
-[JsonSerializable(typeof(SnapShot))]
-public class SnapShotContext:JsonSerializerContext
-{
-
 }

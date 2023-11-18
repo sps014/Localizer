@@ -16,10 +16,7 @@ namespace Localizer.ViewModels
         public string? keyName;
 
         [ObservableProperty]
-        public string? titleResourceName;
-
-        [ObservableProperty]
-        public string? resourceDir;
+        public string? snapValue;
 
         [ObservableProperty]
         public bool isDataGridItemSelected = false;
@@ -32,7 +29,6 @@ namespace Localizer.ViewModels
         private void OnSelectionInDataGridChanged(DataGridCurrentSelectionChangedevent e)
         {
             //todo: think what info to show
-            return;
 
             if (e.Item==null)
             {
@@ -45,9 +41,7 @@ namespace Localizer.ViewModels
             if (e.Item.ResxEntity.TryGetAbsolutePath(string.Empty,out var path))
             {
                 var name = path.GetFileNameWithoutExtension();
-                ResourceDir = path.GetParentDirectory();
-                TitleResourceName = name;
-                KeyName = e.Item.Key;
+                KeyName = e.Item.ResxEntity.Node.NodePathPartsFromParent.Add(e.Item.Key).JoinBy("\\");
             }
 
         }
