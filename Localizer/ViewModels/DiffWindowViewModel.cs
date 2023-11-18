@@ -68,7 +68,7 @@ namespace Localizer.ViewModels
         }
 
         [RelayCommand]
-        public async void ExportChanges()
+        public async Task ExportChanges()
         {
             if(Source ==null || Source.Count<=0)
             {
