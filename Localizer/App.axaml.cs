@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using Avalonia;
 using Avalonia.Controls;
@@ -10,6 +11,7 @@ namespace Localizer;
 
 public partial class App : Application
 {
+    public const string APP_NAME = "Localizer";
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -17,6 +19,9 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        //set path of Environment Variable 
+        Environment.SetEnvironmentVariable(APP_NAME, Process.GetCurrentProcess().MainModule.FileName,EnvironmentVariableTarget.User);
+
         var environmentArgs = Environment.GetCommandLineArgs();
         Window window = null;
 
