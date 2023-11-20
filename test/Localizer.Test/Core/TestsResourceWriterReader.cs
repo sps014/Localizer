@@ -133,6 +133,7 @@ namespace Localizer.Test.Core
 
             Assert.Equal(3, resxRecords.Count);
         }
+
         [Theory]
         [InlineData("de")]
         [InlineData("fr")]
@@ -161,6 +162,83 @@ namespace Localizer.Test.Core
             Assert.Equal("k1", kvc.Key);
             Assert.Equal("vz", kvc.Value);
             Assert.Equal("cmtz", kvc.Comment);
+
+        }
+
+        [Theory]
+        [InlineData("de")]
+        [InlineData("fr")]
+        [InlineData("cn-ZH")]
+        [InlineData("")]
+        internal void ResxStringUpdate(string culture)
+        {
+            AddResxStrings(culture);
+
+            var path = Consts.OUT_PATH.JoinPath($"Resource1.{culture}.resx");
+
+            if (culture == string.Empty)
+            {
+                path = Consts.OUT_PATH.JoinPath($"Resource1.resx");
+            }
+            ResxResourceWriter writer = new ResxResourceWriter(path);
+
+
+            writer.UpdateResource("k2", "kz", "kzz");
+
+            var resxRecords = new ResxResourceReader(path).ToList();
+
+            var kvc = resxRecords.FirstOrDefault(x => x.Key == "k2");
+
+            Assert.Equal("k2", kvc.Key);
+            Assert.Equal("kz", kvc.Value);
+            Assert.Equal("kzz", kvc.Comment);
+
+            writer.UpdateResource("k2", null, string.Empty);
+
+            resxRecords = new ResxResourceReader(path).ToList();
+
+            kvc = resxRecords.FirstOrDefault(x => x.Key == "k2");
+
+            Assert.Equal("k2", kvc.Key);
+            Assert.Equal(string.Empty, kvc.Value);
+            Assert.Equal(string.Empty, kvc.Comment);
+
+        }
+
+        [Theory]
+        [InlineData("de")]
+        [InlineData("fr")]
+        [InlineData("cn-ZH")]
+        [InlineData("")]
+        internal void ResxStringDelete(string culture)
+        {
+            AddResxStrings(culture);
+
+            var path = Consts.OUT_PATH.JoinPath($"Resource1.{culture}.resx");
+
+            if (culture == string.Empty)
+            {
+                path = Consts.OUT_PATH.JoinPath($"Resource1.resx");
+            }
+            ResxResourceWriter writer = new ResxResourceWriter(path);
+
+
+            writer.DeleteResource("k2");
+
+            var resxRecords = new ResxResourceReader(path).ToList();
+
+            var kvc = resxRecords.FirstOrDefault(x => x.Key == "k2");
+
+            Assert.Null(kvc);
+
+            writer.DeleteResource("k3");
+
+            resxRecords = new ResxResourceReader(path).ToList();
+
+            kvc = resxRecords.FirstOrDefault(x => x.Key == "k3");
+
+            Assert.Null(kvc);
+            Assert.Single(resxRecords);
 
         }
 

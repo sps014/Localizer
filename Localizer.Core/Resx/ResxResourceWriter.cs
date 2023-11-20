@@ -47,6 +47,13 @@ public class ResxResourceWriter
         xmlDoc.Root!.Add(newElement);
         xmlDoc.Save(FilePath);
     }
+
+    /// <summary>
+    /// Update string key , Value and Comment
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    /// <param name="comment">to set comment to empty assign string.Empty instead of null</param>
     public void UpdateResource(string key, string? value, string? comment= null)
     {
         var elementToUpdate = xmlDoc.Descendants("data")
@@ -208,7 +215,7 @@ public class ResxResourceWriter
         
     }
 
-    internal void DeleteResource(string key)
+    public void DeleteResource(string key)
     {
         var elementToUpdate = xmlDoc.Descendants("data")
                             .FirstOrDefault(el => el.Attribute("name")?.Value == key);
