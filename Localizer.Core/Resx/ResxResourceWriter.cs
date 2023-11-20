@@ -74,6 +74,9 @@ public class ResxResourceWriter
     }
     private void CreateNewFileIfNotExists()
     {
+        if(!Directory.Exists(Path.GetDirectoryName(FilePath)))
+            Directory.CreateDirectory(Path.GetDirectoryName(FilePath)!);
+
         if (File.Exists(FilePath))
             return;
 
