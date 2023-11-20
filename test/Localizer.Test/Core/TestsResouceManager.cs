@@ -23,9 +23,9 @@ namespace Localizer.Test.Core
         void Init()
         {
             readerWriter = new TestsResourceWriterReader();
-            readerWriter.AddResxStrings("de");
+            readerWriter.AddResxStrings("");
+            readerWriter.AddResxStrings("de",false);
             readerWriter.AddResxStrings("fr", false);
-            readerWriter.AddResxStrings("zn-CH", false);
         }
         [Fact]
         public void BuildResxManager()
@@ -51,6 +51,18 @@ namespace Localizer.Test.Core
             var resource = csprojNode.ChildrenCollection.FirstOrDefault();
             Assert.True(resource!.IsLeafResXFileNode);
             Assert.Equal("Properties", resource!.NodeName);
+
+            var leaf = tree.Root.ChildrenCollection.Last() as ResxFileSystemLeafNode;
+            TestLeafCulturesEntity(leaf!);
+        }
+
+        private void TestLeafCulturesEntity(ResxFileSystemLeafNode  leaf)
+        {
+            var cultures = leaf.ResxEntry.Cultures.OrderBy(x=>x).ToList();
+            Assert.Equal(3, cultures.Count);
+            Assert.Equal("", cultures[0]);
+            Assert.Equal("de", cultures[1]);
+            Assert.Equal("fr", cultures[2]);
 
         }
     }
