@@ -82,13 +82,16 @@ namespace Localizer.Test.Core
         [InlineData("cn-ZH")]
         [InlineData("")]
 
-        internal void AddResxStrings(string culture)
+        internal void AddResxStrings(string culture,bool deleteFast= true)
         {
-            try
+            if (deleteFast)
             {
-                Directory.Delete(Consts.OUT_PATH, true);
+                try
+                {
+                    Directory.Delete(Consts.OUT_PATH, true);
+                }
+                catch { }
             }
-            catch { }
 
             var path = Consts.OUT_PATH.JoinPath($"Resource1.{culture}.resx");
 

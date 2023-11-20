@@ -18,7 +18,7 @@ public class ResxResourceReader:IEnumerable<ResxResourceReader.ResxRecord>
 
     public ResxResourceReader(string path)
     { 
-        Stream s = File.OpenRead(path);
+        using Stream s = File.OpenRead(path);
         XDocument doc = XDocument.Load(s);
 
         foreach (XElement element in doc.Descendants("data"))

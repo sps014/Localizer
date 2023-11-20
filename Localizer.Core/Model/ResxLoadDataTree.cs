@@ -38,7 +38,6 @@ public record ResxLoadDataTree
                         .Select(x => (x.GetParentDirectory()!, new ProjectInfo(x)))
                         .ToImmutableDictionary(x => x.Item1, x => x.Item2);
 
-
         foreach (var resxFile in resxFiles)
         {
             AddNewFileToTree(resxFile);

@@ -20,7 +20,12 @@ public class ResxResourceWriter
     }
 
     
-
+    /// <summary>
+    /// Add or update a resource
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    /// <param name="comment"></param>
     public void AddResource(string key,string? value,string? comment=null)
     {
         if (key == null)
