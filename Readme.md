@@ -10,3 +10,5 @@ It is a tool to Load thousand of Resx files in few seconds for adding editng Res
 * Cross platform (windows, linux , mac)
 * Perfromant Virtualized Datagrid for editing
 * Modern UI
+* Import/Export Excel
+* Create Snapshot for Diffing
