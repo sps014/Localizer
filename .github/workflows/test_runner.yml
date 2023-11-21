@@ -32,4 +32,5 @@ jobs:
       uses: dorny/test-reporter@v1
       if: always()
       with:
+        name: 'Test Results' 
         path: '**/test_results.trx'
