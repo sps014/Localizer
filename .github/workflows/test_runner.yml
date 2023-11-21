@@ -26,7 +26,7 @@ jobs:
       run: dotnet build ./test/Localizer.Test/Localizer.Test.csproj --configuration Release
 
     - name: Test
-      run: dotnet test ./test/Localizer.Test/Localizer.Test.csproj  --no-restore --verbosity normal --logger "trx;LogFileName=test_results.trx
+      run: dotnet test ./test/Localizer.Test/Localizer.Test.csproj  --no-restore --verbosity normal --logger "trx;LogFileName=test_results.trx"
       
     - name: Publish Test Results
       uses: dorny/test-reporter@v1
