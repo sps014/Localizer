@@ -18,8 +18,9 @@ public class ResxResourceReader:IEnumerable<ResxResourceReader.ResxRecord>
 
     public ResxResourceReader(string path)
     { 
-        using Stream s = File.OpenRead(path);
-        XDocument doc = XDocument.Load(s);
+        string str = File.ReadAllText(path);
+
+        XDocument doc = XDocument.Parse(str,LoadOptions.PreserveWhitespace);
 
         foreach (XElement element in doc.Descendants("data"))
         {
@@ -34,7 +35,6 @@ public class ResxResourceReader:IEnumerable<ResxResourceReader.ResxRecord>
             
             _records.Add(key,rec);
         }
-        s.Close();
     }
 
     public record ResxRecord(string Key, string? Value, string? Comment);

@@ -16,7 +16,7 @@ public class ResxResourceWriter
     {
         FilePath = path;
         CreateNewFileIfNotExists();
-        xmlDoc = XDocument.Load(path);
+        xmlDoc = XDocument.Parse(File.ReadAllText(FilePath),LoadOptions.PreserveWhitespace);
     }
 
     
@@ -50,7 +50,7 @@ public class ResxResourceWriter
         
 
         xmlDoc.Root!.Add(newElement);
-        xmlDoc.Save(FilePath);
+        Save();
     }
 
     /// <summary>
@@ -76,13 +76,18 @@ public class ResxResourceWriter
             {
                 elementToUpdate.Add(new XElement("comment", comment));
             }
-            xmlDoc.Save(FilePath);
+            Save();
         }
         else
         {
             AddResource(key, value, comment);
         }
 
+    }
+
+    private void Save()
+    {
+        File.WriteAllText(FilePath,xmlDoc.ToString());
     }
     private void CreateNewFileIfNotExists()
     {
@@ -228,7 +233,7 @@ public class ResxResourceWriter
         if (elementToUpdate != null)
         {
             elementToUpdate.Remove();
-            xmlDoc.Save(FilePath);
+            Save();
         }
     }
 }
