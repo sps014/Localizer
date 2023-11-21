@@ -1,0 +1,27 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Localizer.MeasureTextWindow"
+		xmlns:vm="using:Localizer.ViewModels"
+		x:DataType="vm:MeasureTextViewModel"
+		ExtendClientAreaToDecorationsHint="True"
+        Title="MeasureTextWindow">
+	
+	<StackPanel Margin="10,45,0,0">
+		<Grid ColumnDefinitions="Auto,Auto">
+			<TextBlock Text="Path"/>
+			<TextBlock Grid.Column="1" Margin="20,0"
+					   Text="{Binding Path}"/>
+		</Grid>
+		<Grid ColumnDefinitions="Auto,Auto" Margin="0,10" >
+			<TextBlock Text="Key "/>
+			<TextBlock Grid.Column="1" FontWeight="Bold"
+					   Margin="20,0" Text="{Binding Key}"/>
+		</Grid>
+
+		<DataGrid IsReadOnly="True" ItemsSource="{Binding Items}" x:Name="dataGrid" CanUserResizeColumns="True" AutoGenerateColumns="False">
+		</DataGrid>
+	</StackPanel>
+</Window>

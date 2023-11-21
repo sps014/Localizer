@@ -63,5 +63,8 @@
 		<Button Height="32" Width="32" x:Name="infoBtn" Click="diffClick" ToolTip.Tip="Diff">
 			<Image Source="/Assets/diff.png"/>
 		</Button>
+		<Button Height="32" Width="32" Margin="15,0,0,0" x:Name="measureBtn" Click="measureClick" ToolTip.Tip="Measure Text Length">
+			<Image Source="/Assets/measure.png"/>
+		</Button>
 	</StackPanel>
 </UserControl>

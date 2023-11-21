@@ -48,8 +48,12 @@ internal partial class DataGridViewModel:ObservableObject
         EventBus.Instance.Subscribe<CreateSnapshotEvent>(CreateSnapshot);
         EventBus.Instance.Subscribe<LoadSnapshotEvent>(LoadSnapshot);
         EventBus.Instance.Subscribe<UnloadSnapshotEvent>(UnloadSnapshot);
+        EventBus.Instance.Subscribe<MeasureTextEvent>(MeasureText);
+    }
 
-
+    private void MeasureText(MeasureTextEvent e)
+    {
+        e.Entity = DataGrid.SelectedItem as ResxEntityViewModel;
     }
     private async void UnloadSnapshot(UnloadSnapshotEvent e)
     {

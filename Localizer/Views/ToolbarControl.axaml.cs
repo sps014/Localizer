@@ -192,6 +192,21 @@ public partial class ToolbarControl : UserControl
         await window.ShowDialog(WindowHelper.ParentWindow<MainWindow>()!);
     }
 
+    void measureClick(object sender, RoutedEventArgs e)
+    {
+        var eventData = new MeasureTextEvent();
+        EventBus.Instance.Publish(eventData);
+
+        if(eventData.Entity == null)
+        {
+            return;
+        }
+
+        MeasureTextWindow window = new MeasureTextWindow(eventData.Entity);
+        window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        window.ShowDialog(WindowHelper.ParentWindow<MainWindow>()!);
+    }
+
 
 
     private void search_Click(object? sender, RoutedEventArgs e)
@@ -199,33 +214,5 @@ public partial class ToolbarControl : UserControl
         FindReplaceWindow fnd = new FindReplaceWindow();
         fnd.WindowStartupLocation = WindowStartupLocation.CenterOwner;
         fnd.ShowDialog(WindowHelper.ParentWindow<MainWindow>()!);
-    }
-}
-
-internal record TableColumnInfo
-{
-    public bool IsVisible { get; set; }
-    public string Culture { get; set; }
-    public bool IsComment { get; set; }
-
-    public string DisplayValue
-    {
-        get
-        {
-            var c = Culture==string.Empty ? "Neutral" : Culture;
-            if (IsComment)
-            {
-                return $"Comment ({c})";
-            }
-
-            return c;
-        }
-    }
-
-    public TableColumnInfo(string culture,bool isComment,bool isVisible)
-    {
-        Culture = culture;
-        IsComment = isComment;
-        IsVisible = isVisible;
     }
 }
