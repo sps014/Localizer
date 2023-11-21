@@ -22,3 +22,9 @@ jobs:
 
     - name: Test
       run: dotnet test ./test/Localizer.Test/Localizer.Test.csproj  --no-restore --verbosity normal
+      
+    - name: Publish Test Results
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        path: '**/test_results.trx'
