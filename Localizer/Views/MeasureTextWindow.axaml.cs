@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using Localizer.ViewModels;
 
 namespace Localizer;
@@ -12,7 +13,7 @@ public partial class MeasureTextWindow : Window
     public MeasureTextWindow(ResxEntityViewModel entity)
     {
         InitializeComponent();
-        DataContext = vm = new MeasureTextViewModel(entity,FontFamily);
+        DataContext = vm = new MeasureTextViewModel(entity);
         MainWindow.SetThemeOfWindow(this);
         AddColumns();
     }
@@ -21,8 +22,8 @@ public partial class MeasureTextWindow : Window
     {
         AddColumn(nameof(MesaureResultItem.Culture));
         AddColumn(nameof(MesaureResultItem.Text));
-        AddColumn(nameof(MesaureResultItem.Length));
-
+        AddColumn(nameof(MesaureResultItem.Width));
+        AddColumn(nameof(MesaureResultItem.Height));
     }
 
     void AddColumn(string path)

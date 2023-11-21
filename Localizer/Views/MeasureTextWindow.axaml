@@ -6,22 +6,44 @@
         x:Class="Localizer.MeasureTextWindow"
 		xmlns:vm="using:Localizer.ViewModels"
 		x:DataType="vm:MeasureTextViewModel"
-		ExtendClientAreaToDecorationsHint="True"
+		ExtendClientAreaToDecorationsHint="True" Background="Transparent"
         Title="MeasureTextWindow">
 	
-	<StackPanel Margin="10,45,0,0">
-		<Grid ColumnDefinitions="Auto,Auto">
+	<StackPanel Margin="20,45,0,0" Spacing="20">
+		<Label Content="Measure Text" FontSize="24"/>
+		
+		<Grid ColumnDefinitions="Auto,Auto,Auto,Auto,*" Margin="10,0">
+			<Label Content="Current Font " VerticalAlignment="Center" />
+			
+			<Slider Minimum="4" Maximum="100" Grid.Column="1"  Value="{Binding Size}" Width="200"/>
+			<Label Content="{Binding Size}" Grid.Column="2" VerticalAlignment="Center" />
+			<Label Content="px" Grid.Column="3" VerticalAlignment="Center" />
+
+
+			<ComboBox Grid.Column="4" ItemsSource="{Binding AllFonts}"
+					  MinWidth="200" Height="40" HorizontalAlignment="Right"
+					  SelectedItem="{Binding Family}">
+				<ComboBox.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Text="{Binding Name}" FontFamily="{Binding}" />
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>
+			
+		</Grid>
+		<Grid ColumnDefinitions="Auto,Auto" Margin="10,0">
 			<TextBlock Text="Path"/>
 			<TextBlock Grid.Column="1" Margin="20,0"
 					   Text="{Binding Path}"/>
 		</Grid>
-		<Grid ColumnDefinitions="Auto,Auto" Margin="0,10" >
+		<Grid ColumnDefinitions="Auto,Auto" Margin="10,10">
 			<TextBlock Text="Key "/>
 			<TextBlock Grid.Column="1" FontWeight="Bold"
 					   Margin="20,0" Text="{Binding Key}"/>
 		</Grid>
 
-		<DataGrid IsReadOnly="True" ItemsSource="{Binding Items}" x:Name="dataGrid" CanUserResizeColumns="True" AutoGenerateColumns="False">
+		<DataGrid IsReadOnly="True" FontFamily="{Binding Family}" FontSize="{Binding Size}"
+				  ItemsSource="{Binding Items}" x:Name="dataGrid" CanUserResizeColumns="True" AutoGenerateColumns="False">
 		</DataGrid>
 	</StackPanel>
 </Window>
