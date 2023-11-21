@@ -53,13 +53,13 @@ internal partial class DataGridViewModel:ObservableObject
     }
     private async void UnloadSnapshot(UnloadSnapshotEvent e)
     {
-        await SnapshotLoader.UnloadSnapshot(Source);
+        await SnapshotLoader.UnloadSnapshot(AllEntries);
         RefreshGrid();
     }
 
     private async void LoadSnapshot(LoadSnapshotEvent e)
     {
-        await SnapshotLoader.LoadSnapshot(Source, e.Path);
+        await SnapshotLoader.LoadSnapshot(AllEntries, e.Path);
         RefreshGrid();
     }
 
@@ -75,7 +75,7 @@ internal partial class DataGridViewModel:ObservableObject
     }
     private async void CreateSnapshot(CreateSnapshotEvent e)
     {
-        await SnapshotCreator.CreateSnapshot(Source, e.Path);
+        await SnapshotCreator.CreateSnapshot(AllEntries, e.Path);
     }
 
     private async void ImportFromExcel(ImportFromExcelEvent e)
@@ -146,8 +146,9 @@ internal partial class DataGridViewModel:ObservableObject
 
     private void SendDataToRequester(RequestSourceDataEvent e)
     {
-        e.DataInGrid = Source;
+        e.DataInGrid = !e.AllEntities?Source:AllEntries;
     }
+
 
     private void LoadDisplayItemForNode(TreeRequestsLoadDisplayEntryEvent e)
     {

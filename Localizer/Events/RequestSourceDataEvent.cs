@@ -12,6 +12,6 @@ namespace Localizer.Events
     {
         public ObservableCollection<ResxEntityViewModel>? DataInGrid { get; set; }
 
-
+        public bool AllEntities { get; init; } = false;
     }
 }

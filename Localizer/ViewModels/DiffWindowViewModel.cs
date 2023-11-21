@@ -28,7 +28,10 @@ namespace Localizer.ViewModels
         {
             get
             {
-                var referer = new RequestSourceDataEvent();
+                var referer = new RequestSourceDataEvent()
+                {
+                    AllEntities = true
+                };
                 EventBus.Instance.Publish(referer);
                 return referer.DataInGrid;
             }
