@@ -17,11 +17,8 @@ jobs:
       with:
         dotnet-version: 7.0.x
 
-    - name: Install dependencies
-      run: dotnet restore
-
     - name: Build
-      run: dotnet build ./test/Localizer.Test/Localizer.Test.csproj --configuration Release --no-restore
+      run: dotnet build ./test/Localizer.Test/Localizer.Test.csproj --configuration Release
 
     - name: Test
       run: dotnet test ./test/Localizer.Test/Localizer.Test.csproj  --no-restore --verbosity normal
