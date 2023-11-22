@@ -100,7 +100,10 @@ namespace Localizer.ViewModels
         {
             await ResxManager.BuildCollectionAsync(cancellationToken);
             OnResourceLoaded?.Invoke();
+
+#if !DEBUG
             NewVersionUpdateChecker.RunUpdater();
+#endif
         }
 
         public void RequestCacellationOfLoadingResx()

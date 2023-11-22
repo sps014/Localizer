@@ -146,6 +146,13 @@ namespace Localizer.Helper
                     }
 
                     EventBus.Instance.Publish(new ReloadResourcesEvent());
+
+                    Dispatcher.UIThread.Invoke(() =>
+                    {
+                        var box = MessageBoxManager.GetMessageBoxStandard("import success", "Successfully imported excel file data"
+                            , MsBox.Avalonia.Enums.ButtonEnum.Ok, MsBox.Avalonia.Enums.Icon.Success);
+                        box.ShowWindowDialogAsync(WindowHelper.ParentWindow<MainWindow>());
+                    });
                 }
                 catch (Exception ex)
                 {
@@ -155,6 +162,7 @@ namespace Localizer.Helper
                         box.ShowWindowDialogAsync(WindowHelper.ParentWindow<MainWindow>());
                     });
                 }
+
 
             });
         }
