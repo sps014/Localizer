@@ -62,7 +62,7 @@ public record ResxEntityViewModel
         if(SnapshotCultureValues.Count!=CultureValues.Count)
             return true;
 
-        if(!SnapshotCultureValues.Keys.OrderBy(x=>x).SequenceEqual(CultureValues.Keys))
+        if(!SnapshotCultureValues.Keys.OrderBy(x=>x).SequenceEqual(CultureValues.Keys.OrderBy(x=>x)))
             return true;
 
         foreach(var culture in SnapshotCultureValues.Keys)
@@ -77,7 +77,7 @@ public record ResxEntityViewModel
         if (SnapshotCultureComments.Count != CultureComments.Count)
             return true;
 
-        if (!SnapshotCultureComments.Keys.OrderBy(x => x).SequenceEqual(CultureComments.Keys))
+        if (!SnapshotCultureComments.Keys.OrderBy(x => x).SequenceEqual(CultureComments.Keys.OrderBy(x=>x)))
             return true;
 
         foreach (var culture in SnapshotCultureComments.Keys)
