@@ -12,3 +12,10 @@ It is a tool to Load thousand of Resx files in few seconds for adding editng Res
 * Modern UI
 * Import/Export Excel
 * Create Snapshot for Diffing
+
+
+## more screenshots
+
+### Linux
+
+![linux](https://github.com/sps014/Localizer/assets/45932883/702db6b2-4889-4f1d-b9ff-3e1de50e08b8)
