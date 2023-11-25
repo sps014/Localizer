@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -36,8 +37,15 @@ public partial class MainWindow : Window
         }
         else
         {
+            ///will fallback to win 10
             window.TransparencyLevelHint = new[] { WindowTransparencyLevel.AcrylicBlur };
             window.Background = new SolidColorBrush(Colors.Transparent);
+        }
+
+
+        if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            window.Background = new SolidColorBrush(Colors.Black);
         }
 
     }
