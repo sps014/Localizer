@@ -74,6 +74,9 @@ public partial class MainWindow : Window
         {
             if (viewModel.IsResxContentLoaded)
             {
+                //reset static variables
+                SnapshotLoader.IsSnapshotLoaded = false;
+
                 EventBus.Instance.ClearAllSubscriptions();
                 MainWindow window = new MainWindow(viewModel.SolutionFolder);
                 window.Show();
