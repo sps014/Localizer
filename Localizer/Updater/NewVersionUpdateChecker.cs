@@ -165,6 +165,13 @@ namespace Localizer.Updater
 
         public static async void RunUpdater()
         {
+
+            //currently run on windows only
+
+            if (!OperatingSystem.IsWindows())
+                return;
+
+
             //wait 10 min after preious update check to prevent API limit
             if ((DateTime.Now.Ticks - AppSettings.Instance.LastUpdateCheckTime.Ticks)< 10 * 60 * 10000)
             {

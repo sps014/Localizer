@@ -2,12 +2,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 xmlns:v="using:Localizer"
+			 xmlns:vm="using:Localizer.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="60"
-			 x:DataType="v:ToolbarControl"
+			 x:DataType="vm:ToolbarControlViewModel"
              x:Class="Localizer.ToolbarControl">
 	<StackPanel Orientation="Horizontal">
-		<Button Height="32" Width="32" Click="refresh_Click" ToolTip.Tip="Refresh">
+		<Button Height="32" Width="32" Command="{Binding RefreshCommand}" ToolTip.Tip="Refresh">
 			<Image Source="/Assets/refresh.png"/>
 		</Button>
 		<Button Height="32" Width="32" Margin="4,0" ToolTip.Tip="Show/Hide Columns">
@@ -34,17 +34,17 @@
 				</Flyout>
 			</Button.Flyout>
 		</Button>
-		<Button Height="32" Width="32" Click="cross_Clicked" ToolTip.Tip="Delete Key" Margin="10,0,0,0">
+		<Button Height="32" Width="32" Command="{Binding DeleteCommand}" IsVisible="{Binding IsResxEntitySelected}" ToolTip.Tip="Delete Key" Margin="10,0,0,0">
 			<Image Source="/Assets/cross.png"/>
 		</Button>
-		<Button Height="32" Width="32" x:Name="searchBtn" Click="search_Click" ToolTip.Tip="Find">
+		<Button Height="32" Width="32" Command="{Binding SearchCommand}" ToolTip.Tip="Find">
 			<Image Source="/Assets/search.png"/>
 		</Button>
 		<Button Height="32" Width="32" ToolTip.Tip="Excel" Margin="10,0,0,0">
 			<Button.Flyout>
 				<MenuFlyout>
-					<MenuItem Header="Import Excel" Click="importExlClick"></MenuItem>
-					<MenuItem Header="Export Excel" Click="exportExlClick"></MenuItem>
+					<MenuItem Header="Import Excel" Command="{Binding ImportExcelCommand}"></MenuItem>
+					<MenuItem Header="Export Excel" Command="{Binding ExportExcelCommand}"></MenuItem>
 				</MenuFlyout>
 			</Button.Flyout>
 			<Image Source="/Assets/excel.png"/>
@@ -52,18 +52,19 @@
 		<Button Height="32" Width="32" ToolTip.Tip="Snapshot" Margin="10,0,0,0">
 			<Button.Flyout>
 				<MenuFlyout>
-					<MenuItem Header="Create Snapshot" Click="exportSnapClick"></MenuItem>
-					<MenuItem Header="Load Snapshot" Click="importSnapClick"></MenuItem>
-					<MenuItem Header="Unload Snapshot" Click="unloadSnapClick"></MenuItem>
+					<MenuItem Header="Create Snapshot" Command="{Binding ExportSnapshotCommand}"></MenuItem>
+					<MenuItem Header="Load Snapshot" Command="{Binding ImportSnapshotCommand}"></MenuItem>
+					<MenuItem Header="Unload Snapshot" Command="{Binding UnloadSnapshotCommand}"></MenuItem>
 
 				</MenuFlyout>
 			</Button.Flyout>
 			<Image Source="/Assets/snap.png"/>
 		</Button>
-		<Button Height="32" Width="32" x:Name="infoBtn" Click="diffClick" ToolTip.Tip="Diff">
+		<Button Height="32" Width="32" Command="{Binding ProcessDiffCommand}" ToolTip.Tip="Diff ">
 			<Image Source="/Assets/diff.png"/>
 		</Button>
-		<Button Height="32" Width="32" Margin="15,0,0,0" x:Name="measureBtn" Click="measureClick" ToolTip.Tip="Measure Text Length">
+		<Button Height="32" Width="32" Margin="15,0,0,0" Command="{Binding OpenMeasureCommand}"
+				IsVisible="{Binding IsResxEntitySelected}" ToolTip.Tip="Measure Text Length">
 			<Image Source="/Assets/measure.png"/>
 		</Button>
 	</StackPanel>

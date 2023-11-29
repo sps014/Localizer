@@ -35,9 +35,9 @@ public partial class MainWindow : Window
         {
             window.TransparencyLevelHint = new[] { WindowTransparencyLevel.Mica };
         }
-        else
+        else if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            ///will fallback to win 10
+            ///will fallback to win 10 or lower
             window.TransparencyLevelHint = new[] { WindowTransparencyLevel.AcrylicBlur };
             window.Background = new SolidColorBrush(Colors.Transparent);
         }
