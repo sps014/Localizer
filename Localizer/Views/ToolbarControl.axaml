@@ -67,5 +67,9 @@
 				IsVisible="{Binding IsResxEntitySelected}" ToolTip.Tip="Measure Text Length">
 			<Image Source="/Assets/measure.png"/>
 		</Button>
+		<Button Height="32" Width="32" Margin="15,0,0,0" Command="{Binding OpenSettingsCommand}"
+				 ToolTip.Tip="Measure Text Length">
+			<Image Source="/Assets/settings.png"/>
+		</Button>
 	</StackPanel>
 </UserControl>

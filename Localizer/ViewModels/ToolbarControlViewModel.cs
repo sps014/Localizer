@@ -228,4 +228,12 @@ public partial class ToolbarControlViewModel : ObservableObject
         fnd.WindowStartupLocation = WindowStartupLocation.CenterOwner;
         await fnd.ShowDialog(WindowHelper.ParentWindow<MainWindow>()!);
     }
+
+    [RelayCommand]
+    public async Task OpenSettings()
+    {
+        SettingsWindow fnd = new SettingsWindow();
+        fnd.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        await fnd.ShowDialog(WindowHelper.ParentWindow<MainWindow>()!);
+    }
 }

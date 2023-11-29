@@ -2,8 +2,46 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" MaxWidth="700" MaxHeight="600" MinWidth="600" MinHeight="400"
         x:Class="Localizer.Views.SettingsWindow" Background="Transparent" ExtendClientAreaToDecorationsHint="True"
+		xmlns:vm="using:Localizer.ViewModels"
+		x:DataType="vm:SettingsWindowViewModel"
         Title="SettingsWindow">
+
+	<StackPanel Margin="20">
+		<Label Content="Settings" FontSize="24"/>
+
+	<TabControl Margin="0,10,0,0">
+		<TabItem Header="Appearence" Margin="4">
+			<Grid ColumnDefinitions="*,Auto">
+				<TextBlock Margin="5">Use Transparency effects on Windows (Restart)</TextBlock>
+				<CheckBox Grid.Column="1" IsChecked="{Binding UseMicaOrAcrylicDesign}"></CheckBox>
+			</Grid>
+
+		</TabItem>
+		<TabItem Header="About">
+			<Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto">
+				<TextBlock Margin="5">Version</TextBlock>
+				<TextBlock Margin="5" Grid.Column="1" Text="{Binding Version}"></TextBlock>
+				<TextBlock Margin="5" Grid.Row="1" Text="{Binding Repo}"></TextBlock>
+				<Button Grid.Row="1"  Grid.Column="1" Margin="5" Command="{Binding CopySourceLink}">Copy Source Link</Button>
+				<TextBlock Margin="5" Grid.Row="2" IsVisible="{Binding IsNewVersionAvailable}" TextWrapping="WrapWithOverflow"
+						   Text="New Version of the App is available (On windows updates automatically on close)"></TextBlock>
+				<TextBlock Margin="5" Grid.Row="2" Grid.Column="1" IsVisible="{Binding IsNewVersionAvailable}"
+						   Text="{Binding NewVersion}"></TextBlock>
+
+			</Grid>
+		</TabItem>
+		<TabItem Header="Credits">
+			<Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto">
+				<TextBlock Margin="5">ResxFileIcon</TextBlock>
+				<TextBlock Margin="5" Grid.Column="1" Text="https://www.iconfinder.com/icons/199317/resx_file_extension_format_icon"></TextBlock>
+				<TextBlock Margin="5" Grid.Row="1" Text="All Other Icons"></TextBlock>
+				<TextBlock Grid.Row="1"  Grid.Column="1" Margin="5" >https://icons8.com/icons</TextBlock>
+			</Grid>
+		</TabItem>
+	</TabControl>
+	</StackPanel>
+	
 	
 </Window>

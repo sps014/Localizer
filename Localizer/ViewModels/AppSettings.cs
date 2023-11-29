@@ -12,6 +12,7 @@ namespace Localizer.ViewModels;
 
 public class AppSettings
 {
+
     internal readonly static string FilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),nameof(Localizer), $"{nameof(AppSettings)}.json");
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -29,6 +30,8 @@ public class AppSettings
     }
 
     public Dictionary<string, DateTime> FolderTimeStampMap { get; set; } = new Dictionary<string, DateTime>();
+
+    public bool UseMicaOrAcrylic { get; set; } = true;
 
     private ObservableCollection<ResxFolderPath>? folders=null;
 

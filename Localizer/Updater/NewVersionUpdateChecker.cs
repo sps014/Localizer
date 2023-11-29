@@ -55,7 +55,7 @@ namespace Localizer.Updater
         }
 
         
-        private static async Task<VersionResult> IsNewVersionAvailable()
+        public static async Task<VersionResult> IsNewVersionAvailable()
         {
             try
             {
@@ -166,7 +166,7 @@ namespace Localizer.Updater
         public static async void RunUpdater()
         {
 
-            //currently run on windows only
+            //TODO : make cross platform , currently runs on windows only
 
             if (!OperatingSystem.IsWindows())
                 return;

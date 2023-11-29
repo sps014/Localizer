@@ -43,9 +43,10 @@ public partial class MainWindow : Window
         }
 
 
-        if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX) || !AppSettings.Instance.UseMicaOrAcrylic)
         {
             window.Background = new SolidColorBrush(Colors.Black);
+            window.TransparencyLevelHint = new[] { WindowTransparencyLevel.None };
         }
 
     }
