@@ -14,6 +14,11 @@ It is a Localization tool to Load thousand of Resx files in few seconds for addi
 * Create Snapshot for Diffing
 
 
+### Building
+* Install [.NET 8](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+* open terminal in root of this repo , Go to Localizer folder and type 
+   ` dotnet build `
+
 ## more screenshots
 
 ### Linux
