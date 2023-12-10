@@ -16,7 +16,7 @@ public class ResxResourceWriter
     {
         FilePath = path;
         CreateNewFileIfNotExists();
-        xmlDoc = XDocument.Parse(File.ReadAllText(FilePath),LoadOptions.PreserveWhitespace);
+        xmlDoc = XDocument.Parse(File.ReadAllText(FilePath));
     }
 
     
@@ -32,7 +32,7 @@ public class ResxResourceWriter
             return;
 
         XElement newElement;
-        if(comment != null)
+        if(!string.IsNullOrEmpty(comment))
         {
              newElement = new XElement("data",
                 new XAttribute("name", key),
@@ -87,7 +87,7 @@ public class ResxResourceWriter
 
     private void Save()
     {
-        File.WriteAllText(FilePath,xmlDoc.ToString());
+        xmlDoc.Save(FilePath, SaveOptions.None);
     }
     private void CreateNewFileIfNotExists()
     {
