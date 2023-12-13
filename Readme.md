@@ -7,11 +7,12 @@ It is a Localization tool to Load thousand of Resx files in few seconds for addi
 ### Key features
 * Fast startup time (load time is minimal)
 * Cross platform (windows, linux , mac)
-* Perfromant Virtualized Datagrid for editing
+* Performant Virtualized Datagrid for editing
 * Modern UI
 * Import/Export Excel
 * Create Snapshot for Diffing
 
+** If you have issues in rendering text (in Windows 10) on white background, feel free to Disable Acrylic Blur in Settings->Appearence->Disable acrylic blur.
 
 ### Building
 * Install [.NET 8](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
