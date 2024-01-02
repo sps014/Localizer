@@ -31,7 +31,7 @@ public class AppSettings
 
     public Dictionary<string, DateTime> FolderTimeStampMap { get; set; } = new Dictionary<string, DateTime>();
 
-    public bool UseMicaOrAcrylic { get; set; } = true;
+    public bool UseMicaOrAcrylic { get; set; } = false;
 
     private ObservableCollection<ResxFolderPath>? folders=null;
 
